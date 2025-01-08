@@ -7,6 +7,7 @@ import com.sparta.yobaeats.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,13 +19,17 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(AuthSignupRequest authSignupRequest) {
+    public ResponseEntity<Void> signup(
+            @RequestBody AuthSignupRequest authSignupRequest
+    ) {
         authService.signup(authSignupRequest);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthLoginResponse> login(AuthLoginRequest authLoginRequest) {
+    public ResponseEntity<AuthLoginResponse> login(
+            @RequestBody AuthLoginRequest authLoginRequest
+    ) {
         authService.login(authLoginRequest);
         return ResponseEntity.ok().build();
     }
