@@ -2,6 +2,7 @@ package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.user.dto.UserRes;
+import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
 import com.sparta.yobaeats.domain.user.enums.UserRole;
 import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
@@ -56,6 +57,16 @@ public class User extends BaseEntity {
     public void isDeletedUser() {
         if (this.isDeleted) {
             throw new UserDeletedException(ErrorCode.USER_DELETED);
+        }
+    }
+
+    public void updateUser(UserUpdateReq req) {
+        if (req.email() != null && !req.email().isBlank()) {
+            this.email = req.email();
+        }
+
+        if (req.password() != null && !req.password().isBlank()) {
+            this.password = req.password();
         }
     }
 }
