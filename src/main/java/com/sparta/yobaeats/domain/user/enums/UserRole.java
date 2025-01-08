@@ -1,9 +1,8 @@
 package com.sparta.yobaeats.domain.user.enums;
 
-import com.sparta.yobaeats.global.exception.InvalidUserRoleException;
+import com.sparta.yobaeats.domain.user.exception.InvalidUserRoleException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import java.util.Arrays;
-import org.springframework.http.HttpStatus;
 
 public enum UserRole {
     USER,
