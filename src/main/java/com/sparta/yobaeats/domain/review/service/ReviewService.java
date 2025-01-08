@@ -1,9 +1,14 @@
 package com.sparta.yobaeats.domain.review.service;
 
 import com.sparta.yobaeats.domain.review.dto.request.ReviewReq;
+import com.sparta.yobaeats.domain.review.dto.response.ReviewRes;
+import com.sparta.yobaeats.domain.review.entity.Review;
+import com.sparta.yobaeats.domain.review.exception.InvalidStarRangeException;
 import com.sparta.yobaeats.domain.review.repository.ReviewRepository;
 import com.sparta.yobaeats.domain.store.service.StoreService;
 import com.sparta.yobaeats.domain.user.service.UserService;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +44,15 @@ public class ReviewService {
         Review review = req.to(user, store, order);
         reviewRepository.save(review);
          */
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewRes> findByStoreId(Long storeId) {
+        List<Review> reviewList = reviewRepository
+            .findAllByStoreIdOrderByUpdatedAtDesc(storeId);
+
+        return reviewList.stream()
+            .map(ReviewRes::from)
+            .toList();
     }
 }
