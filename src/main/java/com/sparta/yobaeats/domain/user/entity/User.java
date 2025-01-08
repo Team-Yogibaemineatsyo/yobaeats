@@ -53,8 +53,8 @@ public class User extends BaseEntity {
         );
     }
 
-    public void isDeletedUser(){
-        if(this.isDeleted){
+    public void isDeletedUser() {
+        if (this.isDeleted) {
             throw new UserDeletedException(ErrorCode.USER_DELETED);
         }
     }

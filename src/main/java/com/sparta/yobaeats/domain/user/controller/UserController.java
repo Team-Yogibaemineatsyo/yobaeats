@@ -18,9 +18,12 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserRes> findUserById(
+        // @AuthenticationPrincipal UserDetails userDetails,
         @PathVariable Long userId
-    ){
-      UserRes userRes = userService.findUserById(userId);
-      return ResponseEntity.ok(userRes);
+    ) {
+        // userId? email?
+        // String email =userDetails.getId(); ( 일단 대충..나중에 시큐리티 보고 수정 )
+        UserRes userRes = userService.findUserById(userId);
+        return ResponseEntity.ok(userRes);
     }
 }
