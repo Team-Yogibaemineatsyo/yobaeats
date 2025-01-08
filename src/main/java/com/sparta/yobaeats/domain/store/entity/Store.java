@@ -1,5 +1,6 @@
 package com.sparta.yobaeats.domain.store.entity;
 
+import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-public class Store {
+public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

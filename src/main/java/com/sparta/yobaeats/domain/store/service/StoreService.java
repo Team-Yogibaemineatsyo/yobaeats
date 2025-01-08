@@ -1,12 +1,13 @@
 package com.sparta.yobaeats.domain.store.service;
 
 import com.sparta.yobaeats.domain.store.dto.request.StoreCreateReq;
+import com.sparta.yobaeats.domain.store.dto.response.StoreReadDetailRes;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.store.repository.StoreRepository;
 import com.sparta.yobaeats.domain.user.entity.User;
-import jakarta.validation.Valid;
+import com.sparta.yobaeats.global.exception.NotFoundException;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,5 +24,16 @@ public class StoreService {
         Store store = storeRepository.save(request.toEntity(user));
 
         return store.getId();
+    }
+
+    public StoreReadDetailRes readStore(Long storeId) {
+        Store store = findStoreById(storeId);
+
+        return StoreReadDetailRes.from(store);
+    }
+
+    private Store findStoreById(Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }
 }
