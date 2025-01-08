@@ -2,6 +2,8 @@ package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.user.enums.UserRole;
+import com.sparta.yobaeats.global.exception.UnauthorizedException;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,5 +43,11 @@ public class User extends BaseEntity {
         this.password = password;
         this.nickName = nickName;
         this.role = role;
+    }
+
+    public void isDeletedUser() {
+        if(this.isDeleted) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
     }
 }
