@@ -28,7 +28,7 @@ public class UserController {
     ) {
         // userId? email?
         // String email =userDetails.getId(); ( 일단 대충..나중에 시큐리티 보고 수정 )
-        UserRes userRes = userService.findUserById(userId);
+        UserRes userRes = userService.findById(userId);
         return ResponseEntity.ok(userRes);
     }
 
