@@ -1,11 +1,7 @@
 package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
-import com.sparta.yobaeats.domain.user.dto.UserRes;
-import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
 import com.sparta.yobaeats.domain.user.enums.UserRole;
-import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
-import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -68,5 +64,9 @@ public class User extends BaseEntity {
         if (req.password() != null && !req.password().isBlank()) {
             this.password = req.password();
         }
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
     }
 }

@@ -1,14 +1,7 @@
 package com.sparta.yobaeats.domain.user.controller;
 
-import com.sparta.yobaeats.domain.user.dto.UserRes;
-import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +33,18 @@ public class UserController {
         // userId? email?
         // String email = userDetails.getId(); ( 일단 대충..나중에 시큐리티 보고 수정 )
         userService.updateUser(userId, req);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(
+        @RequestBody UserDeleteReq req,
+        @PathVariable Long userId
+        // @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        // userId? email?
+        // String email = userDetails.getId(); ( 일단 대충..나중에 시큐리티 보고 수정 )
+        userService.deleteUser(req, userId);
         return ResponseEntity.noContent().build();
     }
 }
