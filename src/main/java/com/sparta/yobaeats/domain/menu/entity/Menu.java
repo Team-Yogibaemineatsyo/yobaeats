@@ -45,4 +45,14 @@ public class Menu {
         this.menuPrice = menuPrice;
         this.description = description;
     }
+
+    public static Menu update(Menu existingMenu, String menuName, Integer menuPrice, String description) {
+        return new Menu(
+                existingMenu.getId(),
+                existingMenu.getStoreId(),
+                menuName,
+                menuPrice,
+                description
+        );
+    }
 }
