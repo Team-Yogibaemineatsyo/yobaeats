@@ -61,4 +61,12 @@ public class StoreService {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }
+
+    public void deleteStore(Long userId, Long storeId) {
+        User user = User.builder().id(userId).build();
+
+        Store store = findStoreById(storeId);
+
+        store.delete();
+    }
 }

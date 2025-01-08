@@ -2,6 +2,8 @@ package com.sparta.yobaeats.domain.store.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.user.entity.User;
+import com.sparta.yobaeats.global.exception.ConflictException;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -82,6 +84,14 @@ public class Store extends BaseEntity {
         updateOpenAt(newOpenAt);
         updateCloseAt(newCloseAt);
         updateMinOrderPrice(newMinOrderPrice);
+    }
+
+    public void delete() {
+        if (isDeleted) {
+            throw new ConflictException(ErrorCode.STORE_ALREADY_DELETED);
+        }
+
+        this.isDeleted = true;
     }
 
     private void updateName(String newName) {

@@ -65,4 +65,17 @@ public class StoreController {
 
         return ResponseEntity.noContent().build();
     }
+
+    // OWNER 권한 필요
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<Void> deleteStore(
+            @PathVariable Long storeId
+    ) {
+        // userId 필요
+        final Long userId = 1L;
+
+        storeService.deleteStore(userId, storeId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
