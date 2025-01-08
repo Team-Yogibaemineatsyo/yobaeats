@@ -2,6 +2,7 @@ package com.sparta.yobaeats.domain.store.controller;
 
 import com.sparta.yobaeats.domain.store.dto.request.StoreCreateReq;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadDetailRes;
+import com.sparta.yobaeats.domain.store.dto.response.StoreReadSimpleRes;
 import com.sparta.yobaeats.domain.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/stores")
@@ -40,5 +42,12 @@ public class StoreController {
             @PathVariable Long storeId
     ) {
         return ResponseEntity.ok(storeService.readStore(storeId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StoreReadSimpleRes>> readStores(
+            @RequestParam(required = false) String storeName
+    ) {
+        return ResponseEntity.ok(storeService.readStores(storeName));
     }
 }
