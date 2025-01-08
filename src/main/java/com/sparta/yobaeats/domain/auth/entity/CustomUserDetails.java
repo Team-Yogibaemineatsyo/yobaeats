@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private final User user;
 
@@ -43,7 +43,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getEmail();
     }
 
     /**
