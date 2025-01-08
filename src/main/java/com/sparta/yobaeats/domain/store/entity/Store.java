@@ -22,3 +22,4 @@ public class Store {
         this.id = id;
     }
 }
+
