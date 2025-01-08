@@ -20,7 +20,7 @@ public class UserService {
             .orElseThrow(()-> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         user.isDeletedUser();
 
-        //나중에 토큰아이디 뒤의 userId엔 나중에 토큰에서 추출한 아이디 넣을거야
+        // 뒤의 userId는 추후에 토큰아이디로 변경
         if(!user.getId().equals(userId))  {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
