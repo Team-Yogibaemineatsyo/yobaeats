@@ -44,7 +44,7 @@ public class StoreService {
     }
 
     public List<StoreReadSimpleRes> readStores(String storeName) {
-        List<Store> store = storeRepository.findAllByName(storeName);
+        List<Store> store = storeRepository.findAllActiveByAndNameOrElseAll(storeName);
 
         return store.stream()
                 .map(StoreReadSimpleRes::from)
@@ -63,16 +63,17 @@ public class StoreService {
         );
     }
 
-    private Store findStoreById(Long storeId) {
-        return storeRepository.findById(storeId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
-    }
-
+    @Transactional
     public void deleteStore(Long userId, Long storeId) {
         User user = User.builder().id(userId).build();
 
         Store store = findStoreById(storeId);
 
         store.delete();
+    }
+
+    private Store findStoreById(Long storeId) {
+        return storeRepository.findByIdAndIsDeletedFalse(storeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }
 }
