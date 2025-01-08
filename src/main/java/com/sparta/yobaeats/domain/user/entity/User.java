@@ -3,7 +3,6 @@ package com.sparta.yobaeats.domain.user.entity;
 import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.user.dto.response.UserRes;
 import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
-import com.sparta.yobaeats.domain.user.enums.UserRole;
 import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;

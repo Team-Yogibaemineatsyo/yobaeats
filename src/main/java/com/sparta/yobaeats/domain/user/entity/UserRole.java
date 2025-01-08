@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.domain.user.enums;
+package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.user.exception.InvalidUserRoleException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
