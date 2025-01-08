@@ -28,6 +28,9 @@ public class UserService {
 
         //if (!passwordEncoder.matches(req.password, user.getPassword())) {
         //    throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
-        userRepository.delete(user);
+
+        user.softDelete();
+
+        userRepository.save(user);
     }
 }

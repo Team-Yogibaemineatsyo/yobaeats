@@ -50,4 +50,8 @@ public class User extends BaseEntity {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
     }
+
+    public void softDelete() {
+        this.isDeleted = true;
+    }
 }
