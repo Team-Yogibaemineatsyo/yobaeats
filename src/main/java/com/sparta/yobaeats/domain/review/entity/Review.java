@@ -29,7 +29,7 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
