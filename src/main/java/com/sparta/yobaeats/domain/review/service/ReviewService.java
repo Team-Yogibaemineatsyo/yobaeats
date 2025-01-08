@@ -7,6 +7,7 @@ import com.sparta.yobaeats.domain.review.exception.InvalidStarRangeException;
 import com.sparta.yobaeats.domain.review.repository.ReviewRepository;
 import com.sparta.yobaeats.domain.store.service.StoreService;
 import com.sparta.yobaeats.domain.user.service.UserService;
+import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +70,13 @@ public class ReviewService {
         return reviewList.stream()
             .map(ReviewRes::from)
             .toList();
+    }
+
+    public void deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+
+        review.softDelete();
+        reviewRepository.save(review);
     }
 }

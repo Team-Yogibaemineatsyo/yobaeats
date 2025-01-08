@@ -39,6 +39,9 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private int star;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @Builder
     public Review(
         Long id,
@@ -54,5 +57,9 @@ public class Review extends BaseEntity {
         this.order = order;
         this.contents = contents;
         this.star = star;
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
     }
 }
