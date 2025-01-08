@@ -1,7 +1,10 @@
 package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
+import com.sparta.yobaeats.domain.user.dto.UserRes;
 import com.sparta.yobaeats.domain.user.enums.UserRole;
+import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,5 +44,18 @@ public class User extends BaseEntity {
         this.password = password;
         this.nickName = nickName;
         this.role = role;
+    }
+
+    public UserRes from() {
+        return new UserRes(
+            this.email = email,
+            this.nickName = nickName
+        );
+    }
+
+    public void isDeletedUser(){
+        if(this.isDeleted){
+            throw new UserDeletedException(ErrorCode.USER_DELETED);
+        }
     }
 }
