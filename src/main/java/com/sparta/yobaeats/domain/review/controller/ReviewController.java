@@ -37,4 +37,13 @@ public class ReviewController {
         ReviewListRes listRes = new ReviewListRes(reviewService.findByStoreId(storeId));
         return ResponseEntity.ok(listRes);
     }
+
+    @GetMapping
+    public ResponseEntity<ReviewListRes> findByStar(
+        @RequestParam int startStar,
+        @RequestParam int endStar
+    ) {
+        ReviewListRes listRes = new ReviewListRes(reviewService.findByStar(startStar, endStar));
+        return ResponseEntity.ok(listRes);
+    }
 }

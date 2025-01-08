@@ -9,4 +9,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByStoreIdOrderByUpdatedAtDesc(Long storeId);
 
     List<Review> findByStarBetween(int startStar, int endStar);
+
+    List<Review> findByStar(int startStar);
 }

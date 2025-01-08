@@ -55,4 +55,19 @@ public class ReviewService {
             .map(ReviewRes::from)
             .toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<ReviewRes> findByStar(int startStar, int endStar) {
+        if (startStar > endStar) {
+            throw new InvalidStarRangeException(ErrorCode.INVALID_STAR_RANGE);
+        }
+
+        List<Review> reviewList = startStar == endStar ?
+            reviewRepository.findByStar(startStar) :
+            reviewRepository.findByStarBetween(startStar, endStar);
+
+        return reviewList.stream()
+            .map(ReviewRes::from)
+            .toList();
+    }
 }
