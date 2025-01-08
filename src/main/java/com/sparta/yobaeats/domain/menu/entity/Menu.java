@@ -27,13 +27,13 @@ public class Menu {
 //    @JoinColumn(name = "store_id", nullable = false)
 //    private Store store;
 
-    @Column(name = "menu_name", nullable = false)
+    @Column(name = "menu_name", nullable = false, length = 30)
     private String menuName;
 
     @Column(name = "menu_price", nullable = false)
     private Integer menuPrice;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 100)
     private String description;
 
     @Column(name = "is_deleted", nullable = false)
@@ -42,12 +42,20 @@ public class Menu {
     @Builder
     public Menu(Long id, Long storeId, String menuName, Integer menuPrice, String description) {
         this.id = id;
-        // this.store = store;(병합 후 주석풀기)
-        this.storeId = storeId; // Store ID로 초기화(병합 후 삭제)
+        this.storeId = storeId;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
         this.description = description;
     }
+
+//    @Builder
+//    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description) {
+//        this.id = id;
+//        this.store = store;
+//        this.menuName = menuName;
+//        this.menuPrice = menuPrice;
+//        this.description = description;
+//    }
 
     public static Menu update(Menu existingMenu, String menuName, Integer menuPrice, String description) {
         return new Menu(

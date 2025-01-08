@@ -23,27 +23,56 @@ public class Order extends BaseEntity {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // 유저와의 관계를 설정합니다.
-    private User user; // User 엔티티 참조
+    // 병합 후 주석풀기
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
-    @ManyToOne // 하나의 주문은 하나의 가게에 속합니다.
-    @JoinColumn(name = "store_id", nullable = false) // 외래 키 설정
-    private Store store;
+
+    // 병합 후 주석풀기
+//    @ManyToOne // 주문과 가게 간의 관계 설정
+//    @JoinColumn(name = "store_id", nullable = false)
+//    private Store store; // Store 객체 참조
+
+    @Column(name = "store_id", nullable = false)
+    private Long storeId;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false) // 외래 키 설정
+    @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
+    @Enumerated(EnumType.STRING) // Enum을 DB에 저장할 때 문자열로 저장
     @Column(name = "status", nullable = false)
-    private String status;
+    private Status status;
 
     @Builder
-    public Order(Long id, User user, Store store, Menu menu, String status) {
+    public Order(Long id, Long storeId, Menu menu, Status status) {
         this.id = id;
-        this.user = user;
-        this.store = store;
+        this.storeId = storeId;
         this.menu = menu;
-        this.status = status;
+        this.status = status != null ? status : Status.ORDER_REQUESTED;
     }
+
+//    @Builder
+//    public Order(Long id, User user, Store store, Menu menu, String status) {
+//        this.id = id;
+//        this.user = user;
+//        this.store = store;
+//        this.menu = menu;
+//        this.status = status != null ? status : Status.ORDER_REQUESTED;
+//    }
+
+    public enum Status {
+        ORDER_REQUESTED, // 주문 요청
+        ORDER_ACCEPTED, // 주문 수락
+        COOKING_COMPLETE, // 조리 완료
+        DELIVERING, // 배달중
+        DELIVERED; // 배달 완료
+    }
+
+    // 주문 상태 변경 메서드
+    public void changeStatus(Status newStatus) {
+        this.status = newStatus;
+    }
+
 }

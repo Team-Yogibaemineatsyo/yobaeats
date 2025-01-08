@@ -1,4 +1,4 @@
 package com.sparta.yobaeats.domain.order.dto;
 
-public class OrderCreateReq {
+public record OrderCreateReq(Long storeId, Long menuId) {
 }
