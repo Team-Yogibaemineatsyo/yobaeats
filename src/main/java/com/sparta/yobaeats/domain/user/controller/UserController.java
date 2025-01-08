@@ -21,7 +21,11 @@ public class UserController {
     public ResponseEntity<Void> updateUser(
         @RequestBody UserUpdateReq req,
         @PathVariable Long userId
+        // @AuthenticationPrincipal UserDetails userDetails
+
     ) {
+        // userId? email?
+        // String email = userDetails.getId(); ( 일단 대충..나중에 시큐리티 보고 수정 )
         userService.updateUser(userId, req);
         return ResponseEntity.noContent().build();
     }

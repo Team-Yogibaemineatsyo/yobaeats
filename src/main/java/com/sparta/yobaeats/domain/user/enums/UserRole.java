@@ -12,6 +12,6 @@ public enum UserRole {
         return Arrays.stream(UserRole.values())
             .filter(userRole -> userRole.name().equalsIgnoreCase(role))
             .findFirst()
-            .orElseThrow(()-> new InvalidUserRoleException(ErrorCode.INVALID_USER_ROLE));
+            .orElseThrow(() -> new InvalidUserRoleException(ErrorCode.INVALID_USER_ROLE));
     }
 }
