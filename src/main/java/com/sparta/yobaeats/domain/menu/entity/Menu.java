@@ -36,6 +36,9 @@ public class Menu {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
     @Builder
     public Menu(Long id, Long storeId, String menuName, Integer menuPrice, String description) {
         this.id = id;
@@ -54,5 +57,10 @@ public class Menu {
                 menuPrice,
                 description
         );
+    }
+
+    // 메뉴 삭제 상태를 변경하는 메서드
+    public void markAsDeleted() {
+        this.isDeleted = true;
     }
 }

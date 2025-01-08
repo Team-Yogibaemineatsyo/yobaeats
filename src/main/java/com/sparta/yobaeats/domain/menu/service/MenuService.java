@@ -16,19 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    // private final StoreService storeService; // StoreService 의존성 주석 처리
+    // private final StoreService storeService; // 병합 후 주석풀기
 
     @Transactional
     public void createMenu(MenuCreateReq menuCreateReq) {
-        // Store ID를 직접 사용하여 Menu 생성(병합 후 삭제)
         Long storeId = menuCreateReq.storeId();
 
-        // 병합하고 주석풀기
-        // Store store = storeService.getStoreById(menuCreateReq.getStoreId());
-
         Menu menu = Menu.builder()
-                //.store(store) 병합 후 주석풀기
-                .storeId(storeId)  // Store ID로 초기화(병합 후 삭제)
+                .storeId(storeId)
                 .menuName(menuCreateReq.menuName())
                 .menuPrice(menuCreateReq.menuPrice())
                 .description(menuCreateReq.description())
@@ -38,8 +33,26 @@ public class MenuService {
         menuRepository.save(menu);
     }
 
+    // 병합 후 사용할 메서드
+//    @Transactional
+//    public void createMenu(MenuCreateReq menuCreateReq) {
+//        // Store ID를 통해 가게 정보 조회
+//        Store store = storeRepository.findById(menuCreateReq.storeId())
+//                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND)); // 가게가 없을 경우 예외 처리
+//
+//        Menu menu = Menu.builder()
+//                .store(store) // Store 객체로 초기화
+//                .menuName(menuCreateReq.menuName())
+//                .menuPrice(menuCreateReq.menuPrice())
+//                .description(menuCreateReq.description())
+//                .build();
+//
+//        menuRepository.save(menu);
+//    }
+
     @Transactional
     public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq) {
+
         // 메뉴를 ID로 조회
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND)); // 메뉴가 없을 경우 예외 처리
@@ -48,5 +61,12 @@ public class MenuService {
                 menuUpdateReq.menuName(),
                 menuUpdateReq.menuPrice(),
                 menuUpdateReq.description());
+    }
+
+    @Transactional
+    public void deleteMenu(Long menuId) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND)); // 메뉴가 없을 경우 예외 처리
+        menu.markAsDeleted();
     }
 }
