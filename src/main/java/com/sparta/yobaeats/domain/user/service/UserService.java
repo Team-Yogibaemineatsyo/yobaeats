@@ -1,9 +1,8 @@
 package com.sparta.yobaeats.domain.user.service;
 
-import com.sparta.yobaeats.domain.store.entity.Store;
-import com.sparta.yobaeats.domain.user.dto.UserDeleteReq;
-import com.sparta.yobaeats.domain.user.dto.UserRes;
-import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
+import com.sparta.yobaeats.domain.user.dto.request.UserDeleteReq;
+import com.sparta.yobaeats.domain.user.dto.response.UserRes;
+import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.repository.UserRepository;
 import com.sparta.yobaeats.global.exception.NotFoundException;
