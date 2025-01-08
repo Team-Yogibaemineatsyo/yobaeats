@@ -1,5 +1,7 @@
 package com.sparta.yobaeats.domain.auth.service;
 
+import com.sparta.yobaeats.domain.auth.dto.request.AuthLoginRequest;
+import com.sparta.yobaeats.domain.auth.dto.request.AuthSignupRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -7,11 +9,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    public void signup() {
+    public void signup(AuthSignupRequest authSignupRequest) {
 
     }
 
-    public void login() {
+    public void login(AuthLoginRequest authLoginRequest) {
 
     }
 
