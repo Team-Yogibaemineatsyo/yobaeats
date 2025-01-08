@@ -25,11 +25,13 @@ public class JwtUtil {
     }
 
     public String generateToken(Long id, UserRole role) {
+        long now = System.currentTimeMillis();
+
         return BEARER_PREFIX + Jwts.builder()
                 .claim("id", id)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(EXPIRATION_TIME))
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + EXPIRATION_TIME))
                 .signWith(secretKey)
                 .compact();
     }
@@ -44,10 +46,9 @@ public class JwtUtil {
 
     public User getUserFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
-        return User.builder()
-//                .id(claims.get("id", Long.class))
-                .role(claims.get("role", UserRole.class))
-                .build();
+        return new User(
+                claims.get("id", Long.class),
+                UserRole.of(claims.get("role", String.class)));
     }
 
     private Claims getClaimsFromToken(String token) {
