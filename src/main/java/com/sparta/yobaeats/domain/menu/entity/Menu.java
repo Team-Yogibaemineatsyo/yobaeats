@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "menus")
 @Getter
@@ -20,12 +18,9 @@ public class Menu {
     @Column(name = "menu_id")
     private Long id;
 
-    @Column(name = "store_id", nullable = false)
-    private Long storeId; // Store ID로 참조(병합 후 삭제)
-
-//    @ManyToOne (병합 후 주석풀기)
-//    @JoinColumn(name = "store_id", nullable = false)
-//    private Store store;
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @Column(name = "menu_name", nullable = false, length = 30)
     private String menuName;
@@ -40,31 +35,23 @@ public class Menu {
     private boolean isDeleted = false;
 
     @Builder
-    public Menu(Long id, Long storeId, String menuName, Integer menuPrice, String description) {
+    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description) {
         this.id = id;
-        this.storeId = storeId;
+        this.store = store;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
         this.description = description;
     }
 
-//    @Builder
-//    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description) {
-//        this.id = id;
-//        this.store = store;
-//        this.menuName = menuName;
-//        this.menuPrice = menuPrice;
-//        this.description = description;
-//    }
 
     public static Menu update(Menu existingMenu, String menuName, Integer menuPrice, String description) {
-        return new Menu(
-                existingMenu.getId(),
-                existingMenu.getStoreId(),
-                menuName,
-                menuPrice,
-                description
-        );
+        return Menu.builder()
+                .id(existingMenu.getId())
+                .store(existingMenu.getStore()) // 기존 store 객체를 그대로 사용
+                .menuName(menuName)
+                .menuPrice(menuPrice)
+                .description(description)
+                .build();
     }
 
     // 메뉴 삭제 상태를 변경하는 메서드

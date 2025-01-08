@@ -10,8 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "orders")
 @Getter
@@ -23,19 +21,13 @@ public class Order extends BaseEntity {
     @Column(name = "order_id")
     private Long id;
 
-    // 병합 후 주석풀기
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-
-    // 병합 후 주석풀기
-//    @ManyToOne // 주문과 가게 간의 관계 설정
-//    @JoinColumn(name = "store_id", nullable = false)
-//    private Store store; // Store 객체 참조
-
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = false)
@@ -46,21 +38,13 @@ public class Order extends BaseEntity {
     private Status status;
 
     @Builder
-    public Order(Long id, Long storeId, Menu menu, Status status) {
+    public Order(Long id, User user, Store store, Menu menu, Status status) {
         this.id = id;
-        this.storeId = storeId;
+        this.user = user;
+        this.store = store;
         this.menu = menu;
-        this.status = status != null ? status : Status.ORDER_REQUESTED;
+        this.status = status;
     }
-
-//    @Builder
-//    public Order(Long id, User user, Store store, Menu menu, String status) {
-//        this.id = id;
-//        this.user = user;
-//        this.store = store;
-//        this.menu = menu;
-//        this.status = status != null ? status : Status.ORDER_REQUESTED;
-//    }
 
     public enum Status {
         ORDER_REQUESTED, // 주문 요청

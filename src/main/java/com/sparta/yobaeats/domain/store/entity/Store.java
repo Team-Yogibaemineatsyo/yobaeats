@@ -5,6 +5,7 @@ import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.global.exception.ConflictException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

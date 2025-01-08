@@ -36,14 +36,13 @@ public class OrderLoggingAspect {
         Long orderId = (Long) args[0]; // 첫 번째 인수는 orderId
         OrderUpdateReq orderUpdateReq = (OrderUpdateReq) args[1]; // 두 번째 인수는 OrderUpdateReq
 
-        // 새로운 상태를 가져옵니다.
         Order.Status newStatus = orderUpdateReq.status();
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.ORDER_NOT_FOUND));
-        Long storeId = order.getStoreId();
 
-        // 로깅
+        Long storeId = order.getStore().getId();
+
         log.info("Order status updated: time={}, storeId={}, orderId={}, newStatus={}",
                 formattedTime, storeId, orderId, newStatus);
     }

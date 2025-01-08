@@ -3,6 +3,7 @@ package com.sparta.yobaeats.domain.menu.controller;
 import com.sparta.yobaeats.domain.menu.dto.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class MenuController {
 
     @PostMapping
     public ResponseEntity<Void> createMenu(
-            @RequestBody MenuCreateReq menuCreateReq
+            @Valid @RequestBody MenuCreateReq menuCreateReq
     ) {
         menuService.createMenu(menuCreateReq);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -26,7 +27,7 @@ public class MenuController {
     @PatchMapping("/{menuId}")
     public ResponseEntity<Void> updateMenu(
             @PathVariable("menuId") Long menuId,
-            @RequestBody MenuUpdateReq menuUpdateReq
+            @Valid @RequestBody MenuUpdateReq menuUpdateReq
     ) {
         menuService.updateMenu(menuId, menuUpdateReq);
         return ResponseEntity.ok().build();
