@@ -14,13 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
     //private final PasswordEncoder passwordEncoder;
 
-    @Transactional(readOnly = true)
     public UserRes findById(Long userId) {
         User user = findUserById(userId);
         user.isDeletedUser();
@@ -32,6 +31,7 @@ public class UserService {
         return user.from();
     }
 
+    @Transactional
     public void updateUser(Long userId, UserUpdateReq req) {
         User user = findUserById(userId);
         user.isDeletedUser();
@@ -42,10 +42,9 @@ public class UserService {
         }
 
         user.updateUser(req);
-
-        userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(UserDeleteReq req, Long userId) {
         User user = findUserById(userId);
         user.isDeletedUser();
@@ -59,8 +58,6 @@ public class UserService {
         //    throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
 
         user.softDelete();
-
-        userRepository.save(user);
     }
 
     public User findUserById(Long userId) {
