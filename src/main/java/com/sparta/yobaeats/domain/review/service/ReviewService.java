@@ -84,6 +84,5 @@ public class ReviewService {
             .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
 
         review.softDelete();
-        reviewRepository.save(review);
     }
 }

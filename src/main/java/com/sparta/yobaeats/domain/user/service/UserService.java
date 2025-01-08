@@ -42,8 +42,6 @@ public class UserService {
         }
 
         user.updateUser(req);
-
-        userRepository.save(user);
     }
 
     public void deleteUser(UserDeleteReq req, Long userId) {
@@ -59,8 +57,6 @@ public class UserService {
         //    throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
 
         user.softDelete();
-
-        userRepository.save(user);
     }
 
     public User findUserById(Long userId) {
