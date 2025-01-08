@@ -4,6 +4,7 @@ import com.sparta.yobaeats.domain.auth.dto.request.AuthLoginRequest;
 import com.sparta.yobaeats.domain.auth.dto.request.AuthSignupRequest;
 import com.sparta.yobaeats.domain.auth.dto.response.AuthLoginResponse;
 import com.sparta.yobaeats.domain.auth.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(
-            @RequestBody AuthSignupRequest authSignupRequest
+            @Valid @RequestBody AuthSignupRequest authSignupRequest
     ) {
         authService.signup(authSignupRequest);
         return ResponseEntity.noContent().build();
