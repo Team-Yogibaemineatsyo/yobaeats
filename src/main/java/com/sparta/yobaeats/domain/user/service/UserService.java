@@ -1,5 +1,6 @@
 package com.sparta.yobaeats.domain.user.service;
 
+import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.user.dto.UserDeleteReq;
 import com.sparta.yobaeats.domain.user.dto.UserRes;
 import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
@@ -21,9 +22,8 @@ public class UserService {
     //private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public UserRes findUserById(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    public UserRes findById(Long userId) {
+        User user = findUserById(userId);
         user.isDeletedUser();
 
         // 뒤의 userId는 추후에 토큰아이디로 변경
@@ -34,8 +34,7 @@ public class UserService {
     }
 
     public void updateUser(Long userId, UserUpdateReq req) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        User user = findUserById(userId);
         user.isDeletedUser();
 
         // 뒤의 userId 나중에 토큰 Id로 변경
@@ -49,8 +48,7 @@ public class UserService {
     }
 
     public void deleteUser(UserDeleteReq req, Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(()-> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        User user = findUserById(userId);
         user.isDeletedUser();
 
         // 뒤의 userId 나중에 토큰 Id로 변경
@@ -64,5 +62,10 @@ public class UserService {
         user.softDelete();
 
         userRepository.save(user);
+    }
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }
