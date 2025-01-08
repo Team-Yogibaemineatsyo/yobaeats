@@ -71,4 +71,40 @@ public class Store extends BaseEntity {
         this.isDeleted = isDeleted;
         this.user = user;
     }
+
+    public void update(
+            String newName,
+            LocalTime newOpenAt,
+            LocalTime newCloseAt,
+            Integer newMinOrderPrice
+    ) {
+        updateName(newName);
+        updateOpenAt(newOpenAt);
+        updateCloseAt(newCloseAt);
+        updateMinOrderPrice(newMinOrderPrice);
+    }
+
+    private void updateName(String newName) {
+        if (newName != null) {
+            this.name = newName;
+        }
+    }
+
+    private void updateOpenAt(LocalTime newOpenAt) {
+        if (newOpenAt != null) {
+            this.openAt = newOpenAt;
+        }
+    }
+
+    private void updateCloseAt(LocalTime newCloseAt) {
+        if (newCloseAt != null) {
+            this.closeAt = newCloseAt;
+        }
+    }
+
+    private void updateMinOrderPrice(Integer newMinOrderPrice) {
+        if (newMinOrderPrice != null) {
+            this.minOrderPrice = newMinOrderPrice;
+        }
+    }
 }

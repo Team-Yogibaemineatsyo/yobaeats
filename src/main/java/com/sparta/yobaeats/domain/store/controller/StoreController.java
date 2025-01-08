@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.store.controller;
 
 import com.sparta.yobaeats.domain.store.dto.request.StoreCreateReq;
+import com.sparta.yobaeats.domain.store.dto.request.StoreUpdateReq;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadDetailRes;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadSimpleRes;
 import com.sparta.yobaeats.domain.store.service.StoreService;
@@ -49,5 +50,19 @@ public class StoreController {
             @RequestParam(required = false) String storeName
     ) {
         return ResponseEntity.ok(storeService.readStores(storeName));
+    }
+
+    // OWNER 권한 필요
+    @PatchMapping("/{storeId}")
+    public ResponseEntity<Void> updateStore(
+            @PathVariable Long storeId,
+            @RequestBody StoreUpdateReq request
+    ) {
+        // userId 필요
+        final Long userId = 1L;
+
+        storeService.updateStore(userId, storeId, request);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.store.service;
 
 import com.sparta.yobaeats.domain.store.dto.request.StoreCreateReq;
+import com.sparta.yobaeats.domain.store.dto.request.StoreUpdateReq;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadDetailRes;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadSimpleRes;
 import com.sparta.yobaeats.domain.store.entity.Store;
@@ -21,6 +22,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
 
+    @Transactional
     public Long createStore(StoreCreateReq request, Long userId) {
         User user = User.builder().id(userId).build();
 
@@ -41,6 +43,18 @@ public class StoreService {
         return store.stream()
                 .map(StoreReadSimpleRes::from)
                 .toList();
+    }
+
+    @Transactional
+    public void updateStore(Long userId, Long storeId, StoreUpdateReq request) {
+        User user = User.builder().id(userId).build();
+
+        Store store = findStoreById(storeId);
+
+        store.update(
+                request.storeName(), request.openAt(),
+                request.closeAt(), request.minOrderPrice()
+        );
     }
 
     private Store findStoreById(Long storeId) {
