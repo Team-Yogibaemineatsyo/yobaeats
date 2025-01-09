@@ -1,9 +1,8 @@
 package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
-import com.sparta.yobaeats.domain.user.dto.UserRes;
-import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
-import com.sparta.yobaeats.domain.user.enums.UserRole;
+import com.sparta.yobaeats.domain.user.dto.response.UserRes;
+import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
 import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
@@ -40,7 +39,8 @@ public class User extends BaseEntity {
     private boolean isDeleted = false;
 
     @Builder
-    public User(String email, String password, String nickName, UserRole role) {
+    public User(Long id, String email, String password, String nickName, UserRole role) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.nickName = nickName;

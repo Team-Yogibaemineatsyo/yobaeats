@@ -1,9 +1,10 @@
 package com.sparta.yobaeats.domain.user.controller;
 
-import com.sparta.yobaeats.domain.user.dto.UserDeleteReq;
-import com.sparta.yobaeats.domain.user.dto.UserRes;
-import com.sparta.yobaeats.domain.user.dto.UserUpdateReq;
+import com.sparta.yobaeats.domain.user.dto.request.UserDeleteReq;
+import com.sparta.yobaeats.domain.user.dto.response.UserRes;
+import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
 import com.sparta.yobaeats.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,13 +29,13 @@ public class UserController {
     ) {
         // userId? email?
         // String email =userDetails.getId(); ( 일단 대충..나중에 시큐리티 보고 수정 )
-        UserRes userRes = userService.findUserById(userId);
+        UserRes userRes = userService.findById(userId);
         return ResponseEntity.ok(userRes);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Void> updateUser(
-        @RequestBody UserUpdateReq req,
+        @Valid @RequestBody UserUpdateReq req,
         @PathVariable Long userId
         // @AuthenticationPrincipal UserDetails userDetails
 
@@ -47,7 +48,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(
-        @RequestBody UserDeleteReq req,
+        @Valid @RequestBody UserDeleteReq req,
         @PathVariable Long userId
         // @AuthenticationPrincipal UserDetails userDetails
     ) {
