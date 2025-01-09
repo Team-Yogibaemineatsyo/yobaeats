@@ -1,7 +1,7 @@
 package com.sparta.yobaeats.domain.review.service;
 
 import com.sparta.yobaeats.domain.order.entity.Order;
-import com.sparta.yobaeats.domain.order.entity.Order.Status;
+import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.service.OrderService;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewRes;
@@ -45,7 +45,7 @@ public class ReviewService {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
         // 주문 상태 검증
-        if(order.getStatus() != Status.DELIVERED) {
+        if(order.getOrderStatus() != OrderStatus.DELIVERED) {
             throw new InvalidOrderStatusException(ErrorCode.INVALID_ORDER_STATUS);
         }
         // 리뷰 중복 작성 검증

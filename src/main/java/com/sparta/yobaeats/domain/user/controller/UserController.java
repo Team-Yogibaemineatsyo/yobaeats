@@ -22,7 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{userId}")
+    @GetMapping("/me")
     public ResponseEntity<UserRes> findUserById(
         // @AuthenticationPrincipal UserDetails userDetails,
         @PathVariable Long userId

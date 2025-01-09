@@ -1,7 +1,8 @@
 package com.sparta.yobaeats.global.aop;
 
 import com.sparta.yobaeats.domain.order.entity.Order;
-import com.sparta.yobaeats.domain.order.dto.OrderUpdateReq;
+import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
+import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.repository.OrderRepository;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
@@ -44,7 +45,7 @@ public class OrderLoggingAspect {
         OrderUpdateReq orderUpdateReq = (OrderUpdateReq) args[1]; // 두 번째 인수는 주문 업데이트 요청
 
         // 새로운 상태를 가져옵니다.
-        Order.Status newStatus = orderUpdateReq.status();
+        OrderStatus newStatus = orderUpdateReq.orderStatus();
 
         // 주문 ID로 주문을 조회합니다.
         Order order = orderRepository.findById(orderId)
