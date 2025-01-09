@@ -54,9 +54,16 @@ public class Order extends BaseEntity {
         DELIVERED; // 배달 완료
     }
 
-    // 주문 상태 변경 메서드
+    /**
+     * 주문 상태를 변경하는 메서드
+     *
+     * 이 메서드는 주문의 상태를 새로운 상태로 변경합니다.
+     *
+     * @param newStatus 새로운 주문 상태
+     *                  - 가능한 상태는 ORDER_REQUESTED, ORDER_ACCEPTED,
+     *                    COOKING_COMPLETE, DELIVERING, DELIVERED입니다.
+     */
     public void changeStatus(Status newStatus) {
         this.status = newStatus;
     }
-
 }

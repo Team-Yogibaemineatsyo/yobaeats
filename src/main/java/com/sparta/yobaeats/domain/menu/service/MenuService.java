@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 메뉴 관리 로직을 처리하는 Service 클래스
+ */
 @Service
 @RequiredArgsConstructor
 public class MenuService {
@@ -25,34 +28,29 @@ public class MenuService {
         Store store = storeRepository.findById(menuCreateReq.storeId())
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND));
 
-        // 새로운 Menu 객체 생성
-        Menu menu = Menu.builder()
-                .store(store)
-                .menuName(menuCreateReq.menuName())
-                .menuPrice(menuCreateReq.menuPrice())
-                .description(menuCreateReq.description())
-                .build();
+        // DTO의 팩토리 메서드를 사용해 Menu 엔티티 생성
+        Menu menu = menuCreateReq.toEntity(store);
 
+        // 메뉴 저장
         menuRepository.save(menu);
     }
 
     @Transactional
     public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq) {
-        // 메뉴를 ID로 조회
         Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND)); // 메뉴가 없을 경우 예외 처리
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));
 
         Menu updatedMenu = Menu.update(menu,
                 menuUpdateReq.menuName(),
                 menuUpdateReq.menuPrice(),
-                menuUpdateReq.description());
+                menuUpdateReq.description()
+        );
     }
 
     @Transactional
     public void deleteMenu(Long menuId) {
-        // 메뉴를 ID로 조회
         Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND)); // 메뉴가 없을 경우 예외 처리
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));
 
         menu.markAsDeleted();
     }
