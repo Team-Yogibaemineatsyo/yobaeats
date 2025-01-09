@@ -1,8 +1,8 @@
 package com.sparta.yobaeats.domain.user.service;
 
 import com.sparta.yobaeats.domain.user.dto.request.UserDeleteReq;
-import com.sparta.yobaeats.domain.user.dto.response.UserRes;
-import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
+import com.sparta.yobaeats.domain.user.dto.response.UserReadInfoRes;
+import com.sparta.yobaeats.domain.user.dto.request.UserUpdateInfoReq;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.repository.UserRepository;
 import com.sparta.yobaeats.global.exception.NotFoundException;
@@ -20,18 +20,18 @@ public class UserService {
     private final UserRepository userRepository;
     //private final PasswordEncoder passwordEncoder;
 
-    public UserRes findById(Long userId) {
+    public UserReadInfoRes findById(Long userId) {
         User user = findUserById(userId);
         user.isDeletedUser();
 
         // 뒤의 userId는 추후에 토큰아이디로 변경
         validateUser(user.getId(), userId);
 
-        return user.from();
+        return UserReadInfoRes.from(user);
     }
 
     @Transactional
-    public void updateUser(Long userId, UserUpdateReq req) {
+    public void updateUser(Long userId, UserUpdateInfoReq req) {
         User user = findUserById(userId);
         user.isDeletedUser();
 

@@ -1,8 +1,7 @@
 package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
-import com.sparta.yobaeats.domain.user.dto.response.UserRes;
-import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
+import com.sparta.yobaeats.domain.user.dto.request.UserUpdateInfoReq;
 import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
@@ -54,20 +53,13 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public UserRes from() {
-        return new UserRes(
-            this.email = email,
-            this.nickName = nickName
-        );
-    }
-
     public void isDeletedUser() {
         if (this.isDeleted) {
             throw new UserDeletedException(ErrorCode.USER_DELETED);
         }
     }
 
-    public void updateUser(UserUpdateReq req) {
+    public void updateUser(UserUpdateInfoReq req) {
         if (req.email() != null && !req.email().isBlank()) {
             this.email = req.email();
         }
