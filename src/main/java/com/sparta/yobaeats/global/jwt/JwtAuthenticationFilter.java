@@ -25,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getTokenFromHeader(request);
 
+        // TODO JWT 토큰 유효성 검사: 없음, 잘못된 토큰 등
         if (StringUtils.hasText(token) && jwtUtil.isValidExpiration(token)) {
             setToHolder(token);
         }

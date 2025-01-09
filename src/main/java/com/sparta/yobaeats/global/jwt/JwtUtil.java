@@ -47,9 +47,6 @@ public class JwtUtil {
 
         Date now = new Date();
 
-        String name = authentication.getName();
-
-
         return BEARER_PREFIX + Jwts.builder()
                 .claim("id", authentication.getName())
                 .claim("role", authorities)
