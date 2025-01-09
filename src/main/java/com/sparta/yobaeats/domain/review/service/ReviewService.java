@@ -54,7 +54,6 @@ public class ReviewService {
         }
 
         Review review = req.to(user, order, store);
-
     }
 
     public List<ReviewRes> findByStoreId(Long storeId) {
@@ -74,6 +73,10 @@ public class ReviewService {
         List<Review> reviewList = startStar == endStar ?
             reviewRepository.findByStar(startStar) :
             reviewRepository.findByStarBetween(startStar, endStar);
+
+        if(reviewList.isEmpty()) {
+            throw new NotFoundException(ErrorCode.STAR_NOT_FOUND);
+        }
 
         return reviewList.stream()
             .map(ReviewRes::from)
