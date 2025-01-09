@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record StoreReadDetailRes(
@@ -13,8 +14,8 @@ public record StoreReadDetailRes(
         LocalTime openAt,
         LocalTime closeAt,
         Integer minOrderPrice,
-        Double starRate
-//        List<MenuDetailRes> menus
+        Double starRate,
+        List<MenuDetailRes> menus
 ) {
 
     public static StoreReadDetailRes from(Store store) {
@@ -25,6 +26,10 @@ public record StoreReadDetailRes(
                 .closeAt(store.getCloseAt())
                 .minOrderPrice(store.getMinOrderPrice())
                 .starRate(store.getStarRate())
+                .menus(store.getMenus()
+                        .stream()
+                        .map(MenuDetailRes::from)
+                        .toList())
                 .build();
     }
 }
