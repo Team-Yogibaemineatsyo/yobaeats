@@ -5,7 +5,6 @@ import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.global.exception.ConflictException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +28,7 @@ public class Store extends BaseEntity {
     @Column(name = "store_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String name;
 
     @Column(nullable = false)
