@@ -1,7 +1,7 @@
 package com.sparta.yobaeats.global.jwt;
 
 import com.sparta.yobaeats.domain.user.entity.User;
-import com.sparta.yobaeats.domain.user.enums.UserRole;
+import com.sparta.yobaeats.domain.user.entity.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;

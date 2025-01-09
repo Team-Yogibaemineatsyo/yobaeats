@@ -1,7 +1,7 @@
 package com.sparta.yobaeats.domain.auth.dto.request;
 
 import com.sparta.yobaeats.domain.user.entity.User;
-import com.sparta.yobaeats.domain.user.enums.UserRole;
+import com.sparta.yobaeats.domain.user.entity.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
