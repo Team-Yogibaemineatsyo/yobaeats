@@ -24,6 +24,7 @@ public class StoreService {
 
     private final UserService userService;
     private final StoreRepository storeRepository;
+
     private static final int MAX_OWNED_STORES = 3;
 
     @Transactional
@@ -73,7 +74,7 @@ public class StoreService {
         store.delete();
     }
 
-    private Store findStoreById(Long storeId) {
+    public Store findStoreById(Long storeId) {
         return storeRepository.findByIdAndIsDeletedFalse(storeId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }

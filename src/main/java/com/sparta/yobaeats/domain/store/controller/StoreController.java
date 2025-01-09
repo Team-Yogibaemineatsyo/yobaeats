@@ -1,15 +1,17 @@
 package com.sparta.yobaeats.domain.store.controller;
 
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.store.dto.request.StoreCreateReq;
 import com.sparta.yobaeats.domain.store.dto.request.StoreUpdateReq;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadDetailRes;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadSimpleRes;
 import com.sparta.yobaeats.domain.store.service.StoreService;
+import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -24,16 +26,14 @@ public class StoreController {
     // OWNER 권한 필요
     @PostMapping
     public ResponseEntity<Void> createStore(
-            @RequestBody @Valid final StoreCreateReq request
+            @RequestBody @Valid StoreCreateReq request,
+            @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         // userId 필요
         final Long userId = 1L;
 
-        final Long storeId = storeService.createStore(request, userId);
-
-        final URI uri = UriComponentsBuilder.fromPath("/api/stores/{storeId}")
-                .buildAndExpand(storeId)
-                .toUri();
+        Long storeId = storeService.createStore(request, userId);
+        URI uri = UriBuilderUtil.create("/api/stores/{storeId}", storeId);
 
         return ResponseEntity.created(uri).build();
     }
@@ -56,7 +56,8 @@ public class StoreController {
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(
             @PathVariable Long storeId,
-            @RequestBody StoreUpdateReq request
+            @RequestBody StoreUpdateReq request,
+            @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         // userId 필요
         final Long userId = 1L;
@@ -69,7 +70,8 @@ public class StoreController {
     // OWNER 권한 필요
     @DeleteMapping("/{storeId}")
     public ResponseEntity<Void> deleteStore(
-            @PathVariable Long storeId
+            @PathVariable Long storeId,
+            @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         // userId 필요
         final Long userId = 1L;
