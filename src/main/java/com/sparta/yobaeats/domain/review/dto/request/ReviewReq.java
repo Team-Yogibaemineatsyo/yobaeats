@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 public record ReviewReq(
 
     @NotBlank(message = "주문 ID는 필수 입력 항목입니다.")
-    String orderId,
+    Long orderId,
 
     @NotNull(message = "별점은 필수 입력 항목입니다.")
     @Min(value = 1, message = "별점은 1 이상이어야 합니다.")
