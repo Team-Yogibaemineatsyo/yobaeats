@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.global.jwt;
 
-import com.sparta.yobaeats.domain.auth.entity.CustomUserDetails;
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.user.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setToHolder(String token) {
         User user = jwtUtil.getUserFromToken(token);
-        CustomUserDetails userDetails = new CustomUserDetails(user);
+        UserDetailsCustom userDetails = new UserDetailsCustom(user);
 
         Authentication authToken
                 = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

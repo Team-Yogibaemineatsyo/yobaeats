@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.auth.service;
 
-import com.sparta.yobaeats.domain.auth.entity.CustomUserDetails;
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.repository.UserRepository;
 import com.sparta.yobaeats.global.exception.NotFoundException;
@@ -22,6 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        return new CustomUserDetails(user);
+        return new UserDetailsCustom(user);
     }
 }
