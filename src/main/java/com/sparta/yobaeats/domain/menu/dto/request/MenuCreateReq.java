@@ -1,24 +1,28 @@
-package com.sparta.yobaeats.domain.menu.dto;
+package com.sparta.yobaeats.domain.menu.dto.request;
 
+import com.sparta.yobaeats.domain.menu.dto.MenuValidationMessage;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * 메뉴 생성 요청 데이터를 담는 DTO 클래스
  */
 public record MenuCreateReq(
 
-        @NotBlank
+        @NotBlank(message = MenuValidationMessage.STOREID_BLANK_MESSAGE)
         Long storeId,
 
-        @NotBlank
+        @Size(max = MenuValidationMessage.NAME_MAX, message = MenuValidationMessage.NAME_MAX_MESSAGE)
+        @NotBlank(message = MenuValidationMessage.NAME_BLANK_MESSAGE)
         String menuName,
 
-        @NotBlank
+        @NotBlank(message = MenuValidationMessage.PRICE_BLANK_MESSAGE)
         Integer menuPrice,
 
-        @NotBlank
+        @Size(max = MenuValidationMessage.DESCRIPTION_MAX, message = MenuValidationMessage.DESCRIPTION_MAX_MESSAGE)
+        @NotBlank(message = MenuValidationMessage.DESCRIPTION_BLANK_MESSAGE)
         String description
 ) {
     /**

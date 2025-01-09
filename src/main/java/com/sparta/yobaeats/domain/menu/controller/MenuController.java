@@ -1,13 +1,17 @@
 package com.sparta.yobaeats.domain.menu.controller;
 
-import com.sparta.yobaeats.domain.menu.dto.MenuCreateReq;
-import com.sparta.yobaeats.domain.menu.dto.MenuUpdateReq;
+import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
+import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
+import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,16 +23,18 @@ public class MenuController {
     /**
      * 메뉴 생성 API
      *
-     * @param menuCreateReq 메뉴 생성 요청 데이터 (JSON 형식)
-     *                       - 이름, 가격, 설명 등 메뉴 정보를 포함
+     * @param menuCreateReqList 메뉴 생성 요청 데이터 (JSON 형식)
+     *                          - 이름, 가격, 설명 등 메뉴 정보를 포함
      * @return HTTP 201(CREATED) 상태 코드 반환
      */
     @PostMapping
-    public ResponseEntity<Void> createMenu(
-            @Valid @RequestBody MenuCreateReq menuCreateReq
+    public ResponseEntity<Void> createMenus(
+            @RequestBody @Valid List<MenuCreateReq> menuCreateReqList
     ) {
-        menuService.createMenu(menuCreateReq);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList);
+        URI uri = UriBuilderUtil.create("/api/menus/{menuId}", createdMenuIds.get(0));
+
+        return ResponseEntity.created(uri).build();
     }
 
     /**
@@ -42,7 +48,7 @@ public class MenuController {
     @PatchMapping("/{menuId}")
     public ResponseEntity<Void> updateMenu(
             @PathVariable("menuId") Long menuId,
-            @Valid @RequestBody MenuUpdateReq menuUpdateReq
+            @RequestBody @Valid MenuUpdateReq menuUpdateReq
     ) {
         menuService.updateMenu(menuId, menuUpdateReq);
         return ResponseEntity.ok().build();
