@@ -69,11 +69,11 @@ public class OrderService {
     }
 
     /**
-     * 주문 ID로 주문 조회 메서드
+     * 주문 ID로 주문을 조회하는 메서드.
      *
      * @param orderId 조회할 주문의 ID
-     * @return Order 객체
-     * @throws CustomRuntimeException ORDER_NOT_FOUND: 주문을 찾을 수 없는 경우
+     * @return Order 객체: 조회된 주문 정보
+     * @throws NotFoundException ORDER_NOT_FOUND: 주문을 찾을 수 없는 경우 발생
      */
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)

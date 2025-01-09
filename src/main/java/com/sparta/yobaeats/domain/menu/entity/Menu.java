@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "menus")
@@ -18,8 +20,9 @@ public class Menu {
     @Column(name = "menu_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Store store;
 
     @Column(name = "menu_name", nullable = false, length = 30)
