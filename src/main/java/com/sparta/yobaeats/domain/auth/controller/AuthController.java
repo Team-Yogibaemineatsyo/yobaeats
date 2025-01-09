@@ -21,9 +21,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(
-            @Valid @RequestBody AuthSignupRequest authSignupRequest
+            @RequestBody @Valid AuthSignupRequest authSignupRequest
     ) {
         authService.signup(authSignupRequest);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -32,12 +33,7 @@ public class AuthController {
             @RequestBody AuthLoginRequest authLoginRequest
     ) {
         String data = authService.login(authLoginRequest);
-        return ResponseEntity.ok(new AuthLoginResponse(data));
-    }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        authService.logout();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new AuthLoginResponse(data));
     }
 }
