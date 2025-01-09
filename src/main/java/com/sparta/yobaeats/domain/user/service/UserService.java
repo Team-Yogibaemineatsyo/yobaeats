@@ -9,6 +9,8 @@ import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,45 +20,28 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    //private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public UserReadInfoRes findById(Long userId) {
-        User user = findUserById(userId);
-        user.isDeletedUser();
-
-        // 뒤의 userId는 추후에 토큰아이디로 변경
-        validateUser(user.getId(), userId);
-
-        return UserReadInfoRes.from(user);
+        return UserReadInfoRes.from(findUserById(userId));
     }
 
     @Transactional
     public void updateUser(Long userId, UserUpdateInfoReq req) {
-        User user = findUserById(userId);
-        user.isDeletedUser();
-
-        // 뒤의 userId는 추후에 토큰아이디로 변경
-        validateUser(user.getId(), userId);
-
-        user.updateUser(req);
+        String newPassword = (req.password() != null) ? passwordEncoder.encode(req.password()) : null;
+        findUserById(userId).update(newPassword, req.nickName());
     }
 
     @Transactional
     public void deleteUser(UserDeleteReq req, Long userId) {
         User user = findUserById(userId);
-        user.isDeletedUser();
-
-        // 뒤의 userId는 추후에 토큰아이디로 변경
-        validateUser(user.getId(), userId);
-
-        //if (!passwordEncoder.matches(req.password, user.getPassword())) {
-        //    throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
+        validatePassword(req.password(), user.getPassword());
 
         user.softDelete();
     }
 
     public User findUserById(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndIsDeletedFalse(userId)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
@@ -66,12 +51,9 @@ public class UserService {
         }
     }
 
-    /*
-    *
     private void validatePassword(String rawPassword, String password) {
-        if (!passwordEncoder.matches(rawPassword,password)) {
+        if (!passwordEncoder.matches(rawPassword, password)) {
             throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
         }
     }
-     */
 }
