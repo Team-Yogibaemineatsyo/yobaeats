@@ -20,6 +20,7 @@ public enum ErrorCode {
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴를 찾을 수 없습니다."),
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이 메뉴는 이미 삭제되었습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
+    ORDER_NOT_CHANGE(HttpStatus.NOT_FOUND, "주문 상태를 변경할 수 없습니다."),
 
     // 가게 관련 익셉션
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "가게가 존재하지 않습니다."),

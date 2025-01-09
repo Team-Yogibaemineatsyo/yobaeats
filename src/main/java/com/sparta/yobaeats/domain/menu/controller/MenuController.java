@@ -25,7 +25,6 @@ public class MenuController {
      *
      * @param menuCreateReqList 메뉴 생성 요청 데이터 (JSON 형식)
      *                          - 이름, 가격, 설명 등 메뉴 정보를 포함
-     * @return HTTP 201(CREATED) 상태 코드 반환
      */
     @PostMapping
     public ResponseEntity<Void> createMenus(
