@@ -5,9 +5,15 @@ import com.sparta.yobaeats.domain.auth.dto.request.AuthSignupRequest;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.repository.UserRepository;
 import com.sparta.yobaeats.global.exception.ConflictException;
+import com.sparta.yobaeats.global.exception.NotFoundException;
+import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,8 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public void signup(AuthSignupRequest authSignupRequest) {
         boolean isExists = userRepository.existsByEmail(authSignupRequest.email());
@@ -32,8 +40,13 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public void login(AuthLoginRequest authLoginRequest) {
+    public String login(AuthLoginRequest authLoginRequest) {
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(authLoginRequest.email(), authLoginRequest.password());
 
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+
+        return jwtUtil.generateTokenByAuthentication(authentication);
     }
 
     public void logout() {

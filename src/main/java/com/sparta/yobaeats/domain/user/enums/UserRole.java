@@ -5,8 +5,8 @@ import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import java.util.Arrays;
 
 public enum UserRole {
-    USER,
-    OWNER;
+    ROLE_USER,
+    ROLE_OWNER;
 
     public static UserRole of(String role) {
         return Arrays.stream(UserRole.values())

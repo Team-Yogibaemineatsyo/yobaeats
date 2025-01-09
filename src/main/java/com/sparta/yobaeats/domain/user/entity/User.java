@@ -47,6 +47,11 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
+    public User(Long id, UserRole role) {
+        this.id = id;
+        this.role = role;
+    }
+
     public UserRes from() {
         return new UserRes(
             this.email = email,
