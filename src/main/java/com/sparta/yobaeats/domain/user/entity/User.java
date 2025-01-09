@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "users")
@@ -36,7 +37,8 @@ public class User extends BaseEntity {
     private UserRole role;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @Builder
     public User(Long id, String email, String password, String nickName, UserRole role) {
