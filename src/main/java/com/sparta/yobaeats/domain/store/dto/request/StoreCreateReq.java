@@ -1,22 +1,26 @@
 package com.sparta.yobaeats.domain.store.dto.request;
 
+import com.sparta.yobaeats.domain.store.dto.StoreValidationMessage;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalTime;
 
 public record StoreCreateReq(
-        @NotBlank
+        @Size(max = StoreValidationMessage.NAME_MAX, message = StoreValidationMessage.NAME_MAX_MESSAGE)
+        @NotBlank(message = StoreValidationMessage.NAME_BLANK_MESSAGE)
         String storeName,
 
-        @NotBlank
+        @NotNull(message = StoreValidationMessage.OPEN_AT_NULL_MESSAGE)
         LocalTime openAt,
 
-        @NotBlank
+        @NotNull(message = StoreValidationMessage.CLOSE_AT_NULL_MESSAGE)
         LocalTime closeAt,
 
-        @NotBlank
+        @NotNull(message = StoreValidationMessage.MIN_ORDER_PRICE_NULL_MESSAGE)
         Integer minOrderPrice
 ) {
 
