@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,6 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "menus")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Menu {
 
     @Id
@@ -34,7 +36,7 @@ public class Menu {
     @Column(name = "menu_price", nullable = false)
     private Integer menuPrice;
 
-    @Column(name = "description", length = 100)
+    @Column(name = "description", nullable = false, length = 100)
     private String description;
 
     @Column(nullable = false)
@@ -42,12 +44,13 @@ public class Menu {
     private boolean isDeleted;
 
     @Builder
-    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description) {
+    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description,  boolean isDeleted) {
         this.id = id;
         this.store = store;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
         this.description = description;
+        this.isDeleted = isDeleted;
     }
 
 
@@ -58,6 +61,7 @@ public class Menu {
                 .menuName(menuName)
                 .menuPrice(menuPrice)
                 .description(description)
+                .isDeleted(existingMenu.isDeleted())
                 .build();
     }
 

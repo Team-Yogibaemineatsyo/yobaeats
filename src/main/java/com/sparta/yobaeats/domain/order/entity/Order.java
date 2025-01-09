@@ -9,11 +9,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Order extends BaseEntity {
 
     @Id
@@ -35,6 +38,7 @@ public class Order extends BaseEntity {
 
     @Enumerated(EnumType.STRING) // Enum을 DB에 저장할 때 문자열로 저장
     @Column(name = "status", nullable = false)
+    @ColumnDefault("'PENDING'")
     private OrderStatus orderStatus;
 
     @Builder
@@ -43,7 +47,7 @@ public class Order extends BaseEntity {
         this.user = user;
         this.store = store;
         this.menu = menu;
-        this.orderStatus = orderStatus;
+        this.orderStatus = orderStatus != null ? orderStatus : OrderStatus.PENDING;
     }
 
     // 주문 상태 변경
