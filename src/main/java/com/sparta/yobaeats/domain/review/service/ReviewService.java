@@ -1,14 +1,21 @@
 package com.sparta.yobaeats.domain.review.service;
 
+import com.sparta.yobaeats.domain.order.entity.Order;
+import com.sparta.yobaeats.domain.order.entity.Order.Status;
 import com.sparta.yobaeats.domain.order.service.OrderService;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewRes;
 import com.sparta.yobaeats.domain.review.entity.Review;
+import com.sparta.yobaeats.domain.review.exception.DuplicateReviewException;
+import com.sparta.yobaeats.domain.review.exception.InvalidOrderStatusException;
 import com.sparta.yobaeats.domain.review.exception.InvalidStarRangeException;
 import com.sparta.yobaeats.domain.review.repository.ReviewRepository;
+import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.store.service.StoreService;
+import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.NotFoundException;
+import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +35,9 @@ public class ReviewService {
     @Transactional
     public void createReview(ReviewReq req) {
         //토큰에서 userId 받아와서 User 객체 생성
-       /* User user = userService.findUserById(tokenId);
+        Long tokenId = 1L; // 나중에 삭제...임시
+
+        User user = userService.findUserById(tokenId);
         Order order = orderService.findOrderById(req.orderId());
         Store store = order.getStore();
         // 사용자 검증
@@ -45,7 +54,7 @@ public class ReviewService {
         }
 
         Review review = req.to(user, order, store);
-        */
+
     }
 
     public List<ReviewRes> findByStoreId(Long storeId) {
