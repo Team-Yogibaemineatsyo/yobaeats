@@ -5,6 +5,8 @@ import com.sparta.yobaeats.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -37,6 +40,25 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateTokenByAuthentication(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        Date now = new Date();
+
+        String name = authentication.getName();
+
+
+        return BEARER_PREFIX + Jwts.builder()
+                .claim("id", authentication.getName())
+                .claim("role", authorities)
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
     public boolean isStartsWithBearer(String token) {
         return token.startsWith(BEARER_PREFIX);
     }
@@ -53,7 +75,7 @@ public class JwtUtil {
         Claims claims = getClaimsFromToken(token);
 
         return new User(
-                claims.get("id", Long.class),
+                Long.parseLong(claims.get("id", String.class)),
                 UserRole.of(claims.get("role", String.class)));
     }
 

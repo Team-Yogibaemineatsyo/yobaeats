@@ -37,13 +37,13 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> "ROLE_" + user.getRole().name());
+        authorities.add(() -> user.getRole().name());
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getEmail();
+        return user.getPassword();
     }
 
     /**
