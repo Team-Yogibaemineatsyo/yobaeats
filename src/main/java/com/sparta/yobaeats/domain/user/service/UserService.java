@@ -24,10 +24,8 @@ public class UserService {
         User user = findUserById(userId);
         user.isDeletedUser();
 
-        // 뒤의 userId는 추후에 토큰아이디로 변경
-        if (!user.getId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+
+
         return user.from();
     }
 
@@ -36,10 +34,8 @@ public class UserService {
         User user = findUserById(userId);
         user.isDeletedUser();
 
-        // 뒤의 userId 나중에 토큰 Id로 변경
-        if (!user.getId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+        // 뒤의 userId는 추후에 토큰아이디로 변경
+        validateUser(user.getId(), userId);
 
         user.updateUser(req);
     }
@@ -49,10 +45,8 @@ public class UserService {
         User user = findUserById(userId);
         user.isDeletedUser();
 
-        // 뒤의 userId 나중에 토큰 Id로 변경
-        if(user.getId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+        // 뒤의 userId는 추후에 토큰아이디로 변경
+        validateUser(user.getId(), userId);
 
         //if (!passwordEncoder.matches(req.password, user.getPassword())) {
         //    throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
@@ -63,5 +57,11 @@ public class UserService {
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public void validateUser(Long userId, Long tokenUserId) {
+        if (!userId.equals(tokenUserId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
     }
 }

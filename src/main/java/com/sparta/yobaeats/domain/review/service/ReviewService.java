@@ -74,7 +74,11 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-            .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+                .orElseThrow(()-> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+        Long userId = review.getUser().getId();
+
+        // 뒤의 userId 추후에 토큰아이디로 변경
+        userService.validateUser(userId, userId);
 
         review.softDelete();
     }
