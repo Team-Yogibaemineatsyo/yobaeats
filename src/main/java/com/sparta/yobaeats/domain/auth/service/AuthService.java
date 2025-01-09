@@ -11,6 +11,9 @@ import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import com.sparta.yobaeats.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +23,9 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public void signup(AuthSignupRequest authSignupRequest) {
         boolean isExists = userRepository.existsByEmail(authSignupRequest.email());
@@ -37,14 +41,12 @@ public class AuthService {
     }
 
     public String login(AuthLoginRequest authLoginRequest) {
-        User user = userRepository.findByEmail(authLoginRequest.email())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(authLoginRequest.email(), authLoginRequest.password());
 
-        if (!passwordEncoder.matches(authLoginRequest.password(), user.getPassword())) {
-            throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
-        }
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
 
-        return jwtUtil.generateToken(user.getId(), user.getRole());
+        return jwtUtil.generateTokenByAuthentication(authentication);
     }
 
     public void logout() {
