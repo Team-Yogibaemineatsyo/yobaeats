@@ -53,19 +53,20 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public void isDeletedUser() {
-        if (this.isDeleted) {
-            throw new UserDeletedException(ErrorCode.USER_DELETED);
+    public void update(String password, String nickName) {
+      updatePassword(password);
+      updateNickName(nickName);
+    }
+
+    private void updatePassword(String newPassword) {
+        if (newPassword != null) {
+            this.password = newPassword;
         }
     }
 
-    public void updateUser(UserUpdateInfoReq req) {
-        if (req.email() != null && !req.email().isBlank()) {
-            this.email = req.email();
-        }
-
-        if (req.password() != null && !req.password().isBlank()) {
-            this.password = req.password();
+    private  void updateNickName(String newNickName) {
+        if (newNickName != null) {
+            this.nickName = newNickName;
         }
     }
 
