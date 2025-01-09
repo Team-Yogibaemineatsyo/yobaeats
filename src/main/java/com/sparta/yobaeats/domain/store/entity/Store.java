@@ -1,9 +1,8 @@
 package com.sparta.yobaeats.domain.store.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
+import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.user.entity.User;
-import com.sparta.yobaeats.global.exception.ConflictException;
-import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,6 +14,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "stores")
@@ -53,6 +54,9 @@ public class Store extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus = new ArrayList<>();
+
     @Builder
     public Store(
             Long id,
@@ -62,7 +66,8 @@ public class Store extends BaseEntity {
             LocalTime openAt,
             LocalTime closeAt,
             boolean isDeleted,
-            User user
+            User user,
+            List<Menu> menus
     ) {
         this.id = id;
         this.name = name;
@@ -72,6 +77,7 @@ public class Store extends BaseEntity {
         this.closeAt = closeAt;
         this.isDeleted = isDeleted;
         this.user = user;
+        this.menus = menus;
     }
 
     public void update(
@@ -87,10 +93,6 @@ public class Store extends BaseEntity {
     }
 
     public void delete() {
-        if (isDeleted) {
-            throw new ConflictException(ErrorCode.STORE_ALREADY_DELETED);
-        }
-
         this.isDeleted = true;
     }
 
