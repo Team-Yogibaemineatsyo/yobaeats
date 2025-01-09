@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.auth.entity;
 
 import com.sparta.yobaeats.domain.user.entity.User;
+import com.sparta.yobaeats.domain.user.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,11 +47,12 @@ public class UserDetailsCustom implements UserDetails {
         return user.getPassword();
     }
 
-    /**
-     * id 반환
-     */
     @Override
     public String getUsername() {
-        return user.getId().toString();
+        return user.getNickName();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 }
