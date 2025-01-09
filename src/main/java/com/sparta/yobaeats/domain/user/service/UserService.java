@@ -24,7 +24,8 @@ public class UserService {
         User user = findUserById(userId);
         user.isDeletedUser();
 
-
+        // 뒤의 userId는 추후에 토큰아이디로 변경
+        validateUser(user.getId(), userId);
 
         return user.from();
     }
@@ -64,4 +65,13 @@ public class UserService {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
     }
+
+    /*
+    *
+    private void validatePassword(String rawPassword, String password) {
+        if (!passwordEncoder.matches(rawPassword,password)) {
+            throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
+        }
+    }
+     */
 }
