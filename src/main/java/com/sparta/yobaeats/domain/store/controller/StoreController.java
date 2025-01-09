@@ -23,16 +23,12 @@ public class StoreController {
 
     private final StoreService storeService;
 
-    // OWNER 권한 필요
     @PostMapping
     public ResponseEntity<Void> createStore(
             @RequestBody @Valid StoreCreateReq request,
             @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        // userId 필요
-        final Long userId = 1L;
-
-        Long storeId = storeService.createStore(request, userId);
+        Long storeId = storeService.createStore(request, userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/stores/{storeId}", storeId);
 
         return ResponseEntity.created(uri).build();
@@ -52,31 +48,23 @@ public class StoreController {
         return ResponseEntity.ok(storeService.readStores(storeName));
     }
 
-    // OWNER 권한 필요
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(
             @PathVariable Long storeId,
             @RequestBody StoreUpdateReq request,
             @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        // userId 필요
-        final Long userId = 1L;
-
-        storeService.updateStore(userId, storeId, request);
+        storeService.updateStore(storeId, request, userDetails.getId());
 
         return ResponseEntity.noContent().build();
     }
 
-    // OWNER 권한 필요
     @DeleteMapping("/{storeId}")
     public ResponseEntity<Void> deleteStore(
             @PathVariable Long storeId,
             @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        // userId 필요
-        final Long userId = 1L;
-
-        storeService.deleteStore(userId, storeId);
+        storeService.deleteStore(storeId, userDetails.getId());
 
         return ResponseEntity.noContent().build();
     }
