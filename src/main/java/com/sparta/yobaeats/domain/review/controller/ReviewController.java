@@ -1,12 +1,17 @@
 package com.sparta.yobaeats.domain.review.controller;
 
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewReq;
-import com.sparta.yobaeats.domain.review.dto.response.ReviewListRes;
+import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoListRes;
+import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoRes;
 import com.sparta.yobaeats.domain.review.service.ReviewService;
+import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -25,35 +30,34 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<Void> createReview(
-        @Valid @RequestBody ReviewReq req
-        // @AuthenticationPrincipal UserDetails userDetails
+        @Valid @RequestBody ReviewReq reviewReq,
+        @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        reviewService.createReview(req);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        Long userId = userDetails.getId();
+        Long StoreId = reviewService.createReview(reviewReq, userId);
+        URI uri = UriBuilderUtil.create("/api/reviews/{reviewId}", StoreId);
+
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping
-    public ResponseEntity<ReviewListRes> findByStoreId(
-        @RequestParam Long storeId
+    public ResponseEntity<ReviewReadInfoListRes> findByStoreId(
+        @RequestParam Long storeId,
+        @RequestParam(required = false) int startStar,
+        @RequestParam(required = false) int endStar
     ) {
-        ReviewListRes listRes = new ReviewListRes(reviewService.findByStoreId(storeId));
+        ReviewReadInfoListRes listRes = new ReviewReadInfoListRes(reviewService.findByStoreId(storeId, startStar, endStar));
         return ResponseEntity.ok(listRes);
     }
 
-    @GetMapping
-    public ResponseEntity<ReviewListRes> findByStar(
-        @RequestParam int startStar,
-        @RequestParam int endStar
-    ) {
-        ReviewListRes listRes = new ReviewListRes(reviewService.findByStar(startStar, endStar));
-        return ResponseEntity.ok(listRes);
-    }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(
-        @PathVariable Long reviewId
+        @PathVariable Long reviewId,
+        @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        reviewService.deleteReview(reviewId);
+        Long userId = userDetails.getId();
+        reviewService.deleteReview(reviewId, userId);
         return ResponseEntity.noContent().build();
     }
 }

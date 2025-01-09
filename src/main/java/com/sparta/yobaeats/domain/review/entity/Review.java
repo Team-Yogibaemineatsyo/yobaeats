@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "reviews")
@@ -29,7 +30,7 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -39,7 +40,8 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private int star;
 
-    @Column(name = "is_deleted")
+    @Column
+    @ColumnDefault("false")
     private boolean isDeleted = false;
 
     @Builder
