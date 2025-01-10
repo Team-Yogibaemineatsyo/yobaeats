@@ -1,6 +1,5 @@
 package com.sparta.yobaeats.domain.order.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
@@ -15,6 +14,7 @@ import com.sparta.yobaeats.domain.user.entity.UserRole;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +53,7 @@ public class OrderServiceTest {
     private UserService userService;
 
     private User user;
-    private UserDetailsCustom userDetails;
+    private CustomUserDetails customUserDetails;
     private Store store;
     private Menu menu;
 
@@ -67,7 +67,7 @@ public class OrderServiceTest {
                 .nickName("username")
                 .role(UserRole.ROLE_USER)
                 .build();
-        userDetails = new UserDetailsCustom(user);
+        customUserDetails = new CustomUserDetails(user);
 
         store = Store.builder()
                 .id(1L)
@@ -96,7 +96,7 @@ public class OrderServiceTest {
         when(orderRepository.save(any(Order.class))).thenReturn(new Order(1L, user, store, menu, OrderStatus.PENDING));
 
         // when
-        Long orderId = orderService.createOrder(orderCreateReq, userDetails);
+        Long orderId = orderService.createOrder(orderCreateReq, customUserDetails);
 
         // then
         assertNotNull(orderId);
@@ -145,7 +145,7 @@ public class OrderServiceTest {
                 .role(UserRole.ROLE_OWNER)
                 .build();
 
-        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+        CustomUserDetails ownerDetails = new CustomUserDetails(owner);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 ownerDetails,
@@ -182,7 +182,7 @@ public class OrderServiceTest {
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            orderService.createOrder(orderCreateReq, userDetails);
+            orderService.createOrder(orderCreateReq, customUserDetails);
         });
         assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
     }
