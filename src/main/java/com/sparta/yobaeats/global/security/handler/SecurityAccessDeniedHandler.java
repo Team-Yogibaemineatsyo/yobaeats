@@ -2,6 +2,7 @@ package com.sparta.yobaeats.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.exception.error.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ public class SecurityAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(error.getStatus().value());
-        response.getWriter().write(objectMapper.writeValueAsString(error));
+        response.getWriter().write(objectMapper.writeValueAsString(
+                new ErrorResponse(error.getStatus(), error.getMessage())));
     }
 }

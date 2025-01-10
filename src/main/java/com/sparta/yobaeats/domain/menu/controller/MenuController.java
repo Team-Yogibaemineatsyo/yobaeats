@@ -34,7 +34,6 @@ public class MenuController {
             @RequestBody @Valid List<MenuCreateReq> menuCreateReqList,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId(); // 사용자 ID 가져오기
         List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList, userDetails);
         URI uri = UriBuilderUtil.create("/api/menus/{menuId}", createdMenuIds.get(0));
 
@@ -56,7 +55,6 @@ public class MenuController {
             @RequestBody @Valid MenuUpdateReq menuUpdateReq,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId(); // 사용자 ID 가져오기
         menuService.updateMenu(menuId, menuUpdateReq, userDetails);
         return ResponseEntity.ok().build();
     }
@@ -73,7 +71,6 @@ public class MenuController {
             @PathVariable("menuId") Long menuId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId(); // 사용자 ID 가져오기
         menuService.deleteMenu(menuId, userDetails);
         return ResponseEntity.noContent().build();
     }

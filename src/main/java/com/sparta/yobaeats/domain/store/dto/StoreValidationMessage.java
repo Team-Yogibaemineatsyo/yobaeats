@@ -8,4 +8,6 @@ public class StoreValidationMessage {
     public static final String OPEN_AT_NULL_MESSAGE = "오픈 시간을 입력해주세요.";
     public static final String CLOSE_AT_NULL_MESSAGE = "마감 시간을 입력해주세요.";
     public static final String MIN_ORDER_PRICE_NULL_MESSAGE = "최소 주문 금액을 입력해주세요.";
+    public static final int MIN_ORDER_PRICE_MIN = 0;
+    public static final String MIN_ORDER_PRICE_MIN_MESSAGE = "최소 주문 금액은 0보다 작을 수 없습니다.";
 }
