@@ -2,6 +2,7 @@ package com.sparta.yobaeats.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.exception.error.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,12 +23,11 @@ public class SecurityAuthenticationFailureHandler extends SimpleUrlAuthenticatio
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.warn("Authentication error: wrong password");
-
-        ErrorCode error = ErrorCode.LOGIN_FAILED_EXCEPTION;
+        log.warn("login error: {}", exception.getMessage());
 
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(error.getStatus().value());
-        response.getWriter().write(objectMapper.writeValueAsString(error));
+        response.setStatus(ErrorCode.LOGIN_FAILED_EXCEPTION.getStatus().value());
+        response.getWriter().write(objectMapper.writeValueAsString(
+                new ErrorResponse(ErrorCode.LOGIN_FAILED_EXCEPTION.getStatus(), exception.getMessage())));
     }
 }
