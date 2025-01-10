@@ -2,28 +2,29 @@ package com.sparta.yobaeats.domain.menu.dto.request;
 
 import com.sparta.yobaeats.domain.menu.dto.MenuValidationMessage;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
+import com.sparta.yobaeats.domain.store.dto.StoreValidationMessage;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
+import static com.sparta.yobaeats.domain.menu.dto.MenuValidationMessage.*;
 
 public record MenuCreateReq(
 
-        @NotNull(message = MenuValidationMessage.STOREID_NOTNULL_MESSAGE)
+        @NotNull(message = STOREID_NOTNULL_MESSAGE)
         Long storeId,
 
-        @Size(max = MenuValidationMessage.NAME_MAX, message = MenuValidationMessage.NAME_MAX_MESSAGE)
-        @NotBlank(message = MenuValidationMessage.NAME_BLANK_MESSAGE)
+        @Size(max = NAME_MAX, message = NAME_MAX_MESSAGE)
+        @NotBlank(message = NAME_BLANK_MESSAGE)
         String menuName,
 
-        @NotNull(message = MenuValidationMessage.PRICE_NOTNULL_MESSAGE)
+        @Min(value = MENU_PRICE_MIN, message = MENU_PRICE_MIN_MESSAGE)
+        @NotNull(message = PRICE_NOTNULL_MESSAGE)
         Integer menuPrice,
 
-        @Size(max = MenuValidationMessage.DESCRIPTION_MAX, message = MenuValidationMessage.DESCRIPTION_MAX_MESSAGE)
-        @NotBlank(message = MenuValidationMessage.DESCRIPTION_BLANK_MESSAGE)
+        @Size(max = DESCRIPTION_MAX, message = DESCRIPTION_MAX_MESSAGE)
+        @NotBlank(message = DESCRIPTION_BLANK_MESSAGE)
         String description
 ) {
     /**
