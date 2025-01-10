@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ReviewCreateReq(
-    @NotBlank(message = ReviewValidationMessage.ORDER_ID_BLANK_MESSAGE)
+    @NotNull(message = ReviewValidationMessage.ORDER_ID_BLANK_MESSAGE)
     Long orderId,
 
     @NotNull(message = ReviewValidationMessage.STAR_BLANK_MESSAGE)
