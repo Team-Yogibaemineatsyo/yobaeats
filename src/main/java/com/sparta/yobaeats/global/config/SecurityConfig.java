@@ -1,14 +1,19 @@
 package com.sparta.yobaeats.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.jwt.JwtAuthenticationFilter;
 import com.sparta.yobaeats.global.jwt.JwtUtil;
+import com.sparta.yobaeats.global.security.filter.CustomAuthenticationFilter;
 import com.sparta.yobaeats.global.security.handler.SecurityAccessDeniedHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationEntryPoint;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationFailureHandler;
+import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationSuccessHandler;
 import com.sparta.yobaeats.global.util.SecurityResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,19 +21,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final SecurityResponseMapper securityResponseMapper;
     private final JwtUtil jwtUtil;
-
-    @Bean
-    public SecurityAuthenticationFailureHandler securityAuthenticationFailureHandler() {
-        return new SecurityAuthenticationFailureHandler();
-    }
+    private final ObjectMapper objectMapper;
+    private final SecurityResponseMapper securityResponseMapper;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -53,7 +58,9 @@ public class SecurityConfig {
                 .anyRequest().hasRole("USER")) // 나머지 로그인한 사용자만 접근 가능
 
                 // filter
+//                .addFilterAfter(new CustomUsernamePasswordAuthenticationFilter(objectMapper), LogoutFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(customAuthenticationFilter(), JwtAuthenticationFilter.class)
 
                 // exception handler
                 .exceptionHandling(handler ->
@@ -61,5 +68,27 @@ public class SecurityConfig {
                 .exceptionHandling(handler ->
                         handler.accessDeniedHandler(new SecurityAccessDeniedHandler(securityResponseMapper)))
                 .build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter(objectMapper);
+        filter.setFilterProcessesUrl("/api/auth/login");
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setAuthenticationSuccessHandler(new SecurityAuthenticationSuccessHandler(objectMapper, jwtUtil));
+        filter.setAuthenticationFailureHandler(new SecurityAuthenticationFailureHandler(securityResponseMapper));
+
+        filter.setSecurityContextRepository(
+                new DelegatingSecurityContextRepository(
+                        new RequestAttributeSecurityContextRepository(),
+                        new HttpSessionSecurityContextRepository()
+                ));
+
+        return filter;
     }
 }
