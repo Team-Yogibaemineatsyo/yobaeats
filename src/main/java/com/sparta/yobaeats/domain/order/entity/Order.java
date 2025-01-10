@@ -50,7 +50,11 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus != null ? orderStatus : OrderStatus.PENDING;
     }
 
-    // 주문 상태 변경
+    /**
+     * 주문 상태를 다음 상태로 변경하는 메서드
+     * 현재 주문 상태에 따라 다음 상태로 전환합니다.
+     * 상태 전환은 OrderStatus Enum의 nextStatus() 메서드를 통해 처리됩니다.
+     */
     public void changeStatusToNext() {
         this.orderStatus = this.orderStatus.nextStatus();  // nextStatus 호출하여 상태 전환
     }

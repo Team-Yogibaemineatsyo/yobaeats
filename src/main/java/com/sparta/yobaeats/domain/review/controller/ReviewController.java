@@ -1,15 +1,13 @@
 package com.sparta.yobaeats.domain.review.controller;
 
 import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
-import com.sparta.yobaeats.domain.review.dto.request.ReviewReq;
+import com.sparta.yobaeats.domain.review.dto.request.ReviewCreateReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoListRes;
-import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoRes;
 import com.sparta.yobaeats.domain.review.service.ReviewService;
 import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,26 +28,26 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<Void> createReview(
-        @Valid @RequestBody ReviewReq reviewReq,
+        @RequestBody @Valid ReviewCreateReq reviewReq,
         @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         Long userId = userDetails.getId();
-        Long StoreId = reviewService.createReview(reviewReq, userId);
+        Long StoreId = reviewService.createReview(userId, reviewReq);
         URI uri = UriBuilderUtil.create("/api/reviews/{reviewId}", StoreId);
 
         return ResponseEntity.created(uri).build();
     }
 
     @GetMapping
-    public ResponseEntity<ReviewReadInfoListRes> findByStoreId(
+    public ResponseEntity<ReviewReadInfoListRes> readReviews(
         @RequestParam Long storeId,
         @RequestParam(required = false) int startStar,
         @RequestParam(required = false) int endStar
     ) {
-        ReviewReadInfoListRes listRes = new ReviewReadInfoListRes(reviewService.findByStoreId(storeId, startStar, endStar));
+        ReviewReadInfoListRes listRes = new ReviewReadInfoListRes(
+            reviewService.readReviews(storeId, startStar, endStar));
         return ResponseEntity.ok(listRes);
     }
-
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(

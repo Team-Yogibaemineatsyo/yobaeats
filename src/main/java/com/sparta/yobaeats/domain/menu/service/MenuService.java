@@ -7,6 +7,9 @@ import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.repository.MenuRepository;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.store.service.StoreService;
+import com.sparta.yobaeats.domain.user.entity.User;
+import com.sparta.yobaeats.domain.user.entity.UserRole;
+import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 메뉴 관리 로직을 처리하는 Service 클래스
- */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,48 +28,56 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final StoreService storeService;
+    private final UserService userService;
 
     /**
-     * 메뉴 여러 개 생성 메서드
+     * 메뉴 여러 개를 생성하는 메서드
+     *
+     * @param menuCreateReqList 생성할 메뉴의 요청 데이터 리스트
+     * @return 생성된 메뉴의 ID 리스트
      */
-    public List<Long> createMenus(List<MenuCreateReq> menuCreateReqList) {
-        // 메뉴 목록을 순회하면서 각 메뉴에 대해 store 정보 조회 후 Menu 엔티티 생성
+    public List<Long> createMenus(List<MenuCreateReq> menuCreateReqList, UserDetailsCustom userDetails) {
         List<Menu> menus = menuCreateReqList.stream()
                 .map(menuCreateReq -> {
-                    // Store 정보 조회 및 예외 처리
-                    Store store = storeService.findStoreById(menuCreateReq.storeId());  // StoreService의 메서드 사용
+                    Store store = storeService.findStoreById(menuCreateReq.storeId());
 
-                    // Menu 엔티티 생성
+                    // 인증된 사용자 ID 가져오기
+                    Long userId = userDetails.getId();
+                    // 사용자 객체 조회
+                    User user = userService.findUserById(userId); // User 객체를 가져옴
+
+                    // 소유자 체크
+                    checkIfOwner(userDetails);
+
                     return menuCreateReq.toEntity(store);
                 })
                 .collect(Collectors.toList());
 
-        // 각 메뉴에 대해 소유자 체크
-        for (Menu menu : menus) {
-            checkIfOwner(menu.getStore().getId(), menu.getStore().getUser().getId());
-        }
-
-        // 여러 개의 메뉴를 한 번에 저장하고, 저장된 엔티티 목록 반환
         List<Menu> savedMenus = menuRepository.saveAll(menus);
 
-        // 저장된 메뉴들의 ID 목록을 반환
         return savedMenus.stream()
-                .map(Menu::getId)  // 각 메뉴의 ID를 추출
+                .map(Menu::getId)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 메뉴 수정 메서드
+     * 메뉴를 수정하는 메서드
+     *
+     * @param menuId 수정할 메뉴의 ID
+     * @param menuUpdateReq 수정 요청 데이터
      */
-    public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq) {
-        // 메뉴를 ID로 찾는 메서드 호출
+    public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq, UserDetailsCustom userDetails) {
         Menu menu = findMenuById(menuId);
 
-        // 소유자 체크
-        checkIfOwner(menu.getStore().getId(), menu.getStore().getUser().getId());
+        // 인증된 사용자 ID 가져오기
+        Long userId = userDetails.getId();
+        // 사용자 객체 조회
+        User user = userService.findUserById(userId); // User 객체를 가져옴
 
-        // 메뉴 업데이트
-        menu.update(  // 기존의 메뉴 객체를 사용하여 업데이트
+        // 소유자 체크
+        checkIfOwner(userDetails);
+
+        menu.update(
                 menuUpdateReq.menuName(),
                 menuUpdateReq.menuPrice(),
                 menuUpdateReq.description()
@@ -77,39 +85,57 @@ public class MenuService {
     }
 
     /**
-     * 메뉴 삭제 메서드
+     * 메뉴를 삭제하는 메서드
+     *
+     * @param menuId 삭제할 메뉴의 ID
      */
-    public void deleteMenu(Long menuId) {
-        Menu menu = findMenuById(menuId);  // 메뉴를 ID로 찾는 메서드 호출
+    public void deleteMenu(Long menuId, UserDetailsCustom userDetails) {
+        Menu menu = findMenuById(menuId);
+
+        // 인증된 사용자 ID 가져오기
+        Long userId = userDetails.getId();
+        // 사용자 객체 조회
+        User user = userService.findUserById(userId); // User 객체를 가져옴
 
         // 소유자 체크
-        checkIfOwner(menu.getStore().getId(), menu.getStore().getUser().getId());
+        checkIfOwner(userDetails);
 
-        // 메뉴 삭제 처리
-        menu.delete();  // delete() 메서드는 이미 삭제된 메뉴일 경우 ConflictException을 던짐
-        menu.markAsDeleted(); // 삭제 상태로 설정
-        menuRepository.save(menu); // 변경된 메뉴 상태 저장
+        menu.markAsDeleted();
+        menuRepository.save(menu);
     }
 
-    public void checkIfOwner(Long storeId, Long userId) {
-        Store store = storeService.findStoreById(storeId);
-        if (!store.getUser().getId().equals(userId)) {
-            throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE);
+    /**
+     * 현재 로그인된 사용자가 사장님(ROLE_OWNER)인지 확인하는 메서드
+     * 인증된 사용자가 사장님 역할인지 검증하며, 아닐 경우 예외를 발생시킴
+     */
+    private void checkIfOwner(UserDetailsCustom userDetails) {
+        // 인증되지 않은 사용자 확인
+        if (userDetails == null) {
+            throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE); // 인증되지 않은 사용자
+        }
+
+        // 사용자의 권한을 확인하고 ROLE_OWNER인지 검증
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE))
+                .getAuthority();
+
+        // ROLE_OWNER인 경우만 권한 허용
+        if (!UserRole.ROLE_OWNER.name().equals(role)) {
+            throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE);  // 권한이 없는 경우 예외 처리
         }
     }
 
+
     /**
      * 메뉴 ID로 메뉴를 조회하는 메서드
+     *
+     * @param menuId 조회할 메뉴의 ID
+     * @return 조회된 메뉴 객체
+     * @throws CustomRuntimeException 메뉴를 찾을 수 없는 경우 발생
      */
     public Menu findMenuById(Long menuId) {
         return menuRepository.findById(menuId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));  // 메뉴가 없으면 예외 처리
-    }
-
-    /**
-     * 가게 정보 조회 시 삭제되지 않은 메뉴만 반환
-     */
-    public List<Menu> findMenusByStoreIdAndIsDeletedFalse(Long storeId) {
-        return menuRepository.findByStoreIdAndIsDeletedFalse(storeId);
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));
     }
 }

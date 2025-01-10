@@ -30,7 +30,7 @@ public enum ErrorCode {
     // 리뷰 관련 익셉션
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "배달 완료 상태가 아닙니다."),
     INVALID_STAR_RANGE(HttpStatus.BAD_REQUEST, "별점 범위가 유효하지 않습니다."),
-    STAR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 별점의 가게가 존재하지 않습니다."),
+    STAR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 별점의 리뷰가 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰가 존재하지 않습니다."),
     DUPLICATE_REVIEW(HttpStatus.CONFLICT,"이미 리뷰가 작성된 주문입니다."),
 

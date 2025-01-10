@@ -27,21 +27,28 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(Long userId, UserUpdateInfoReq req) {
-        String newPassword = (req.password() != null) ? passwordEncoder.encode(req.password()) : null;
-        findUserById(userId).update(newPassword, req.nickName());
+    public void updateUser(Long userId, UserUpdateInfoReq userUpdateInfoReq) {
+        String newPassword = (userUpdateInfoReq.password() != null)
+            ? passwordEncoder.encode(userUpdateInfoReq.password())
+            : null;
+        findUserById(userId).update(newPassword, userUpdateInfoReq.nickName());
     }
 
     @Transactional
-    public void deleteUser(UserDeleteReq req, Long userId) {
+    public void deleteUser(Long userId, UserDeleteReq userDeleteReq) {
         User user = findUserById(userId);
-        validatePassword(req.password(), user.getPassword());
+        validatePassword(userDeleteReq.password(), user.getPassword());
 
         user.softDelete();
     }
 
     public User findUserById(Long userId) {
         return userRepository.findByIdAndIsDeletedFalse(userId)
+            .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 

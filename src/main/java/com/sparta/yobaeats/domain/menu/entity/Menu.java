@@ -44,7 +44,7 @@ public class Menu {
     private boolean isDeleted;
 
     @Builder
-    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description,  boolean isDeleted) {
+    public Menu(Long id, Store store, String menuName, Integer menuPrice, String description, boolean isDeleted) {
         this.id = id;
         this.store = store;
         this.menuName = menuName;
@@ -55,6 +55,10 @@ public class Menu {
 
     /**
      * 메뉴 정보를 업데이트하는 메서드
+     *
+     * @param menuName 업데이트할 메뉴 이름
+     * @param menuPrice 업데이트할 메뉴 가격
+     * @param description 업데이트할 메뉴 설명
      */
     public void update(String menuName, Integer menuPrice, String description) {
         updateName(menuName); // 이름 업데이트
@@ -64,6 +68,7 @@ public class Menu {
 
     /**
      * 메뉴 삭제 처리 메서드
+     *
      * 이미 삭제된 메뉴일 경우 예외를 발생시킴
      */
     public void delete() {
@@ -72,24 +77,42 @@ public class Menu {
         }
     }
 
-    // 메뉴 삭제 상태를 변경하는 메서드
+    /**
+     * 메뉴 삭제 상태를 변경하는 메서드
+     *
+     * 이 메서드는 메뉴를 삭제 상태로 표시합니다.
+     */
     public void markAsDeleted() {
         this.isDeleted = true;
     }
 
-    // 각 필드 업데이트 메서드
+    /**
+     * 메뉴 이름을 업데이트하는 메서드
+     *
+     * @param newName 새로운 메뉴 이름
+     */
     private void updateName(String newName) {
         if (newName != null) {
             this.menuName = newName; // 새로운 이름으로 업데이트
         }
     }
 
+    /**
+     * 메뉴 가격을 업데이트하는 메서드
+     *
+     * @param newPrice 새로운 메뉴 가격
+     */
     private void updatePrice(Integer newPrice) {
         if (newPrice != null) {
             this.menuPrice = newPrice; // 새로운 가격으로 업데이트
         }
     }
 
+    /**
+     * 메뉴 설명을 업데이트하는 메서드
+     *
+     * @param newDescription 새로운 메뉴 설명
+     */
     private void updateDescription(String newDescription) {
         if (newDescription != null) {
             this.description = newDescription; // 새로운 설명으로 업데이트

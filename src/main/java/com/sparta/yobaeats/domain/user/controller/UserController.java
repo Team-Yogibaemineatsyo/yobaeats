@@ -24,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<UserReadInfoRes> findUserById(
+    public ResponseEntity<UserReadInfoRes> readUserInfo(
         @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         Long userId = userDetails.getId();
@@ -34,21 +34,21 @@ public class UserController {
 
     @PatchMapping
     public ResponseEntity<Void> updateUser(
-        @RequestBody @Valid UserUpdateInfoReq req,
+        @RequestBody @Valid UserUpdateInfoReq userUpdateInfoReq,
         @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         Long userId = userDetails.getId();
-        userService.updateUser(userId, req);
+        userService.updateUser(userId, userUpdateInfoReq);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(
-        @RequestBody @Valid UserDeleteReq req,
+        @RequestBody @Valid UserDeleteReq userDeleteReq,
         @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         Long userId = userDetails.getId();
-        userService.deleteUser(req, userId);
+        userService.deleteUser(userId, userDeleteReq);
         return ResponseEntity.noContent().build();
     }
 }
