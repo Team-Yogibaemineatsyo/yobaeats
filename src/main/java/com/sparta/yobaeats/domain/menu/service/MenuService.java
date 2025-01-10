@@ -41,6 +41,7 @@ public class MenuService {
 
                     // 인증된 사용자 ID 가져오기
                     Long userId = userDetails.getId();
+
                     // 사용자 객체 조회
                     User user = userService.findUserById(userId); // User 객체를 가져옴
 

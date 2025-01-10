@@ -55,10 +55,13 @@ public class OrderService {
         User user = userService.findUserById(userId); // User 객체를 가져옴
 
         // 주문 엔티티 생성
-        Order order = orderRepository.save(orderCreateReq.toEntity(store, menu, user));
+        Order order = orderCreateReq.toEntity(store, menu, user);
 
-        // 주문이 성공적으로 생성되면 주문 ID를 반환
-        return order.getId();
+        // 주문 저장
+        Order savedOrder = orderRepository.save(order);
+
+        // 생성된 주문 ID 반환
+        return savedOrder.getId();
     }
 
     /**

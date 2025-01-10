@@ -36,7 +36,6 @@ public class OrderController {
             @RequestBody @Valid OrderCreateReq orderCreateReq, // 쉼표로 구분
             @AuthenticationPrincipal CustomUserDetails userDetails // 여기에 쉼표 추가
     ) {
-        Long userId = userDetails.getId(); // 사용자 ID 가져오기
         Long orderId = orderService.createOrder(orderCreateReq, userDetails); // userId를 함께 전달
         URI uri = UriBuilderUtil.create("/api/orders/{orderId}", orderId);
 
@@ -57,8 +56,7 @@ public class OrderController {
             @RequestBody @Valid OrderUpdateReq orderUpdateReq,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId(); // 사용자 ID 가져오기
-        orderService.updateOrderStatus(orderId, orderUpdateReq, userDetails); // 상태 업데이트 처리
+        orderService.updateOrderStatus(orderId, orderUpdateReq, userDetails);
         return ResponseEntity.ok().build(); // 200 OK 응답
     }
 }
