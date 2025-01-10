@@ -8,7 +8,7 @@ import com.sparta.yobaeats.global.security.handler.SecurityAccessDeniedHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationEntryPoint;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationFailureHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationSuccessHandler;
-import com.sparta.yobaeats.global.util.SecurityResponseMapper;
+import com.sparta.yobaeats.global.util.SecurityResponseBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
-    private final SecurityResponseMapper securityResponseMapper;
+    private final SecurityResponseBuilder securityResponseMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean

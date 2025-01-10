@@ -3,6 +3,7 @@ package com.sparta.yobaeats.global.security.authentication;
 import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -26,6 +28,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDetailsCustom userDetailsCustom = (UserDetailsCustom) userDetailsService.loadUserByUsername(email);
 
         if (!passwordEncoder.matches(password, userDetailsCustom.getPassword())) {
+            log.warn("Security Authentication error: need to login");
             throw new BadCredentialsException(ErrorCode.LOGIN_FAILED_EXCEPTION.getMessage());
         }
 

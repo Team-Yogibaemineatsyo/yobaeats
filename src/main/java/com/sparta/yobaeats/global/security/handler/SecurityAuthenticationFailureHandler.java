@@ -1,7 +1,7 @@
 package com.sparta.yobaeats.global.security.handler;
 
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import com.sparta.yobaeats.global.util.SecurityResponseMapper;
+import com.sparta.yobaeats.global.util.SecurityResponseBuilder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,16 +18,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    private final SecurityResponseMapper securityResponseMapper;
+    private final SecurityResponseBuilder securityResponseMapper;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.warn("Authentication error: wrong password");
 
+        ErrorCode error = ErrorCode.LOGIN_FAILED_EXCEPTION;
+
         response.setContentType("application/json;charset=UTF-8");
-        ErrorCode errorCode = ErrorCode.LOGIN_FAILED_EXCEPTION;
-        response.setStatus(errorCode.getStatus().value());
-//        response.getWriter().write(securityResponseMapper.build(errorCode));
-        response.getWriter().write(exception.getMessage());
+        response.setStatus(error.getStatus().value());
+        response.getWriter().write(securityResponseMapper.errorBuild(error));
     }
 }

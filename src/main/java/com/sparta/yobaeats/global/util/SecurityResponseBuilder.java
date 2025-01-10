@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SecurityResponseMapper {
+public class SecurityResponseBuilder {
 
     private final ObjectMapper objectMapper;
 
-    public String build(ErrorCode errorCode) throws JsonProcessingException {
+    public String errorBuild(ErrorCode errorCode) throws JsonProcessingException {
         return objectMapper.writeValueAsString(
                 new ErrorResponse(
                         errorCode.getStatus(),
