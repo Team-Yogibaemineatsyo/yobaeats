@@ -62,6 +62,7 @@ class ReviewServiceTest {
             .id(1L)
             .name("오늘파스타")
             .starRate(4.5)
+            .minOrderPrice(10000)
             .build();
 
         order = Order.builder()
@@ -180,7 +181,7 @@ class ReviewServiceTest {
         // when & then
         NotFoundException exception = assertThrows(NotFoundException.class,
             () -> reviewService.readReviews(store.getId(), startStar, endStar));
-        assertEquals(ErrorCode.STAR_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.REVIEW_NOT_FOUND, exception.getErrorCode());
     }
 
     @DisplayName("가게 리뷰 조회 성공")
@@ -220,7 +221,6 @@ class ReviewServiceTest {
         // given
         Long reviewId = review.getId();
         given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
-        doNothing().when(userService).validateUser(user.getId(), user.getId());
 
         // when
         reviewService.deleteReview(reviewId, user.getId());
