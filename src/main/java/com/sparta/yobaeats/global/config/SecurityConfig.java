@@ -2,6 +2,7 @@ package com.sparta.yobaeats.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.jwt.JwtAuthenticationFilter;
+import com.sparta.yobaeats.global.jwt.JwtExceptionFilter;
 import com.sparta.yobaeats.global.jwt.JwtUtil;
 import com.sparta.yobaeats.global.security.handler.SecurityAccessDeniedHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationEntryPoint;
@@ -54,6 +55,7 @@ public class SecurityConfig {
 
                 // filter
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class)
 
                 // exception handler
                 .exceptionHandling(handler ->

@@ -2,6 +2,8 @@ package com.sparta.yobaeats.global.jwt;
 
 import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.user.entity.User;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.jwt.exception.JwtNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +26,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getTokenFromHeader(request);
+
+        if (token == null) {
+            throw new JwtNotFoundException(ErrorCode.JWT_TOKEN_ERROR);
+        }
 
         // TODO JWT 토큰 유효성 검사: 없음, 잘못된 토큰 등
         if (StringUtils.hasText(token) && jwtUtil.isValidExpiration(token)) {

@@ -36,7 +36,10 @@ public enum ErrorCode {
 
     // Security 관련 익셉션
     AUTHENTICATION_FAILED_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
-    AUTHORIZATION_EXCEPTION(HttpStatus.FORBIDDEN, "권한이 없습니다.");
+    AUTHORIZATION_EXCEPTION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+
+    // JWT 관련 익셉션
+    JWT_TOKEN_ERROR(HttpStatus.BAD_REQUEST, "jwt token error");
 
     private final HttpStatus status;
     private final String message;
