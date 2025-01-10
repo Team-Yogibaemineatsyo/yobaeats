@@ -28,7 +28,7 @@ public enum OrderStatus {
             case ORDER_ACCEPTED -> COOKING_COMPLETE; // '주문 수락됨' -> '조리 완료됨'
             case COOKING_COMPLETE -> DELIVERING; // '조리 완료됨' -> '배달 중'
             case DELIVERING -> DELIVERED; // '배달 중' -> '배달 완료됨'
-            default -> throw new IllegalStateException("상태 전환이 불가능한 상태입니다."); // 불가능한 전환 시 예외 발생
+            default -> throw new IllegalStateException("주문 상태를 변경할 수 없습니다."); // 불가능한 전환 시 예외 발생
         };
     }
 }

@@ -53,16 +53,13 @@ public class Menu {
         this.isDeleted = isDeleted;
     }
 
-
-    public static Menu update(Menu existingMenu, String menuName, Integer menuPrice, String description) {
-        return Menu.builder()
-                .id(existingMenu.getId())
-                .store(existingMenu.getStore()) // 기존 store 객체를 그대로 사용
-                .menuName(menuName)
-                .menuPrice(menuPrice)
-                .description(description)
-                .isDeleted(existingMenu.isDeleted())
-                .build();
+    /**
+     * 메뉴 정보를 업데이트하는 메서드
+     */
+    public void update(String menuName, Integer menuPrice, String description) {
+        updateName(menuName); // 이름 업데이트
+        updatePrice(menuPrice); // 가격 업데이트
+        updateDescription(description); // 설명 업데이트
     }
 
     /**
@@ -78,5 +75,24 @@ public class Menu {
     // 메뉴 삭제 상태를 변경하는 메서드
     public void markAsDeleted() {
         this.isDeleted = true;
+    }
+
+    // 각 필드 업데이트 메서드
+    private void updateName(String newName) {
+        if (newName != null) {
+            this.menuName = newName; // 새로운 이름으로 업데이트
+        }
+    }
+
+    private void updatePrice(Integer newPrice) {
+        if (newPrice != null) {
+            this.menuPrice = newPrice; // 새로운 가격으로 업데이트
+        }
+    }
+
+    private void updateDescription(String newDescription) {
+        if (newDescription != null) {
+            this.description = newDescription; // 새로운 설명으로 업데이트
+        }
     }
 }
