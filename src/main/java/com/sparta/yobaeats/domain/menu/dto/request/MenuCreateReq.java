@@ -20,7 +20,6 @@ public record MenuCreateReq(
         String menuName,
 
         @NotNull(message = MenuValidationMessage.PRICE_NOTNULL_MESSAGE)
-        @Positive(message = MenuValidationMessage.PRICE_VALIDATION_MESSAGE)
         Integer menuPrice,
 
         @Size(max = MenuValidationMessage.DESCRIPTION_MAX, message = MenuValidationMessage.DESCRIPTION_MAX_MESSAGE)

@@ -59,10 +59,6 @@ public class OrderService {
         // 사용자 객체 조회
         User user = userService.findUserById(userId); // User 객체를 가져옴
 
-
-        // 소유자 체크
-        checkIfOwner(userDetails);
-
         // 주문 엔티티 생성
         Order order = orderRepository.save(orderCreateReq.toEntity(store, menu, user));
 
