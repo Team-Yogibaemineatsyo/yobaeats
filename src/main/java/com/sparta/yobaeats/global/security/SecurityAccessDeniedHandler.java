@@ -21,6 +21,6 @@ public class SecurityAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        log.warn("Access denied");
+        log.error("Authorization error: Access denied");
     }
 }

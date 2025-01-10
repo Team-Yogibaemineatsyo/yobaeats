@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.jwt.JwtAuthenticationFilter;
 import com.sparta.yobaeats.global.jwt.JwtUtil;
 import com.sparta.yobaeats.global.security.SecurityAccessDeniedHandler;
+import com.sparta.yobaeats.global.security.SecurityAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +51,8 @@ public class SecurityConfig {
         // exception handler
         http.exceptionHandling(exception ->
                 exception.accessDeniedHandler(new SecurityAccessDeniedHandler(objectMapper)));
+        http.exceptionHandling(exception ->
+                exception.authenticationEntryPoint(new SecurityAuthenticationEntryPoint()));
 
         return http.build();
     }
