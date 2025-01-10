@@ -28,8 +28,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CustomUserDetails userDetailsCustom = (CustomUserDetails) userDetailsService.loadUserByUsername(email);
 
         if (!passwordEncoder.matches(password, userDetailsCustom.getPassword())) {
-            log.warn("Security Authentication error: password mismatch");
-            throw new BadCredentialsException(ErrorCode.LOGIN_FAILED_EXCEPTION.getMessage());
+            log.warn("login error: password mismatch");
+            throw new BadCredentialsException(ErrorCode.INVALID_PASSWORD.getMessage());
         }
 
         return new CustomAuthenticationToken(userDetailsCustom, null, userDetailsCustom.getAuthorities());
