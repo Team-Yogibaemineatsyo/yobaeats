@@ -1,8 +1,7 @@
 package com.sparta.yobaeats.global.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import com.sparta.yobaeats.global.exception.error.ErrorResponse;
+import com.sparta.yobaeats.global.util.SecurityResponseMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,22 +18,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper;
+    private final SecurityResponseMapper securityResponseMapper;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.error("Security Authentication error: need to login");
+        log.warn("Security Authentication error: need to login");
 
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(ErrorCode.AUTHENTICATION_FAILED_EXCEPTION.getStatus().value());
-        response.getWriter().write(
-                objectMapper.writeValueAsString(
-                        new ErrorResponse(
-                                ErrorCode.AUTHENTICATION_FAILED_EXCEPTION.getStatus(),
-                                ErrorCode.AUTHENTICATION_FAILED_EXCEPTION.getMessage()
-                        )
-                )
-        );
+        ErrorCode errorCode = ErrorCode.AUTHENTICATION_FAILED_EXCEPTION;
+        response.setStatus(errorCode.getStatus().value());
+        response.getWriter().write(securityResponseMapper.build(errorCode));
 //        throw new SecurityAuthenticationFailedException(ErrorCode.AUTHENTICATION_FAILED_EXCEPTION);
     }
 }

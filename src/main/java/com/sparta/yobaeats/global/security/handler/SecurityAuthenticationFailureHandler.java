@@ -17,7 +17,7 @@ public class SecurityAuthenticationFailureHandler extends SimpleUrlAuthenticatio
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         // TODO 로그인 실패 핸들러 등록 방법 찾기 or 알맞은 핸들러 찾기
-        log.error("Authentication error: wrong password");
+        log.warn("Authentication error: wrong password");
         super.onAuthenticationFailure(request, response, exception);
     }
 }

@@ -1,12 +1,11 @@
 package com.sparta.yobaeats.global.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.jwt.JwtAuthenticationFilter;
-import com.sparta.yobaeats.global.jwt.JwtExceptionFilter;
 import com.sparta.yobaeats.global.jwt.JwtUtil;
 import com.sparta.yobaeats.global.security.handler.SecurityAccessDeniedHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationEntryPoint;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationFailureHandler;
+import com.sparta.yobaeats.global.util.SecurityResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final ObjectMapper objectMapper;
+    private final SecurityResponseMapper securityResponseMapper;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -55,13 +54,12 @@ public class SecurityConfig {
 
                 // filter
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class)
 
                 // exception handler
                 .exceptionHandling(handler ->
-                        handler.authenticationEntryPoint(new SecurityAuthenticationEntryPoint(objectMapper)))
+                        handler.authenticationEntryPoint(new SecurityAuthenticationEntryPoint(securityResponseMapper)))
                 .exceptionHandling(handler ->
-                        handler.accessDeniedHandler(new SecurityAccessDeniedHandler(objectMapper)))
+                        handler.accessDeniedHandler(new SecurityAccessDeniedHandler(securityResponseMapper)))
                 .build();
     }
 }
