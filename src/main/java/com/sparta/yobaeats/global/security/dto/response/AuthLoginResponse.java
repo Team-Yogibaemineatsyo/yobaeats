@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.domain.auth.dto.response;
+package com.sparta.yobaeats.global.security.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

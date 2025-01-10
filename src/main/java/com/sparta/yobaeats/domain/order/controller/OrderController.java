@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.order.controller;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
 import com.sparta.yobaeats.domain.order.entity.Order;
@@ -33,7 +33,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> createOrder(
             @RequestBody @Valid OrderCreateReq orderCreateReq, // 쉼표로 구분
-            @AuthenticationPrincipal UserDetailsCustom userDetails // 여기에 쉼표 추가
+            @AuthenticationPrincipal CustomUserDetails userDetails // 여기에 쉼표 추가
     ) {
         Long userId = userDetails.getId(); // 사용자 ID 가져오기
         Long orderId = orderService.createOrder(orderCreateReq, userDetails); // userId를 함께 전달
@@ -53,7 +53,7 @@ public class OrderController {
     public ResponseEntity<Void> updateOrderStatus(
             @PathVariable("orderId") Long orderId,
             @RequestBody @Valid OrderUpdateReq orderUpdateReq,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId(); // 사용자 ID 가져오기
         orderService.updateOrderStatus(orderId, orderUpdateReq, userDetails); // 상태 업데이트 처리

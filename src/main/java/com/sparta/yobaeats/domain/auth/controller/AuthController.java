@@ -1,8 +1,6 @@
 package com.sparta.yobaeats.domain.auth.controller;
 
-import com.sparta.yobaeats.domain.auth.dto.request.AuthLoginRequest;
 import com.sparta.yobaeats.domain.auth.dto.request.AuthSignupRequest;
-import com.sparta.yobaeats.domain.auth.dto.response.AuthLoginResponse;
 import com.sparta.yobaeats.domain.auth.service.AuthService;
 import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
@@ -30,14 +28,5 @@ public class AuthController {
         URI uri = UriBuilderUtil.create("/api/users/{userId}", userId);
 
         return ResponseEntity.created(uri).build();
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthLoginResponse> login(
-            @RequestBody AuthLoginRequest authLoginRequest
-    ) {
-        String data = authService.login(authLoginRequest);
-
-        return ResponseEntity.ok(new AuthLoginResponse(data));
     }
 }
