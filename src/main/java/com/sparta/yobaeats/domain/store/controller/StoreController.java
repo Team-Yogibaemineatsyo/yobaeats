@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.store.controller;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.store.dto.request.StoreCreateReq;
 import com.sparta.yobaeats.domain.store.dto.request.StoreUpdateReq;
 import com.sparta.yobaeats.domain.store.dto.response.StoreReadDetailRes;
@@ -26,7 +26,7 @@ public class StoreController {
     @PostMapping
     public ResponseEntity<Void> createStore(
             @RequestBody @Valid StoreCreateReq request,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long storeId = storeService.createStore(request, userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/stores/{storeId}", storeId);
@@ -52,7 +52,7 @@ public class StoreController {
     public ResponseEntity<Void> updateStore(
             @PathVariable Long storeId,
             @RequestBody StoreUpdateReq request,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         storeService.updateStore(storeId, request, userDetails.getId());
 
@@ -62,7 +62,7 @@ public class StoreController {
     @DeleteMapping("/{storeId}")
     public ResponseEntity<Void> deleteStore(
             @PathVariable Long storeId,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         storeService.deleteStore(storeId, userDetails.getId());
 

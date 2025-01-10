@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.review.controller;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewCreateReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoListRes;
 import com.sparta.yobaeats.domain.review.service.ReviewService;
@@ -29,7 +29,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<Void> createReview(
         @RequestBody @Valid ReviewCreateReq reviewReq,
-        @AuthenticationPrincipal UserDetailsCustom userDetails
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId();
         Long StoreId = reviewService.createReview(userId, reviewReq);
@@ -52,7 +52,7 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(
         @PathVariable Long reviewId,
-        @AuthenticationPrincipal UserDetailsCustom userDetails
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId();
         reviewService.deleteReview(reviewId, userId);

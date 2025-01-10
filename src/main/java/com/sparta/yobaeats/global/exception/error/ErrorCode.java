@@ -36,7 +36,8 @@ public enum ErrorCode {
     DUPLICATE_REVIEW(HttpStatus.CONFLICT,"이미 리뷰가 작성된 주문입니다."),
 
     // Security 관련 익셉션
-    AUTHENTICATION_FAILED_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
+    LOGIN_FAILED_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다."),
+    NEED_LOGIN_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     AUTHORIZATION_EXCEPTION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
 
     // JWT 관련 익셉션

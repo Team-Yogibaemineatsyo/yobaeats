@@ -1,7 +1,7 @@
 package com.sparta.yobaeats.global.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import com.sparta.yobaeats.global.util.SecurityResponseMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final SecurityResponseMapper securityResponseMapper;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
@@ -28,7 +28,6 @@ public class SecurityAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(error.getStatus().value());
-        response.getWriter().write(securityResponseMapper.build(error));
-//        throw new SecurityAccessDeniedException(ErrorCode.AUTHORIZATION_EXCEPTION);
+        response.getWriter().write(objectMapper.writeValueAsString(error));
     }
 }
