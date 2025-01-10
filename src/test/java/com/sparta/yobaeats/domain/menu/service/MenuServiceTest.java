@@ -1,5 +1,6 @@
 package com.sparta.yobaeats.domain.menu.service;
 
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
@@ -16,6 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalTime;
@@ -36,9 +41,6 @@ public class MenuServiceTest {
     @Mock
     private StoreService storeService;
 
-    @Mock
-    private UserService userService;
-
     // 메뉴 여러 개 생성 테스트
     @Test
     @WithMockUser(roles = "OWNER", username = "owner@example.com")
@@ -51,6 +53,17 @@ public class MenuServiceTest {
                 .nickName("username")
                 .role(UserRole.ROLE_OWNER)
                 .build();
+
+        // UserDetailsCustom 객체 생성
+        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+
+        // Security Context 설정
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                ownerDetails,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_OWNER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Store store = Store.builder()
                 .id(storeId)
@@ -99,6 +112,17 @@ public class MenuServiceTest {
                 .role(UserRole.ROLE_OWNER)
                 .build();
 
+        // UserDetailsCustom 객체 생성
+        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+
+        // Security Context 설정
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                ownerDetails,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_OWNER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         Store store = Store.builder()
                 .id(storeId)
                 .name("가게 이름")
@@ -111,12 +135,12 @@ public class MenuServiceTest {
                 .build(); // Store 객체 생성
 
         Menu existingMenu = new Menu(menuId, store, "Old Name", 10000, "Old Description", false);
-
         MenuUpdateReq updateReq = new MenuUpdateReq("New Name", 12000, "New Description");
 
         // 모의 객체 설정
         when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
-        when(storeService.findStoreById(storeId)).thenReturn(store); // 가게 정보 조회를 추가
+        // 만약 이 스텁이 실제로 사용되지 않으면 다음 줄을 제거합니다.
+        // when(storeService.findStoreById(storeId)).thenReturn(store);
 
         // when
         menuService.updateMenu(menuId, updateReq); // 메뉴 수정 호출
@@ -126,7 +150,6 @@ public class MenuServiceTest {
         assertEquals(12000, existingMenu.getMenuPrice()); // 가격 확인
         assertEquals("New Description", existingMenu.getDescription()); // 설명 확인
     }
-
 
     // 메뉴 삭제 테스트
     @Test
@@ -143,6 +166,17 @@ public class MenuServiceTest {
                 .role(UserRole.ROLE_OWNER)
                 .build();
 
+        // UserDetailsCustom 객체 생성
+        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+
+        // Security Context 설정
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                ownerDetails,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_OWNER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         Store store = Store.builder()
                 .id(storeId)
                 .name("가게 이름")
@@ -157,7 +191,6 @@ public class MenuServiceTest {
         Menu existingMenu = new Menu(menuId, store, "Menu to be deleted", 10000, "Description", false);
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
-        when(storeService.findStoreById(storeId)).thenReturn(store); // 가게 정보 조회를 추가
 
         // when
         menuService.deleteMenu(menuId);

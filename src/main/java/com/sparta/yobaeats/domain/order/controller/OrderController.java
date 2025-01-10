@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
@@ -24,7 +23,10 @@ public class OrderController {
     private final OrderService orderService;
 
     /**
-     * 주문 생성 API
+     * 주문을 생성하는 API
+     *
+     * @param orderCreateReq 주문 생성에 필요한 요청 데이터
+     * @return 생성된 주문의 URI와 함께 201 Created 응답
      */
     @PostMapping
     public ResponseEntity<Order> createOrder(
@@ -33,11 +35,15 @@ public class OrderController {
         Long orderId = orderService.createOrder(orderCreateReq);
         URI uri = UriBuilderUtil.create("/api/orders/{orderId}", orderId);
 
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).build(); // 201 Created 응답
     }
 
     /**
-     * 주문 상태 업데이트 API
+     * 주문 상태를 업데이트하는 API
+     *
+     * @param orderId 주문의 ID
+     * @param orderUpdateReq 상태 업데이트에 필요한 요청 데이터
+     * @return 200 OK 응답
      */
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateOrderStatus(
@@ -45,6 +51,6 @@ public class OrderController {
             @RequestBody @Valid OrderUpdateReq orderUpdateReq
     ) {
         orderService.updateOrderStatus(orderId, orderUpdateReq); // 상태 업데이트 처리
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build(); // 200 OK 응답
     }
 }
