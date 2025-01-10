@@ -38,6 +38,11 @@ public class ReviewService {
         User user = userService.findUserById(userId);
         Order order = orderService.findOrderById(reviewCreateReq.orderId());
         Store store = order.getStore();
+
+        // 자기 자신의 가게인지 검증
+        if (user.getId().equals(store.getUser().getId())) {
+            throw new UnauthorizedException(ErrorCode.SELF_ADD_REVIEW_NOT_ALLOWED);
+        }
         // 리뷰 중복 작성 검증
         if (reviewRepository.existsByOrder(order)) {
             throw new ConflictException(ErrorCode.DUPLICATE_REVIEW);
