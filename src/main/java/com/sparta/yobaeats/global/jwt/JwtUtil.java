@@ -3,8 +3,8 @@ package com.sparta.yobaeats.global.jwt;
 import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -62,12 +63,23 @@ public class JwtUtil {
         return token.startsWith(BEARER_PREFIX);
     }
 
-    public boolean isValidExpiration(String token) {
-        return Jwts.parser().verifyWith(secretKey).build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getExpiration()
-                .after(new Date());
+    public boolean isValid(String token) {
+        try {
+            return Jwts.parser().verifyWith(secretKey).build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .after(new Date());
+        } catch (SecurityException | MalformedJwtException e) {
+            log.error("유효하지 않는 JWT 서명 입니다.");
+        } catch (ExpiredJwtException e) {
+            log.error("만료된 JWT token 입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.error("지원되지 않는 JWT 토큰 입니다.");
+        } catch (Exception e) {
+            log.error("유효하지 않는 JWT 토큰 입니다.");
+        }
+        return false;
     }
 
     public User getUserFromToken(String token) {
