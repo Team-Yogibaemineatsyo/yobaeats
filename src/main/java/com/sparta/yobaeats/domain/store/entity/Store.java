@@ -3,6 +3,8 @@ package com.sparta.yobaeats.domain.store.entity;
 import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.user.entity.User;
+import com.sparta.yobaeats.global.exception.InvalidException;
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,7 +31,7 @@ public class Store extends BaseEntity {
     @Column(name = "store_id")
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30, unique = true)
     private String name;
 
     @Column(nullable = false)
@@ -69,6 +71,8 @@ public class Store extends BaseEntity {
             User user,
             List<Menu> menus
     ) {
+        validateMinOrderPrice(minOrderPrice);
+
         this.id = id;
         this.name = name;
         this.minOrderPrice = minOrderPrice;
@@ -94,6 +98,16 @@ public class Store extends BaseEntity {
 
     public void delete() {
         this.isDeleted = true;
+    }
+
+    public void updateStarRate(double newStarRate) {
+        this.starRate = newStarRate;
+    }
+
+    private void validateMinOrderPrice(Integer minOrderPrice) {
+        if (minOrderPrice % 1000 != 0) {
+            throw new InvalidException(ErrorCode.INVALID_MIN_ORDER_PRICE_UNIT);
+        }
     }
 
     private void updateName(String newName) {
