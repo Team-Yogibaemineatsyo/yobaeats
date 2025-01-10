@@ -6,13 +6,12 @@ import com.sparta.yobaeats.domain.order.service.OrderService;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewCreateReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoRes;
 import com.sparta.yobaeats.domain.review.entity.Review;
-import com.sparta.yobaeats.domain.review.exception.DuplicateReviewException;
-import com.sparta.yobaeats.domain.review.exception.InvalidOrderStatusException;
-import com.sparta.yobaeats.domain.review.exception.InvalidStarRangeException;
 import com.sparta.yobaeats.domain.review.repository.ReviewRepository;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.service.UserService;
+import com.sparta.yobaeats.global.exception.ConflictException;
+import com.sparta.yobaeats.global.exception.InvalidException;
 import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
@@ -37,7 +36,7 @@ public class ReviewService {
         Store store = order.getStore();
         // 리뷰 중복 작성 검증
         if (reviewRepository.existsByOrder(order)) {
-            throw new DuplicateReviewException(ErrorCode.DUPLICATE_REVIEW);
+            throw new ConflictException(ErrorCode.DUPLICATE_REVIEW);
         }
         // 사용자 검증
         if (!user.getId().equals(order.getUser().getId())) {
@@ -45,7 +44,7 @@ public class ReviewService {
         }
         // 주문 상태 검증
         if (order.getOrderStatus() != OrderStatus.DELIVERED) {
-            throw new InvalidOrderStatusException(ErrorCode.INVALID_ORDER_STATUS);
+            throw new InvalidException(ErrorCode.INVALID_ORDER_STATUS);
         }
 
         reviewCreateReq.to(user, order, store);
@@ -55,7 +54,7 @@ public class ReviewService {
 
     public List<ReviewReadInfoRes> readReviews(Long storeId, int startStar, int endStar) {
         if (startStar > endStar) {
-            throw new InvalidStarRangeException(ErrorCode.INVALID_STAR_RANGE);
+            throw new InvalidException(ErrorCode.INVALID_STAR_RANGE);
         }
 
         List<Review> reviewList = reviewRepository

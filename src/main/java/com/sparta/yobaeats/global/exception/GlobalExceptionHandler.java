@@ -1,8 +1,12 @@
 package com.sparta.yobaeats.global.exception;
 
 import com.sparta.yobaeats.global.exception.error.ErrorResponse;
+import com.sparta.yobaeats.global.exception.error.ValidationErrorDto;
+import java.util.List;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,9 +27,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
-        return createResponseEntity(response);
+    protected ResponseEntity<ValidationErrorDto> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        BindingResult bindingResult = e.getBindingResult();
+        List<String> errorCodes = bindingResult.getFieldErrors().stream()
+            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+            .toList();
+
+        ValidationErrorDto validationErrorDto = new ValidationErrorDto(errorCodes);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationErrorDto);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
