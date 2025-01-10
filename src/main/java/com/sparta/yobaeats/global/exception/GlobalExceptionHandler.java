@@ -1,8 +1,10 @@
 package com.sparta.yobaeats.global.exception;
 
+import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import com.sparta.yobaeats.global.exception.error.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,13 +27,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         ErrorResponse response =
-            new ErrorResponse(HttpStatus.BAD_REQUEST, e.getBindingResult().getFieldError().getDefaultMessage());
+                new ErrorResponse(HttpStatus.BAD_REQUEST, e.getBindingResult().getFieldError().getDefaultMessage());
         return createResponseEntity(response);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        return createResponseEntity(response);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(final AuthorizationDeniedException e) {
+        ErrorResponse response = new ErrorResponse(ErrorCode.AUTHORIZATION_EXCEPTION);
         return createResponseEntity(response);
     }
 
