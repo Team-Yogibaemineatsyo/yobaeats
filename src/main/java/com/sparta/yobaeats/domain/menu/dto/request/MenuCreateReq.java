@@ -4,6 +4,7 @@ import com.sparta.yobaeats.domain.menu.dto.MenuValidationMessage;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -18,7 +19,7 @@ public record MenuCreateReq(
         @NotBlank(message = MenuValidationMessage.NAME_BLANK_MESSAGE)
         String menuName,
 
-        @NotBlank(message = MenuValidationMessage.PRICE_BLANK_MESSAGE)
+        @NotNull(message = "메뉴가격을 입력해주세요.")
         Integer menuPrice,
 
         @Size(max = MenuValidationMessage.DESCRIPTION_MAX, message = MenuValidationMessage.DESCRIPTION_MAX_MESSAGE)

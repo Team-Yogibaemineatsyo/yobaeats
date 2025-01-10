@@ -5,7 +5,7 @@ import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
 import com.sparta.yobaeats.domain.order.entity.Order;
-import com.sparta.yobaeats.domain.order.entity.OrderStatus; // Ensure you import OrderStatus
+import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.repository.OrderRepository;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.store.service.StoreService;
@@ -18,9 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,9 +47,81 @@ public class OrderServiceTest {
     private MenuService menuService;
 
     // 주문 생성 성공 테스트
+    @Test
+    @WithMockUser(roles = "USER")
+    void 주문_생성_성공() {
+        Long storeId = 1L;
+        Long menuId = 1L;
+        User user = User.builder() // 사용자로 설정
+                .id(1L)
+                .email("user@example.com")
+                .password("password")
+                .nickName("username")
+                .role(UserRole.ROLE_USER) // USER 역할 설정
+                .build();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                user,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        Store store = Store.builder()
+                .id(storeId)
+                .name("가게 이름")
+                .minOrderPrice(5000)
+                .starRate(0.0)
+                .isDeleted(false)
+                .openAt(LocalTime.of(9, 0))
+                .closeAt(LocalTime.of(21, 0))
+                .user(user) // 사용자 연결
+                .build();
+
+        Menu menu = new Menu(menuId, store, "메뉴 이름", 10000, "메뉴 설명", false);
+
+        // 요청 DTO 설정
+        OrderCreateReq orderCreateReq = new OrderCreateReq(storeId, menuId);
+
+        // Mock 설정
+        when(storeService.findStoreById(storeId)).thenReturn(store);
+        when(menuService.findMenuById(menuId)).thenReturn(menu);
+
+        // OrderStatus 추가
+        Order order = new Order(1L, user, store, menu, OrderStatus.PENDING); // 사용자로 설정
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+
+        // when
+        Long orderId = orderService.createOrder(orderCreateReq);
+
+        // then
+        assertNotNull(orderId);
+        verify(orderRepository).save(any(Order.class));
+    }
+
+    // 주문 생성 실패 테스트
+    @Test
+    @WithMockUser(roles = "USER")
+    void 주문_생성_실패_스토어_존재하지않음() {
+        Long storeId = 1L;
+        Long menuId = 1L;
+
+        // Mock 설정: 스토어가 존재하지 않음
+        when(storeService.findStoreById(storeId)).thenThrow(new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND));
+
+        // 요청 DTO 설정
+        OrderCreateReq orderCreateReq = new OrderCreateReq(storeId, menuId);
+
+        // when & then
+        CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
+            orderService.createOrder(orderCreateReq);
+        });
+        assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
+    }
+
 //    @Test
 //    @WithMockUser(roles = "USER")
-//    void 주문_생성_성공() {
+//    void 주문_생성_실패_메뉴_존재하지않음() {
 //        Long storeId = 1L;
 //        Long menuId = 1L;
 //        User user = User.builder() // 사용자로 설정
@@ -55,36 +132,25 @@ public class OrderServiceTest {
 //                .role(UserRole.ROLE_USER) // USER 역할 설정
 //                .build();
 //
-//        Store store = Store.builder()
-//                .id(storeId)
-//                .name("가게 이름")
-//                .minOrderPrice(5000)
-//                .starRate(0.0)
-//                .isDeleted(false)
-//                .openAt(LocalTime.of(9, 0))
-//                .closeAt(LocalTime.of(21, 0))
-//                .user(user) // 사용자 연결
-//                .build();
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(
+//                user,
+//                null,
+//                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 //
-//        Menu menu = new Menu(menuId, store, "메뉴 이름", 10000, "메뉴 설명", false);
+//        // Mock 설정: 스토어가 존재하지만 메뉴가 존재하지 않음
+//        when(storeService.findStoreById(storeId)).thenReturn(new Store());
+//        when(menuService.findMenuById(menuId)).thenThrow(new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));
 //
 //        // 요청 DTO 설정
 //        OrderCreateReq orderCreateReq = new OrderCreateReq(storeId, menuId);
 //
-//        // Mock 설정
-//        when(storeService.findStoreById(storeId)).thenReturn(store);
-//        when(menuService.findMenuById(menuId)).thenReturn(menu);
-//
-//        // OrderStatus 추가
-//        Order order = new Order(1L, user, store, menu, OrderStatus.PENDING); // 사용자로 설정
-//        when(orderRepository.save(any(Order.class))).thenReturn(order);
-//
-//        // when
-//        Long orderId = orderService.createOrder(orderCreateReq);
-//
-//        // then
-//        assertNotNull(orderId);
-//        verify(orderRepository).save(any(Order.class));
+//        // when & then
+//        CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
+//            orderService.createOrder(orderCreateReq);
+//        });
+//        assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
 //    }
 
     // 주문 조회 성공 테스트
