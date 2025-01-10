@@ -2,13 +2,12 @@ package com.sparta.yobaeats.global.jwt;
 
 import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.user.entity.User;
-import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import com.sparta.yobaeats.global.jwt.exception.JwtNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -25,17 +25,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getTokenFromHeader(request);
+        String token = resolveHeader(request);
 
-        // TODO JWT 토큰 유효성 검사: 없음, 잘못된 토큰 등
-        if (StringUtils.hasText(token) && jwtUtil.isValidExpiration(token)) {
-            setToHolder(token);
+        if (StringUtils.hasText(token) && jwtUtil.isValid(token)) {
+            User user = jwtUtil.getUserFromToken(token);
+            UserDetailsCustom userDetails = new UserDetailsCustom(user);
+
+            Authentication authToken
+                    = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String getTokenFromHeader(HttpServletRequest request) {
+    private String resolveHeader(HttpServletRequest request) {
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
 
         if (!StringUtils.hasText(authorization) || !jwtUtil.isStartsWithBearer(authorization)) {
@@ -43,15 +48,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         return authorization.split(" ")[1];
-    }
-
-    private void setToHolder(String token) {
-        User user = jwtUtil.getUserFromToken(token);
-        UserDetailsCustom userDetails = new UserDetailsCustom(user);
-
-        Authentication authToken
-                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }
