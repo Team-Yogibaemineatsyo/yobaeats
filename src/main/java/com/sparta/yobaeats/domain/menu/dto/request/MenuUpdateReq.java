@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.domain.menu.dto;
+package com.sparta.yobaeats.domain.menu.dto.request;
 
 /**
  * 메뉴 수정 요청 데이터를 담는 DTO 클래스
@@ -10,4 +10,6 @@ public record MenuUpdateReq(
         String menuName,
         Integer menuPrice,
         String description
-) {}
+) {
+
+}

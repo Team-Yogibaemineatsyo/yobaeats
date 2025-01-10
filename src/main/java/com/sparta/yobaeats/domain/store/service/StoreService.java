@@ -54,10 +54,8 @@ public class StoreService {
     }
 
     @Transactional
-    public void updateStore(Long userId, Long storeId, StoreUpdateReq request) {
-        User user = userService.findUserById(userId);
-
-        Store store = findStoreById(storeId);
+    public void updateStore(Long storeId, StoreUpdateReq request, Long userId) {
+        Store store = checkUserAuthentication(storeId, userId);
 
         store.update(
                 request.storeName(), request.openAt(),
@@ -66,10 +64,8 @@ public class StoreService {
     }
 
     @Transactional
-    public void deleteStore(Long userId, Long storeId) {
-        User user = userService.findUserById(userId);
-
-        Store store = findStoreById(storeId);
+    public void deleteStore(Long storeId, Long userId) {
+        Store store = checkUserAuthentication(storeId, userId);
 
         store.delete();
     }
@@ -77,5 +73,12 @@ public class StoreService {
     public Store findStoreById(Long storeId) {
         return storeRepository.findByIdAndIsDeletedFalse(storeId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
+    }
+
+    private Store checkUserAuthentication(Long storeId, Long userId) {
+        Store store = findStoreById(storeId);
+        userService.validateUser(store.getUser().getId(), userId);
+
+        return store;
     }
 }

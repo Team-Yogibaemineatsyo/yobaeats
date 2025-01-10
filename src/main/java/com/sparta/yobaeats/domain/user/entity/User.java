@@ -1,8 +1,7 @@
 package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
-import com.sparta.yobaeats.domain.user.dto.response.UserRes;
-import com.sparta.yobaeats.domain.user.dto.request.UserUpdateReq;
+import com.sparta.yobaeats.domain.user.dto.request.UserUpdateInfoReq;
 import com.sparta.yobaeats.domain.user.exception.UserDeletedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
@@ -10,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "users")
@@ -35,8 +35,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @Column
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @Builder
     public User(Long id, String email, String password, String nickName, UserRole role) {
@@ -52,26 +53,20 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public UserRes from() {
-        return new UserRes(
-            this.email = email,
-            this.nickName = nickName
-        );
+    public void update(String password, String nickName) {
+      updatePassword(password);
+      updateNickName(nickName);
     }
 
-    public void isDeletedUser() {
-        if (this.isDeleted) {
-            throw new UserDeletedException(ErrorCode.USER_DELETED);
+    private void updatePassword(String newPassword) {
+        if (newPassword != null) {
+            this.password = newPassword;
         }
     }
 
-    public void updateUser(UserUpdateReq req) {
-        if (req.email() != null && !req.email().isBlank()) {
-            this.email = req.email();
-        }
-
-        if (req.password() != null && !req.password().isBlank()) {
-            this.password = req.password();
+    private  void updateNickName(String newNickName) {
+        if (newNickName != null) {
+            this.nickName = newNickName;
         }
     }
 

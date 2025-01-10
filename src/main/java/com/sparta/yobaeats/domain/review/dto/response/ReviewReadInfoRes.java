@@ -5,10 +5,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record ReviewRes(Long reviewId, int star, String contents) {
+public record ReviewReadInfoRes(
+    Long reviewId,
+    int star,
+    String contents
+) {
 
-    public static ReviewRes from(Review review) {
-        return ReviewRes.builder()
+    public static ReviewReadInfoRes from(Review review) {
+        return ReviewReadInfoRes.builder()
             .reviewId(review.getId())
             .star(review.getStar())
             .contents(review.getContents())

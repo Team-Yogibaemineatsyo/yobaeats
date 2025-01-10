@@ -1,6 +1,6 @@
-package com.sparta.yobaeats.domain.order.dto;
+package com.sparta.yobaeats.domain.order.dto.request;
 
-import com.sparta.yobaeats.domain.order.entity.Order;
+import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 
 /**
  * 주문 상태 업데이트 요청 데이터를 담는 DTO 클래스
@@ -21,6 +21,6 @@ public record OrderUpdateReq(
          *   - DELIVERING: 배달원이 음식을 배달 중인 상태
          *   - DELIVERED: 배달이 완료된 상태
          */
-        Order.Status status
+        OrderStatus orderStatus
 ) {
 }
