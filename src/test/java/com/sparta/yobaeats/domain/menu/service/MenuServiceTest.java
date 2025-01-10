@@ -8,6 +8,7 @@ import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.store.service.StoreService;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
+import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class MenuServiceTest {
 
     @Mock
     private StoreService storeService;
+
+    @Mock
+    private UserService userService;
 
     // 메뉴 여러 개 생성 테스트
     @Test
