@@ -266,6 +266,10 @@ class StoreServiceTest {
         Long userId = 1L;
         Store store = Store.builder()
                 .id(storeId)
+                .name("기존 가게명")
+                .openAt(LocalTime.of(10, 0))
+                .closeAt(LocalTime.of(22, 0))
+                .minOrderPrice(15000)
                 .user(User.builder().id(userId).build())
                 .isDeleted(false)
                 .build();
