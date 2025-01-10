@@ -8,7 +8,6 @@ import com.sparta.yobaeats.global.security.handler.SecurityAccessDeniedHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationEntryPoint;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationFailureHandler;
 import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationSuccessHandler;
-import com.sparta.yobaeats.global.util.SecurityResponseBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +31,6 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
-    private final SecurityResponseBuilder securityResponseMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -64,9 +62,9 @@ public class SecurityConfig {
 
                 // exception handler
                 .exceptionHandling(handler ->
-                        handler.authenticationEntryPoint(new SecurityAuthenticationEntryPoint(securityResponseMapper)))
+                        handler.authenticationEntryPoint(new SecurityAuthenticationEntryPoint(objectMapper)))
                 .exceptionHandling(handler ->
-                        handler.accessDeniedHandler(new SecurityAccessDeniedHandler(securityResponseMapper)))
+                        handler.accessDeniedHandler(new SecurityAccessDeniedHandler(objectMapper)))
                 .build();
     }
 
@@ -81,7 +79,7 @@ public class SecurityConfig {
         filter.setFilterProcessesUrl("/api/auth/login");
         filter.setAuthenticationManager(authenticationManager());
         filter.setAuthenticationSuccessHandler(new SecurityAuthenticationSuccessHandler(objectMapper, jwtUtil));
-        filter.setAuthenticationFailureHandler(new SecurityAuthenticationFailureHandler(securityResponseMapper));
+        filter.setAuthenticationFailureHandler(new SecurityAuthenticationFailureHandler(objectMapper));
 
         filter.setSecurityContextRepository(
                 new DelegatingSecurityContextRepository(
