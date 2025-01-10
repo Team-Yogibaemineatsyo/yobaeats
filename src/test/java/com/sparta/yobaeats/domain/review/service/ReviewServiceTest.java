@@ -13,15 +13,14 @@ import com.sparta.yobaeats.domain.order.service.OrderService;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewCreateReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoRes;
 import com.sparta.yobaeats.domain.review.entity.Review;
-import com.sparta.yobaeats.domain.review.exception.DuplicateReviewException;
-import com.sparta.yobaeats.domain.review.exception.InvalidOrderStatusException;
-import com.sparta.yobaeats.domain.review.exception.InvalidStarRangeException;
 import com.sparta.yobaeats.domain.review.repository.ReviewRepository;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.store.service.StoreService;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
 import com.sparta.yobaeats.domain.user.service.UserService;
+import com.sparta.yobaeats.global.exception.ConflictException;
+import com.sparta.yobaeats.global.exception.InvalidException;
 import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
@@ -76,7 +75,7 @@ class ReviewServiceTest {
         given(reviewRepository.existsByOrder(order)).willReturn(true);
 
         // when & then
-        DuplicateReviewException exception = assertThrows(DuplicateReviewException.class,
+        ConflictException exception = assertThrows(ConflictException.class,
             () -> reviewService.createReview(user.getId(), reviewCreateReq));
 
         assertEquals(ErrorCode.DUPLICATE_REVIEW, exception.getErrorCode());
@@ -109,7 +108,7 @@ class ReviewServiceTest {
         given(orderService.findOrderById(reviewCreateReq.orderId())).willReturn(deliveringOrder);
 
         // when & then
-        InvalidOrderStatusException exception = assertThrows(InvalidOrderStatusException.class,
+        InvalidException exception = assertThrows(InvalidException.class,
             () -> reviewService.createReview(user.getId(), reviewCreateReq));
         assertEquals(ErrorCode.INVALID_ORDER_STATUS, exception.getErrorCode());
     }
@@ -138,7 +137,7 @@ class ReviewServiceTest {
         int endStar = 3;
 
         // when & then
-        InvalidStarRangeException exception = assertThrows(InvalidStarRangeException.class,
+        InvalidException exception = assertThrows(InvalidException.class,
             () -> reviewService.readReviews(store.getId(), startStar, endStar));
 
         assertEquals(ErrorCode.INVALID_STAR_RANGE, exception.getErrorCode());
