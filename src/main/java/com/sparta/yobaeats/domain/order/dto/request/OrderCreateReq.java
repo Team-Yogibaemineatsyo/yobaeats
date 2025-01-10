@@ -8,12 +8,6 @@ import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
 
-/**
- * 주문 생성 요청 데이터를 담는 DTO 클래스
- *
- * 이 클래스는 주문 생성 API에서 클라이언트가 전송하는 요청 데이터를 나타냅니다.
- * 필요한 필드는 모두 불변(immutable)하도록 record로 정의되었습니다.
- */
 public record OrderCreateReq(
 
         @NotBlank(message = OrderValidationMessage.STOREID_BLANK_MESSAGE)
@@ -23,19 +17,20 @@ public record OrderCreateReq(
         Long menuId
 ) {
     /**
-     * OrderCreateReq를 사용하여 Order 엔티티 생성
+     * OrderCreateReq를 사용하여 Order 엔티티를 생성하는 메서드
      *
      * @param store 주문할 가게의 Store 엔티티
      * @param menu  주문할 메뉴의 Menu 엔티티
-     * @param user
+     * @param user   주문을 생성하는 사용자 User 엔티티
      * @return 생성된 Order 객체
+     *         - 주문 상태는 기본적으로 'ORDER_REQUESTED'로 설정됩니다.
      */
     public Order toEntity(Store store, Menu menu, User user) {
         return Order.builder()
                 .store(store)
                 .menu(menu)
                 .user(user)
-                .orderStatus(OrderStatus.ORDER_REQUESTED)
+                .orderStatus(OrderStatus.ORDER_REQUESTED) // 주문 상태 설정
                 .build();
     }
 }
