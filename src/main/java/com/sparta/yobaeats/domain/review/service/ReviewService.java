@@ -31,7 +31,7 @@ public class ReviewService {
     private final OrderService orderService;
 
     @Transactional
-    public Long createReview(ReviewCreateReq reviewCreateReq, Long userId) {
+    public Long createReview(Long userId, ReviewCreateReq reviewCreateReq) {
         User user = userService.findUserById(userId);
         Order order = orderService.findOrderById(reviewCreateReq.orderId());
         Store store = order.getStore();
@@ -53,7 +53,7 @@ public class ReviewService {
         return store.getId();
     }
 
-    public List<ReviewReadInfoRes> findByStoreId(Long storeId, int startStar, int endStar) {
+    public List<ReviewReadInfoRes> readReviews(Long storeId, int startStar, int endStar) {
         if (startStar > endStar) {
             throw new InvalidStarRangeException(ErrorCode.INVALID_STAR_RANGE);
         }

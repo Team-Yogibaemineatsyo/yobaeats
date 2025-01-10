@@ -32,20 +32,20 @@ public class ReviewController {
         @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
         Long userId = userDetails.getId();
-        Long StoreId = reviewService.createReview(reviewReq, userId);
+        Long StoreId = reviewService.createReview(userId, reviewReq);
         URI uri = UriBuilderUtil.create("/api/reviews/{reviewId}", StoreId);
 
         return ResponseEntity.created(uri).build();
     }
 
     @GetMapping
-    public ResponseEntity<ReviewReadInfoListRes> readReview(
+    public ResponseEntity<ReviewReadInfoListRes> readReviews(
         @RequestParam Long storeId,
         @RequestParam(required = false) int startStar,
         @RequestParam(required = false) int endStar
     ) {
         ReviewReadInfoListRes listRes = new ReviewReadInfoListRes(
-            reviewService.findByStoreId(storeId, startStar, endStar));
+            reviewService.readReviews(storeId, startStar, endStar));
         return ResponseEntity.ok(listRes);
     }
 
