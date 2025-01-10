@@ -25,7 +25,7 @@ public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoin
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.error("Authentication error: need to login");
+        log.error("Security Authentication error: need to login");
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(ErrorCode.AUTHENTICATION_FAILED_EXCEPTION.getStatus().value());

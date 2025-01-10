@@ -57,7 +57,7 @@ public class SecurityConfig {
 
                 // exception handler
                 .exceptionHandling(handler ->
-                        handler.authenticationEntryPoint(new SecurityAuthenticationEntryPoint()))
+                        handler.authenticationEntryPoint(new SecurityAuthenticationEntryPoint(objectMapper)))
                 .exceptionHandling(handler ->
                         handler.accessDeniedHandler(new SecurityAccessDeniedHandler(objectMapper)))
                 .build();
