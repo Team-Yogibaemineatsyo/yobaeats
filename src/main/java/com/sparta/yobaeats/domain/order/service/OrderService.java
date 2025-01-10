@@ -49,10 +49,8 @@ public class OrderService {
         // 메뉴 조회
         Menu menu = menuService.findMenuById(orderCreateReq.menuId());
 
-        // 인증된 사용자 ID 가져오기
-        Long userId = userDetails.getId();
         // 사용자 객체 조회
-        User user = userService.findUserById(userId); // User 객체를 가져옴
+        User user = userService.findUserById(userDetails.getId()); // User 객체를 가져옴
 
         // 주문 엔티티 생성
         Order order = orderCreateReq.toEntity(store, menu, user);
@@ -86,14 +84,12 @@ public class OrderService {
         // 스토어 조회
         Store store = storeService.findStoreById(storeId);
 
-        // 인증된 사용자 ID 가져오기
-        Long userId = userDetails.getId();
-
         // 사용자 객체 조회
-        User user = userService.findUserById(userId); // User 객체를 가져옴
+        User user = userService.findUserById(userDetails.getId());
 
         // 상태 변경
-        order.changeStatusToNext();
+        order.changeStatusToNext(orderUpdateReq);
+        orderRepository.save(order);
     }
 
     /**

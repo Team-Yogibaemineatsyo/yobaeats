@@ -28,7 +28,7 @@ public enum ErrorCode {
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "가게가 존재하지 않습니다."),
     STORE_ALREADY_DELETED(HttpStatus.CONFLICT, "이미 폐업 처리된 가게입니다."),
     STORE_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "가게는 최대 3개까지만 운영할 수 있습니다"),
-    INVALID_MIN_ORDER_PRICE_UNIT(HttpStatus.CONFLICT, "최소 주문 금액은 천원 단위만 입력 가능합니다,"),
+    INVALID_MIN_ORDER_PRICE_UNIT(HttpStatus.BAD_REQUEST, "최소 주문 금액은 천원 단위만 입력 가능합니다,"),
 
     // 리뷰 관련 익셉션
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "배달 완료 상태가 아닙니다."),
