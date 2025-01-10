@@ -10,6 +10,7 @@ import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class StoreController {
 
     private final StoreService storeService;
 
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping
     public ResponseEntity<Void> createStore(
             @RequestBody @Valid StoreCreateReq request,
@@ -48,6 +50,7 @@ public class StoreController {
         return ResponseEntity.ok(storeService.readStores(storeName));
     }
 
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(
             @PathVariable Long storeId,
@@ -59,6 +62,7 @@ public class StoreController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{storeId}")
     public ResponseEntity<Void> deleteStore(
             @PathVariable Long storeId,

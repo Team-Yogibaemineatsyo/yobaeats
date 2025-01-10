@@ -9,6 +9,7 @@ import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +50,7 @@ public class OrderController {
      * @param orderUpdateReq 상태 업데이트에 필요한 요청 데이터
      * @return 200 OK 응답
      */
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateOrderStatus(
             @PathVariable("orderId") Long orderId,
