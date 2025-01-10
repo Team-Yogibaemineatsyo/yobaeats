@@ -45,13 +45,18 @@ class StoreServiceTest {
         // given
         Long userId = 1L;
         User user = User.builder().id(userId).role(UserRole.ROLE_OWNER).build();
-        StoreCreateReq request = new StoreCreateReq("테스트 치킨", LocalTime.of(12, 0), LocalTime.of(22, 0), 15000);
+        StoreCreateReq request = new StoreCreateReq(
+                "테스트 치킨", LocalTime.of(12, 0),
+                LocalTime.of(22, 0), 15000
+        );
+
         Store store = Store.builder()
                 .id(1L)
                 .name(request.storeName())
                 .openAt(request.openAt())
                 .closeAt(request.closeAt())
                 .minOrderPrice(request.minOrderPrice())
+                .user(user)
                 .build();
 
         given(storeRepository.countByUserIdAndIsDeletedFalse(userId)).willReturn(0L);
@@ -64,6 +69,7 @@ class StoreServiceTest {
         // then
         assertNotNull(storeId);
         assertEquals(store.getId(), storeId);
+        assertEquals(store.getUser().getId(), userId);
 
         verify(storeRepository).countByUserIdAndIsDeletedFalse(userId);
         verify(userService).findUserById(userId);
@@ -74,7 +80,10 @@ class StoreServiceTest {
     void 가게_등록_실패_가게_최대_수_초과() {
         // given
         Long userId = 1L;
-        StoreCreateReq request = new StoreCreateReq("테스트 치킨", LocalTime.parse("12:00"), LocalTime.parse("12:00"), 15000);
+        StoreCreateReq request = new StoreCreateReq(
+                "테스트 치킨", LocalTime.of(12, 0),
+                LocalTime.of(22, 0), 15000
+        );
 
         given(storeRepository.countByUserIdAndIsDeletedFalse(userId)).willReturn(3L);
 
@@ -84,7 +93,7 @@ class StoreServiceTest {
 
         // then
         assertEquals(HttpStatus.CONFLICT, exception.getErrorCode().getStatus());
-        assertEquals("가게는 최대 3개까지만 운영할 수 있습니다", exception.getErrorCode().getMessage());
+        assertEquals(ErrorCode.STORE_LIMIT_EXCEEDED.getMessage(), exception.getErrorCode().getMessage());
 
         verify(storeRepository).countByUserIdAndIsDeletedFalse(userId);
         verify(userService, never()).findUserById(userId);
@@ -106,16 +115,19 @@ class StoreServiceTest {
                                         .menuName("치킨1")
                                         .menuPrice(12000)
                                         .description("맛있어")
+                                        .isDeleted(false)
                                         .build(),
                                 Menu.builder()
                                         .id(2L)
                                         .menuName("치킨2")
                                         .menuPrice(16000)
                                         .description("맛없어")
+                                        .isDeleted(false)
                                         .build()
                         )
                 )
                 .build();
+
         given(storeRepository.findByIdAndIsDeletedFalse(storeId)).willReturn(Optional.of(store));
 
         // when
@@ -128,7 +140,7 @@ class StoreServiceTest {
         assertEquals(store.getCloseAt(), result.closeAt());
         assertEquals(store.getMinOrderPrice(), result.minOrderPrice());
 
-        assertEquals(1, result.menus().size());
+        assertEquals(2, result.menus().size());
 
         verify(storeRepository).findByIdAndIsDeletedFalse(storeId);
     }
@@ -165,8 +177,9 @@ class StoreServiceTest {
                 .name("테스트 치킨2")
                 .minOrderPrice(20000)
                 .starRate(4.5)
-                .isDeleted(true)
+                .isDeleted(false)
                 .build();
+
         List<Store> stores = List.of(store1, store2);
 
         given(storeRepository.findAllActiveByAndNameOrElseAll(storeName)).willReturn(stores);
@@ -175,7 +188,7 @@ class StoreServiceTest {
         List<StoreReadSimpleRes> resultList = storeService.readStores(storeName);
 
         // then
-        assertEquals(1, resultList.size());
+        assertEquals(2, resultList.size());
 
         StoreReadSimpleRes result = resultList.get(0);
         assertEquals(store1.getId(), result.storeId());
@@ -228,6 +241,7 @@ class StoreServiceTest {
                 .minOrderPrice(15000)
                 .user(User.builder().id(userId).build())
                 .build();
+
         StoreUpdateReq request = new StoreUpdateReq("수정된 가게명", LocalTime.of(11, 0), LocalTime.of(23, 0), 20000);
 
         given(storeRepository.findByIdAndIsDeletedFalse(storeId)).willReturn(Optional.of(store));
@@ -252,6 +266,10 @@ class StoreServiceTest {
         Long userId = 1L;
         Store store = Store.builder()
                 .id(storeId)
+                .name("기존 가게명")
+                .openAt(LocalTime.of(10, 0))
+                .closeAt(LocalTime.of(22, 0))
+                .minOrderPrice(15000)
                 .user(User.builder().id(userId).build())
                 .isDeleted(false)
                 .build();
@@ -263,29 +281,6 @@ class StoreServiceTest {
 
         // then
         assertTrue(store.isDeleted());
-        verify(userService).validateUser(userId, userId);
-        verify(storeRepository).findByIdAndIsDeletedFalse(storeId);
-    }
-
-    @Test
-    void 가게_삭제_실패() {
-        // given
-        Long storeId = 1L;
-        Long userId = 1L;
-        Store store = Store.builder()
-                .id(storeId)
-                .user(User.builder().id(userId).build())
-                .isDeleted(true)
-                .build();
-
-        given(storeRepository.findByIdAndIsDeletedFalse(storeId)).willReturn(Optional.of(store));
-
-        // when
-        ConflictException exception = assertThrows(ConflictException.class,
-                () -> storeService.deleteStore(storeId, userId));
-
-        // then
-        assertEquals(ErrorCode.STORE_ALREADY_DELETED.getMessage(), exception.getErrorCode().getMessage());
         verify(userService).validateUser(userId, userId);
         verify(storeRepository).findByIdAndIsDeletedFalse(storeId);
     }

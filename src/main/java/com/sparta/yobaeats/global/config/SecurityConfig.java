@@ -51,9 +51,9 @@ public class SecurityConfig {
 
                 // 접근 권한
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // 모든 권한 허용
-                .requestMatchers("/api/users/**").hasRole("USER")
-                .anyRequest().hasRole("USER")) // 나머지 로그인한 사용자만 접근 가능
+                        .requestMatchers("/api/auth/**").permitAll()        // 모든 권한 허용
+                        .requestMatchers("/api/menus/**").hasRole("OWNER")
+                        .anyRequest().authenticated())                      // 나머지 요청들은 인증 필요
 
                 // filter
 //                .addFilterAfter(new CustomUsernamePasswordAuthenticationFilter(objectMapper), LogoutFilter.class)
