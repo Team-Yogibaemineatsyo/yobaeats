@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.menu.controller;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -33,7 +32,7 @@ public class MenuController {
     @PostMapping
     public ResponseEntity<Void> createMenus(
             @RequestBody @Valid List<MenuCreateReq> menuCreateReqList,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId(); // 사용자 ID 가져오기
         List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList, userDetails);
@@ -55,7 +54,7 @@ public class MenuController {
     public ResponseEntity<Void> updateMenu(
             @PathVariable("menuId") Long menuId,
             @RequestBody @Valid MenuUpdateReq menuUpdateReq,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId(); // 사용자 ID 가져오기
         menuService.updateMenu(menuId, menuUpdateReq, userDetails);
@@ -72,7 +71,7 @@ public class MenuController {
     @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> deleteMenu(
             @PathVariable("menuId") Long menuId,
-            @AuthenticationPrincipal UserDetailsCustom userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId(); // 사용자 ID 가져오기
         menuService.deleteMenu(menuId, userDetails);

@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.menu.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
@@ -58,7 +58,7 @@ public class MenuServiceTest {
                 .build();
 
         // UserDetailsCustom 객체 생성
-        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+        CustomUserDetails ownerDetails = new CustomUserDetails(owner);
 
         // Security Context 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -114,7 +114,7 @@ public class MenuServiceTest {
                 .build();
 
         // UserDetailsCustom 객체 생성
-        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+        CustomUserDetails ownerDetails = new CustomUserDetails(owner);
 
         // Security Context 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -164,7 +164,7 @@ public class MenuServiceTest {
                 .build();
 
         // UserDetailsCustom 객체 생성
-        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+        CustomUserDetails ownerDetails = new CustomUserDetails(owner);
 
         // Security Context 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(

@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.order.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
@@ -73,7 +73,7 @@ public class OrderServiceTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // UserDetailsCustom 객체 생성
-        UserDetailsCustom userDetails = new UserDetailsCustom(user);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
 
         Store store = Store.builder()
                 .id(storeId)
@@ -178,7 +178,7 @@ public class OrderServiceTest {
                 .build();
 
         // UserDetailsCustom 객체 생성
-        UserDetailsCustom ownerDetails = new UserDetailsCustom(owner);
+        CustomUserDetails ownerDetails = new CustomUserDetails(owner);
 
         // Security Context 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -240,7 +240,7 @@ public class OrderServiceTest {
                 .nickName("username")
                 .role(UserRole.ROLE_USER)
                 .build();
-        UserDetailsCustom userDetails = new UserDetailsCustom(user);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {

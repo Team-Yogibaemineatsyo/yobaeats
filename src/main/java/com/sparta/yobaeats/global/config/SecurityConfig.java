@@ -76,7 +76,6 @@ public class SecurityConfig {
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter(objectMapper);
-        filter.setFilterProcessesUrl("/api/auth/login");
         filter.setAuthenticationManager(authenticationManager());
         filter.setAuthenticationSuccessHandler(new SecurityAuthenticationSuccessHandler(objectMapper, jwtUtil));
         filter.setAuthenticationFailureHandler(new SecurityAuthenticationFailureHandler(objectMapper));

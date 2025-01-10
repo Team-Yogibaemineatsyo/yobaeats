@@ -1,12 +1,13 @@
 package com.sparta.yobaeats.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.yobaeats.domain.auth.dto.request.AuthLoginRequest;
+import com.sparta.yobaeats.global.security.dto.request.AuthLoginRequest;
 import com.sparta.yobaeats.global.security.authentication.CustomAuthenticationToken;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -30,26 +31,21 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        log.info("Attempting authentication");
-
         AuthLoginRequest authLoginRequest = objectMapper.readValue(request.getReader(), AuthLoginRequest.class);
-
         validateAuthLoginRequest(authLoginRequest);
 
         String email = authLoginRequest.email();
         String password = authLoginRequest.password();
 
         CustomAuthenticationToken token = new CustomAuthenticationToken(email, password);
-
         return getAuthenticationManager().authenticate(token);
     }
 
     private void validateAuthLoginRequest(AuthLoginRequest authLoginRequest) {
-        // null check
         if (!StringUtils.hasText(authLoginRequest.email()) || !StringUtils.hasText(authLoginRequest.password())) {
-            throw new IllegalArgumentException("Email and password are required");
+            throw new BadCredentialsException("Email and password are required");
         }
 
-        // TODO 추가 validation 필요
+        // TODO 추가 validation 필요??
     }
 }

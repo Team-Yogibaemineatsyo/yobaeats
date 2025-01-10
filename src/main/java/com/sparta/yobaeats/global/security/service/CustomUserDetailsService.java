@@ -1,6 +1,6 @@
-package com.sparta.yobaeats.domain.auth.service;
+package com.sparta.yobaeats.global.security.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.repository.UserRepository;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -22,6 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
-        return new UserDetailsCustom(user);
+        return new CustomUserDetails(user);
     }
 }

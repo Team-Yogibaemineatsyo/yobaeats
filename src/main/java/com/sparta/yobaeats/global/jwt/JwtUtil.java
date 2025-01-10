@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.global.jwt;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
 import io.jsonwebtoken.*;
@@ -47,7 +47,7 @@ public class JwtUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        UserDetailsCustom principal = (UserDetailsCustom) authentication.getPrincipal();
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
         Date now = new Date();
 
         return BEARER_PREFIX + Jwts.builder()

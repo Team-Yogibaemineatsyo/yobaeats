@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.domain.auth.dto.request;
+package com.sparta.yobaeats.global.security.dto.request;
 
 public record AuthLoginRequest(
         String email,

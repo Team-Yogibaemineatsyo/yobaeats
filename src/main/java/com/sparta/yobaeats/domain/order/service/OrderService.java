@@ -1,7 +1,6 @@
 package com.sparta.yobaeats.domain.order.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
-import com.sparta.yobaeats.domain.auth.service.UserDetailsServiceImpl;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
@@ -15,13 +14,9 @@ import com.sparta.yobaeats.domain.user.entity.UserRole;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import static com.sparta.yobaeats.domain.user.entity.QUser.user;
 
 @Service
 @Transactional
@@ -42,7 +37,7 @@ public class OrderService {
      * @param orderCreateReq 주문 생성 요청 DTO
      * @return 생성된 주문의 ID
      */
-    public Long createOrder(OrderCreateReq orderCreateReq, UserDetailsCustom userDetails) {
+    public Long createOrder(OrderCreateReq orderCreateReq, CustomUserDetails userDetails) {
         // 스토어 조회
         Store store = storeService.findStoreById(orderCreateReq.storeId());
 
@@ -79,7 +74,7 @@ public class OrderService {
      * @param orderId        주문 ID
      * @param orderUpdateReq 주문 상태 업데이트 요청 DTO
      */
-    public void updateOrderStatus(Long orderId, OrderUpdateReq orderUpdateReq, UserDetailsCustom userDetails) {
+    public void updateOrderStatus(Long orderId, OrderUpdateReq orderUpdateReq, CustomUserDetails userDetails) {
         // 주문 조회
         Order order = findOrderById(orderId);
 
@@ -112,7 +107,7 @@ public class OrderService {
      * 현재 인증된 사용자의 권한을 확인하고, ROLE_OWNER인지 검증합니다.
      * 권한이 없는 경우 예외를 발생시킵니다.
      */
-    private void checkIfOwner(UserDetailsCustom userDetails) {
+    private void checkIfOwner(CustomUserDetails userDetails) {
         // 인증되지 않은 사용자 확인
         if (userDetails == null) {
             throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE); // 인증되지 않은 사용자

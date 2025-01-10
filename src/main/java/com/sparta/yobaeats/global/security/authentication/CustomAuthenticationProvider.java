@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.global.security.authentication;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +25,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String email = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        UserDetailsCustom userDetailsCustom = (UserDetailsCustom) userDetailsService.loadUserByUsername(email);
+        CustomUserDetails userDetailsCustom = (CustomUserDetails) userDetailsService.loadUserByUsername(email);
 
         if (!passwordEncoder.matches(password, userDetailsCustom.getPassword())) {
-            log.warn("Security Authentication error: need to login");
+            log.warn("Security Authentication error: password mismatch");
             throw new BadCredentialsException(ErrorCode.LOGIN_FAILED_EXCEPTION.getMessage());
         }
 
