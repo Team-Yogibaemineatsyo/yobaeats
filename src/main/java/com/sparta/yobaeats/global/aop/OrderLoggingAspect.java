@@ -55,7 +55,11 @@ public class OrderLoggingAspect {
         Long storeId = order.getStore().getId();
 
         // 로그에 주문 상태 업데이트 정보를 기록합니다.
-        log.info("Order status updated: time={}, storeId={}, orderId={}, newStatus={}",
-                formattedTime, storeId, orderId, newStatus);
+        if (newStatus != null) {
+            log.info("Order status updated: time={}, storeId={}, orderId={}, newStatus={}",
+                    formattedTime, storeId, orderId, newStatus);
+        } else {
+            log.warn("Order status is null for orderId={}", orderId);
+        }
     }
 }
