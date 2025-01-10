@@ -1,7 +1,6 @@
 package com.sparta.yobaeats.domain.auth.entity;
 
 import com.sparta.yobaeats.domain.user.entity.User;
-import com.sparta.yobaeats.domain.user.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
