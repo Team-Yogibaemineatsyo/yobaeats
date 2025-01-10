@@ -7,6 +7,7 @@ import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record MenuCreateReq(
@@ -19,6 +20,7 @@ public record MenuCreateReq(
         String menuName,
 
         @NotNull(message = MenuValidationMessage.PRICE_NOTNULL_MESSAGE)
+        @Positive(message = MenuValidationMessage.PRICE_VALIDATION_MESSAGE)
         Integer menuPrice,
 
         @Size(max = MenuValidationMessage.DESCRIPTION_MAX, message = MenuValidationMessage.DESCRIPTION_MAX_MESSAGE)

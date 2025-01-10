@@ -5,6 +5,7 @@ import com.sparta.yobaeats.global.exception.ConflictException;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,9 +50,6 @@ public class Menu {
         this.id = id;
         this.store = store;
         this.menuName = menuName;
-        if (menuPrice < 0) {
-            throw new CustomRuntimeException(ErrorCode.INVALID_MENU_PRICE);
-        }
         this.menuPrice = menuPrice;
         this.description = description;
         this.isDeleted = isDeleted;
