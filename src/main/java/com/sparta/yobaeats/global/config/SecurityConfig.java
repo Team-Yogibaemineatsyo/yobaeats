@@ -77,7 +77,7 @@ public class SecurityConfig {
     public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter(objectMapper);
         filter.setAuthenticationManager(authenticationManager());
-        filter.setAuthenticationSuccessHandler(new SecurityAuthenticationSuccessHandler(objectMapper, jwtUtil));
+        filter.setAuthenticationSuccessHandler(new SecurityAuthenticationSuccessHandler(jwtUtil, objectMapper));
         filter.setAuthenticationFailureHandler(new SecurityAuthenticationFailureHandler(objectMapper));
 
         filter.setSecurityContextRepository(
