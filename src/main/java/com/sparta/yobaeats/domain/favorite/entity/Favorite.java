@@ -29,10 +29,10 @@ public class Favorite extends BaseEntity {
     @Column(name = "favorite_id")
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(nullable = false)
     private Long userId;
 
-    @Column(name = "store_id", nullable = false)
+    @Column(nullable = false)
     private Long storeId;
 
     @Builder

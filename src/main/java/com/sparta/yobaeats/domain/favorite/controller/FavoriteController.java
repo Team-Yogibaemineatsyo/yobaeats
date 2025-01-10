@@ -4,7 +4,6 @@ import com.sparta.yobaeats.domain.favorite.dto.request.FavoriteCreateReq;
 import com.sparta.yobaeats.domain.favorite.dto.response.FavoriteReadListRes;
 import com.sparta.yobaeats.domain.favorite.dto.response.FavoriteReadRes;
 import com.sparta.yobaeats.domain.favorite.service.FavoriteService;
-import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import java.net.URI;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FavoriteController {
 
-    private FavoriteService favoriteService;
+    private final FavoriteService favoriteService;
 
     @PostMapping
     public ResponseEntity<Long> createFavorite(

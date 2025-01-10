@@ -4,9 +4,7 @@ import com.sparta.yobaeats.domain.favorite.dto.request.FavoriteCreateReq;
 import com.sparta.yobaeats.domain.favorite.dto.response.FavoriteReadRes;
 import com.sparta.yobaeats.domain.favorite.entity.Favorite;
 import com.sparta.yobaeats.domain.favorite.repository.FavoriteRepository;
-import com.sparta.yobaeats.domain.review.repository.ReviewRepository;
 import com.sparta.yobaeats.domain.store.service.StoreService;
-import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.ConflictException;
 import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
@@ -21,10 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final UserService userService;
     private final StoreService storeService;
-    private final ReviewRepository reviewRepository;
 
+    @Transactional
     public Long addFavorite(Long userId, FavoriteCreateReq favoriteCreateReq) {
         if (favoriteRepository.existsByUserIdAndStoreId(userId, favoriteCreateReq.storeId())) {
             throw new ConflictException(ErrorCode.DUPLICATED_FAVORITE);
@@ -57,8 +54,11 @@ public class FavoriteService {
         return FavoriteReadRes.from(favorite);
     }
 
-
+    @Transactional
     public void deleteFavorite(Long userId, Long favoriteId) {
+        Favorite favorite = favoriteRepository.findByIdAndUserId(favoriteId, userId)
+            .orElseThrow(() -> new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND));
 
+        favoriteRepository.delete(favorite);
     }
 }
