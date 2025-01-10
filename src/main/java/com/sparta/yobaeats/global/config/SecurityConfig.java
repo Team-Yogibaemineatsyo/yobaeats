@@ -3,9 +3,9 @@ package com.sparta.yobaeats.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.jwt.JwtAuthenticationFilter;
 import com.sparta.yobaeats.global.jwt.JwtUtil;
-import com.sparta.yobaeats.global.security.SecurityAccessDeniedHandler;
-import com.sparta.yobaeats.global.security.SecurityAuthenticationEntryPoint;
-import com.sparta.yobaeats.global.security.SecurityAuthenticationFailureHandler;
+import com.sparta.yobaeats.global.security.handler.SecurityAccessDeniedHandler;
+import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationEntryPoint;
+import com.sparta.yobaeats.global.security.handler.SecurityAuthenticationFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration

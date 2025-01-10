@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.global.security;
+package com.sparta.yobaeats.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

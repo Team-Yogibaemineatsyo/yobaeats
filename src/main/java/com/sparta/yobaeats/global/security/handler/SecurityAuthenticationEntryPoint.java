@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.global.security;
+package com.sparta.yobaeats.global.security.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
