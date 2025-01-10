@@ -25,9 +25,8 @@ public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoin
         log.warn("Security Authentication error: need to login");
 
         response.setContentType("application/json;charset=UTF-8");
-        ErrorCode errorCode = ErrorCode.AUTHENTICATION_FAILED_EXCEPTION;
+        ErrorCode errorCode = ErrorCode.NEED_LOGIN_EXCEPTION;
         response.setStatus(errorCode.getStatus().value());
         response.getWriter().write(securityResponseMapper.build(errorCode));
-//        throw new SecurityAuthenticationFailedException(ErrorCode.AUTHENTICATION_FAILED_EXCEPTION);
     }
 }
