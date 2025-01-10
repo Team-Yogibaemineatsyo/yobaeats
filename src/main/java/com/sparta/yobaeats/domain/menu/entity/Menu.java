@@ -2,6 +2,7 @@ package com.sparta.yobaeats.domain.menu.entity;
 
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.global.exception.ConflictException;
+import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -48,6 +49,9 @@ public class Menu {
         this.id = id;
         this.store = store;
         this.menuName = menuName;
+        if (menuPrice < 0) {
+            throw new CustomRuntimeException(ErrorCode.INVALID_MENU_PRICE);
+        }
         this.menuPrice = menuPrice;
         this.description = description;
         this.isDeleted = isDeleted;
