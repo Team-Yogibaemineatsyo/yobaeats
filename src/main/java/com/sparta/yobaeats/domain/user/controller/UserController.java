@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.user.controller;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.user.dto.request.UserDeleteReq;
 import com.sparta.yobaeats.domain.user.dto.response.UserReadInfoRes;
 import com.sparta.yobaeats.domain.user.dto.request.UserUpdateInfoReq;
@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<UserReadInfoRes> readUserInfo(
-        @AuthenticationPrincipal UserDetailsCustom userDetails
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId();
         UserReadInfoRes userRes = userService.findById(userId);
@@ -35,7 +35,7 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<Void> updateUser(
         @RequestBody @Valid UserUpdateInfoReq userUpdateInfoReq,
-        @AuthenticationPrincipal UserDetailsCustom userDetails
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId();
         userService.updateUser(userId, userUpdateInfoReq);
@@ -45,7 +45,7 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(
         @RequestBody @Valid UserDeleteReq userDeleteReq,
-        @AuthenticationPrincipal UserDetailsCustom userDetails
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getId();
         userService.deleteUser(userId, userDeleteReq);

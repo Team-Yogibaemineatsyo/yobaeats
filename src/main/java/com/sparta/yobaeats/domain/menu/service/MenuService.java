@@ -1,6 +1,6 @@
 package com.sparta.yobaeats.domain.menu.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
@@ -13,8 +13,6 @@ import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +34,7 @@ public class MenuService {
      * @param menuCreateReqList 생성할 메뉴의 요청 데이터 리스트
      * @return 생성된 메뉴의 ID 리스트
      */
-    public List<Long> createMenus(List<MenuCreateReq> menuCreateReqList, UserDetailsCustom userDetails) {
+    public List<Long> createMenus(List<MenuCreateReq> menuCreateReqList, CustomUserDetails userDetails) {
         List<Menu> menus = menuCreateReqList.stream()
                 .map(menuCreateReq -> {
                     Store store = storeService.findStoreById(menuCreateReq.storeId());
@@ -66,7 +64,7 @@ public class MenuService {
      * @param menuId 수정할 메뉴의 ID
      * @param menuUpdateReq 수정 요청 데이터
      */
-    public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq, UserDetailsCustom userDetails) {
+    public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq, CustomUserDetails userDetails) {
         Menu menu = findMenuById(menuId);
 
         // 인증된 사용자 ID 가져오기
@@ -89,7 +87,7 @@ public class MenuService {
      *
      * @param menuId 삭제할 메뉴의 ID
      */
-    public void deleteMenu(Long menuId, UserDetailsCustom userDetails) {
+    public void deleteMenu(Long menuId, CustomUserDetails userDetails) {
         Menu menu = findMenuById(menuId);
 
         // 인증된 사용자 ID 가져오기
@@ -108,7 +106,7 @@ public class MenuService {
      * 현재 로그인된 사용자가 사장님(ROLE_OWNER)인지 확인하는 메서드
      * 인증된 사용자가 사장님 역할인지 검증하며, 아닐 경우 예외를 발생시킴
      */
-    private void checkIfOwner(UserDetailsCustom userDetails) {
+    private void checkIfOwner(CustomUserDetails userDetails) {
         // 인증되지 않은 사용자 확인
         if (userDetails == null) {
             throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE); // 인증되지 않은 사용자

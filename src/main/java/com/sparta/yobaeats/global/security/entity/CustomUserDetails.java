@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.domain.auth.entity;
+package com.sparta.yobaeats.global.security.entity;
 
 import com.sparta.yobaeats.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class UserDetailsCustom implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private final User user;
 
