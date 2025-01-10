@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 
 public record MenuCreateReq(
 
-        @NotBlank(message = MenuValidationMessage.STOREID_BLANK_MESSAGE)
+        @NotNull(message = MenuValidationMessage.STOREID_NOTNULL_MESSAGE)
         Long storeId,
 
         @Size(max = MenuValidationMessage.NAME_MAX, message = MenuValidationMessage.NAME_MAX_MESSAGE)
