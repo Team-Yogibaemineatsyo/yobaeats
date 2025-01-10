@@ -1,6 +1,5 @@
 package com.sparta.yobaeats.domain.menu.service;
 
-import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
@@ -12,6 +11,7 @@ import com.sparta.yobaeats.domain.user.entity.UserRole;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import org.junit.jupiter.api.BeforeEach; // 추가된 import
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +46,7 @@ public class MenuServiceTest {
     private UserService userService;
 
     private User owner;
-    private UserDetailsCustom ownerDetails;
+    private CustomUserDetails ownerDetails;
     private Store store;
 
     @BeforeEach // 각 테스트 실행 전 호출
@@ -60,7 +60,7 @@ public class MenuServiceTest {
                 .build();
 
         // UserDetailsCustom 객체 생성
-        ownerDetails = new UserDetailsCustom(owner);
+        ownerDetails = new CustomUserDetails(owner);
 
         // Security Context 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(
