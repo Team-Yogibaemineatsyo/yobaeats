@@ -1,5 +1,7 @@
 package com.sparta.yobaeats.domain.order.service;
 
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
+import com.sparta.yobaeats.domain.auth.service.UserDetailsServiceImpl;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
@@ -10,6 +12,7 @@ import com.sparta.yobaeats.domain.store.service.StoreService;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
+import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import static com.sparta.yobaeats.domain.user.entity.QUser.user;
 
 @Service
 @Transactional
@@ -26,6 +31,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final StoreService storeService;
     private final MenuService menuService;
+    private final UserService userService;
 
     /**
      * 주문 생성 메서드
@@ -36,7 +42,7 @@ public class OrderService {
      * @param orderCreateReq 주문 생성 요청 DTO
      * @return 생성된 주문의 ID
      */
-    public Long createOrder(OrderCreateReq orderCreateReq) {
+    public Long createOrder(OrderCreateReq orderCreateReq, UserDetailsCustom userDetails) {
         // 스토어 조회
         Store store = storeService.findStoreById(orderCreateReq.storeId());
 
@@ -45,14 +51,17 @@ public class OrderService {
             throw new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND);
         }
 
+        // 메뉴 조회
         Menu menu = menuService.findMenuById(orderCreateReq.menuId());
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE); // 인증되지 않은 사용자 처리
-        }
+        // 인증된 사용자 ID 가져오기
+        Long userId = userDetails.getId();
+        // 사용자 객체 조회
+        User user = userService.findUserById(userId); // User 객체를 가져옴
 
-        User user = (User) authentication.getPrincipal();  // 현재 로그인된 사용자
+
+        // 소유자 체크
+        checkIfOwner(userDetails);
 
         // 주문 엔티티 생성
         Order order = orderRepository.save(orderCreateReq.toEntity(store, menu, user));
@@ -70,7 +79,7 @@ public class OrderService {
      * @param orderId        주문 ID
      * @param orderUpdateReq 주문 상태 업데이트 요청 DTO
      */
-    public void updateOrderStatus(Long orderId, OrderUpdateReq orderUpdateReq) {
+    public void updateOrderStatus(Long orderId, OrderUpdateReq orderUpdateReq, UserDetailsCustom userDetails) {
         // 주문 조회
         Order order = findOrderById(orderId);
 
@@ -78,10 +87,15 @@ public class OrderService {
         Long storeId = order.getStore().getId(); // 주문과 연관된 스토어 ID 가져오기
 
         // 소유자 체크
-        checkIfOwner();
+        checkIfOwner(userDetails);
 
         // 스토어 조회
         Store store = storeService.findStoreById(storeId);
+
+        // 인증된 사용자 ID 가져오기
+        Long userId = userDetails.getId();
+        // 사용자 객체 조회
+        User user = userService.findUserById(userId); // User 객체를 가져옴
 
         // 요청된 상태가 현재 상태의 다음 상태인지 확인
         if (!order.getOrderStatus().nextStatus().equals(orderUpdateReq.orderStatus())) {
@@ -98,17 +112,14 @@ public class OrderService {
      * 현재 인증된 사용자의 권한을 확인하고, ROLE_OWNER인지 검증합니다.
      * 권한이 없는 경우 예외를 발생시킵니다.
      */
-    private void checkIfOwner() {
-        // 현재 인증된 사용자의 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // 인증된 사용자가 없거나 인증되지 않은 경우 예외 발생
-        if (authentication == null || !authentication.isAuthenticated()) {
+    private void checkIfOwner(UserDetailsCustom userDetails) {
+        // 인증되지 않은 사용자 확인
+        if (userDetails == null) {
             throw new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE); // 인증되지 않은 사용자
         }
 
         // 사용자의 권한을 확인하고 ROLE_OWNER인지 검증
-        String role = authentication.getAuthorities().stream()
+        String role = userDetails.getAuthorities().stream()
                 .findFirst()
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.INVALID_USER_ROLE))
                 .getAuthority();

@@ -1,5 +1,6 @@
 package com.sparta.yobaeats.domain.menu.controller;
 
+import com.sparta.yobaeats.domain.auth.entity.UserDetailsCustom;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
@@ -7,6 +8,7 @@ import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,9 +32,11 @@ public class MenuController {
      */
     @PostMapping
     public ResponseEntity<Void> createMenus(
-            @RequestBody @Valid List<MenuCreateReq> menuCreateReqList
+            @RequestBody @Valid List<MenuCreateReq> menuCreateReqList,
+            @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList);
+        Long userId = userDetails.getId(); // 사용자 ID 가져오기
+        List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList, userDetails);
         URI uri = UriBuilderUtil.create("/api/menus/{menuId}", createdMenuIds.get(0));
 
         return ResponseEntity.created(uri).build();
@@ -50,9 +54,11 @@ public class MenuController {
     @PatchMapping("/{menuId}")
     public ResponseEntity<Void> updateMenu(
             @PathVariable("menuId") Long menuId,
-            @RequestBody @Valid MenuUpdateReq menuUpdateReq
+            @RequestBody @Valid MenuUpdateReq menuUpdateReq,
+            @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        menuService.updateMenu(menuId, menuUpdateReq);
+        Long userId = userDetails.getId(); // 사용자 ID 가져오기
+        menuService.updateMenu(menuId, menuUpdateReq, userDetails);
         return ResponseEntity.ok().build();
     }
 
@@ -65,9 +71,11 @@ public class MenuController {
      */
     @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> deleteMenu(
-            @PathVariable("menuId") Long menuId
+            @PathVariable("menuId") Long menuId,
+            @AuthenticationPrincipal UserDetailsCustom userDetails
     ) {
-        menuService.deleteMenu(menuId);
+        Long userId = userDetails.getId(); // 사용자 ID 가져오기
+        menuService.deleteMenu(menuId, userDetails);
         return ResponseEntity.noContent().build();
     }
 }

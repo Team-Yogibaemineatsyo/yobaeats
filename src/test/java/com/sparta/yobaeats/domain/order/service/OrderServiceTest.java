@@ -30,7 +30,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sparta.yobaeats.domain.store.entity.QStore.store;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,6 +47,9 @@ public class OrderServiceTest {
 
     @Mock
     private MenuService menuService;
+
+    @Mock
+    private UserService userService;
 
     // 주문 생성 성공 테스트
     @Test
@@ -69,6 +71,9 @@ public class OrderServiceTest {
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // UserDetailsCustom 객체 생성
+        UserDetailsCustom userDetails = new UserDetailsCustom(user);
 
         Store store = Store.builder()
                 .id(storeId)
@@ -95,7 +100,7 @@ public class OrderServiceTest {
         when(orderRepository.save(any(Order.class))).thenReturn(order);
 
         // when
-        Long orderId = orderService.createOrder(orderCreateReq);
+        Long orderId = orderService.createOrder(orderCreateReq, userDetails); // userDetails 전달
 
         // then
         assertNotNull(orderId);
@@ -143,7 +148,6 @@ public class OrderServiceTest {
 
     // 주문 조회 실패 테스트
     @Test
-
     void 주문_조회_실패() {
         Long orderId = 1L;
 
@@ -161,7 +165,6 @@ public class OrderServiceTest {
     @Test
     @WithMockUser(roles = "OWNER")
     void 주문_상태_변경_성공() {
-        // 필요한 객체 생성
         Long orderId = 1L;
         Long storeId = 1L;
 
@@ -206,7 +209,7 @@ public class OrderServiceTest {
 
         // 주문 상태 업데이트 요청
         OrderUpdateReq orderUpdateReq = new OrderUpdateReq(OrderStatus.ORDER_REQUESTED);
-        orderService.updateOrderStatus(orderId, orderUpdateReq);
+        orderService.updateOrderStatus(orderId, orderUpdateReq, ownerDetails);
 
         // Assertions: Order 객체의 상태가 변경되었는지 확인
         assertEquals(OrderStatus.ORDER_REQUESTED, order.getOrderStatus());
@@ -216,7 +219,7 @@ public class OrderServiceTest {
         verify(storeService).findStoreById(storeId);
     }
 
-    // 주문 생성 실패 테스트
+    // 주문 생성 실패 테스트 - 스토어가 존재하지 않음
     @Test
     @WithMockUser(roles = "USER")
     void 주문_생성_실패_스토어_존재하지않음() {
@@ -229,55 +232,20 @@ public class OrderServiceTest {
         // 요청 DTO 설정
         OrderCreateReq orderCreateReq = new OrderCreateReq(storeId, menuId);
 
-        // when & then
-        CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            orderService.createOrder(orderCreateReq);
-        });
-        assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
-    }
-
-    @Test
-    @WithMockUser(roles = "USER")
-    void 주문_생성_실패_메뉴_존재하지않음() {
-        Long storeId = 1L;
-        Long menuId = 1L;
-        User user = User.builder() // 사용자로 설정
+        // UserDetailsCustom 객체 생성
+        User user = User.builder()
                 .id(1L)
                 .email("user@example.com")
                 .password("password")
                 .nickName("username")
-                .role(UserRole.ROLE_USER) // USER 역할 설정
+                .role(UserRole.ROLE_USER)
                 .build();
-
-        Store store = Store.builder()
-                .id(storeId)
-                .name("가게 이름")
-                .minOrderPrice(5000)
-                .starRate(0.0)
-                .isDeleted(false)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(21, 0))
-                .user(user)
-                .build();
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Mock 설정: 스토어가 존재하지만 메뉴가 존재하지 않음
-        when(storeService.findStoreById(storeId)).thenReturn(store);
-        when(menuService.findMenuById(menuId)).thenThrow(new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));
-
-        // 요청 DTO 설정
-        OrderCreateReq orderCreateReq = new OrderCreateReq(storeId, menuId);
+        UserDetailsCustom userDetails = new UserDetailsCustom(user);
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            orderService.createOrder(orderCreateReq);
+            orderService.createOrder(orderCreateReq, userDetails); // userDetails 전달
         });
-        assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
     }
 }

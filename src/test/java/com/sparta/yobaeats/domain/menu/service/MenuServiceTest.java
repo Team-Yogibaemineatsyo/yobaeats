@@ -41,13 +41,16 @@ public class MenuServiceTest {
     @Mock
     private StoreService storeService;
 
+    @Mock
+    private UserService userService;
+
     // 메뉴 여러 개 생성 테스트
     @Test
     @WithMockUser(roles = "OWNER", username = "owner@example.com")
     void 메뉴_여러개_생성_성공() {
         Long storeId = 1L;
         User owner = User.builder()
-                .id(1L) // 적절한 ID 설정
+                .id(1L)
                 .email("owner@example.com")
                 .password("password")
                 .nickName("username")
@@ -76,7 +79,6 @@ public class MenuServiceTest {
                 .user(owner)
                 .build();
 
-
         MenuCreateReq menuCreateReq1 = new MenuCreateReq(storeId, "메뉴 이름 1", 10000, "메뉴 설명 1");
         MenuCreateReq menuCreateReq2 = new MenuCreateReq(storeId, "메뉴 이름 2", 12000, "메뉴 설명 2");
         List<MenuCreateReq> menuCreateReqList = Arrays.asList(menuCreateReq1, menuCreateReq2);
@@ -88,7 +90,7 @@ public class MenuServiceTest {
         when(menuRepository.saveAll(anyList())).thenReturn(Arrays.asList(menu1, menu2));
 
         // when
-        List<Long> menuIds = menuService.createMenus(menuCreateReqList);
+        List<Long> menuIds = menuService.createMenus(menuCreateReqList, ownerDetails); // userDetails를 ownerDetails로 수정
 
         // then
         verify(menuRepository).saveAll(anyList());
@@ -101,11 +103,10 @@ public class MenuServiceTest {
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_수정_성공() {
-        // given
         Long menuId = 1L;
-        Long storeId = 1L; // 가게 ID 추가
+        Long storeId = 1L;
         User owner = User.builder()
-                .id(1L) // 소유자 ID 설정
+                .id(1L)
                 .email("owner@example.com")
                 .password("password")
                 .nickName("username")
@@ -131,35 +132,31 @@ public class MenuServiceTest {
                 .isDeleted(false)
                 .openAt(LocalTime.of(9, 0))
                 .closeAt(LocalTime.of(21, 0))
-                .user(owner) // 소유자 설정
-                .build(); // Store 객체 생성
+                .user(owner)
+                .build();
 
         Menu existingMenu = new Menu(menuId, store, "Old Name", 10000, "Old Description", false);
         MenuUpdateReq updateReq = new MenuUpdateReq("New Name", 12000, "New Description");
 
-        // 모의 객체 설정
         when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
-        // 만약 이 스텁이 실제로 사용되지 않으면 다음 줄을 제거합니다.
-        // when(storeService.findStoreById(storeId)).thenReturn(store);
 
         // when
-        menuService.updateMenu(menuId, updateReq); // 메뉴 수정 호출
+        menuService.updateMenu(menuId, updateReq, ownerDetails); // userDetails를 ownerDetails로 수정
 
         // then
-        assertEquals("New Name", existingMenu.getMenuName()); // 이름 확인
-        assertEquals(12000, existingMenu.getMenuPrice()); // 가격 확인
-        assertEquals("New Description", existingMenu.getDescription()); // 설명 확인
+        assertEquals("New Name", existingMenu.getMenuName());
+        assertEquals(12000, existingMenu.getMenuPrice());
+        assertEquals("New Description", existingMenu.getDescription());
     }
 
     // 메뉴 삭제 테스트
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_삭제_성공() {
-        // given
         Long menuId = 1L;
-        Long storeId = 1L; // 가게 ID 추가
+        Long storeId = 1L;
         User owner = User.builder()
-                .id(1L) // 소유자 ID 설정
+                .id(1L)
                 .email("owner@example.com")
                 .password("password")
                 .nickName("username")
@@ -185,26 +182,25 @@ public class MenuServiceTest {
                 .isDeleted(false)
                 .openAt(LocalTime.of(9, 0))
                 .closeAt(LocalTime.of(21, 0))
-                .user(owner) // 소유자 설정
-                .build(); // Store 객체 생성
+                .user(owner)
+                .build();
 
         Menu existingMenu = new Menu(menuId, store, "Menu to be deleted", 10000, "Description", false);
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
 
         // when
-        menuService.deleteMenu(menuId);
+        menuService.deleteMenu(menuId, ownerDetails); // userDetails를 ownerDetails로 수정
 
         // then
-        verify(menuRepository).save(existingMenu); // 메뉴를 삭제하기 위해 save 호출 (비활성화 처리)
-        assertTrue(existingMenu.isDeleted()); // 삭제 플래그가 true로 설정되었는지 확인
+        verify(menuRepository).save(existingMenu);
+        assertTrue(existingMenu.isDeleted());
     }
 
     // 메뉴 수정 실패 - 메뉴가 존재하지 않음
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_수정_실패_메뉴_존재하지않음() {
-        // given
         Long menuId = 1L;
         MenuUpdateReq updateReq = new MenuUpdateReq("New Name", 12000, "New Description");
 
@@ -212,7 +208,7 @@ public class MenuServiceTest {
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            menuService.updateMenu(menuId, updateReq);
+            menuService.updateMenu(menuId, updateReq, null); // null로 전달하여 실패를 테스트
         });
         assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
     }
@@ -221,14 +217,13 @@ public class MenuServiceTest {
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_삭제_실패_메뉴_존재하지않음() {
-        // given
         Long menuId = 1L;
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.empty());
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            menuService.deleteMenu(menuId);
+            menuService.deleteMenu(menuId, null); // null로 전달하여 실패를 테스트
         });
         assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
     }
