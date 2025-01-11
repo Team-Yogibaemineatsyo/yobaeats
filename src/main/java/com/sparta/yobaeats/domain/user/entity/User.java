@@ -1,12 +1,12 @@
 package com.sparta.yobaeats.domain.user.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
-import com.sparta.yobaeats.domain.user.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "users")
@@ -32,14 +32,42 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @Column
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @Builder
-    public User(String email, String password, String nickName, UserRole role) {
+    public User(Long id, String email, String password, String nickName, UserRole role) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.nickName = nickName;
         this.role = role;
+    }
+
+    public User(Long id, UserRole role) {
+        this.id = id;
+        this.role = role;
+    }
+
+    public void update(String password, String nickName) {
+        updatePassword(password);
+        updateNickName(nickName);
+    }
+
+    private void updatePassword(String newPassword) {
+        if (newPassword != null && !newPassword.isBlank()) {
+            this.password = newPassword;
+        }
+    }
+
+    private void updateNickName(String newNickName) {
+        if (newNickName != null && !newNickName.isBlank()) {
+            this.nickName = newNickName;
+        }
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
     }
 }
