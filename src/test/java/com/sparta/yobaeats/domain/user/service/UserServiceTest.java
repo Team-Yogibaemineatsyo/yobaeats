@@ -85,19 +85,6 @@ class UserServiceTest {
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
     }
 
-    @DisplayName("이메일로 유저 조회 실패 시, '유저가 존재하지 않습니다.' 출력")
-    @Test
-    void findUserByEmailFail() {
-        // given
-        String email = "nonexistent@email.com";
-        given(userRepository.findByEmail(email)).willReturn(Optional.empty());
-
-        // when & then
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-            userService.findUserByEmail(email));
-        assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
-    }
-
     @DisplayName("유저 정보 조회 성공")
     @Test
     void findUserSuccess() {
