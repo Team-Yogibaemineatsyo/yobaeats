@@ -37,6 +37,10 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰가 존재하지 않습니다."),
     DUPLICATE_REVIEW(HttpStatus.CONFLICT,"이미 리뷰가 작성된 주문입니다."),
 
+    // 즐겨찾기 관련 익셉션
+    DUPLICATED_FAVORITE(HttpStatus.CONFLICT, "이미 즐겨찾기한 가게입니다."),
+    FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기가 존재하지 않습니다."),
+
     // Security 관련 익셉션
     LOGIN_FAILED_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다."),
     NEED_LOGIN_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
