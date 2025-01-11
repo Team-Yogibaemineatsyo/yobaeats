@@ -27,8 +27,7 @@ public class UserController {
     public ResponseEntity<UserReadInfoRes> readUserInfo(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId();
-        UserReadInfoRes userRes = userService.findById(userId);
+        UserReadInfoRes userRes = userService.findById(userDetails.getId());
         return ResponseEntity.ok(userRes);
     }
 
@@ -37,8 +36,7 @@ public class UserController {
         @RequestBody @Valid UserUpdateInfoReq userUpdateInfoReq,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId();
-        userService.updateUser(userId, userUpdateInfoReq);
+        userService.updateUser(userDetails.getId(), userUpdateInfoReq);
         return ResponseEntity.noContent().build();
     }
 
@@ -47,8 +45,7 @@ public class UserController {
         @RequestBody @Valid UserDeleteReq userDeleteReq,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getId();
-        userService.deleteUser(userId, userDeleteReq);
+        userService.deleteUser(userDetails.getId(), userDeleteReq);
         return ResponseEntity.noContent().build();
     }
 }

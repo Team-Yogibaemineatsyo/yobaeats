@@ -1,10 +1,9 @@
 package com.sparta.yobaeats.domain.menu.dto;
 
-import org.springframework.http.HttpStatus;
-
 public class MenuValidationMessage {
 
     public static final String STOREID_NOTNULL_MESSAGE = "스토어 아이디를 입력해주세요.";
+    public static final String  MENUINFO_NOTNULL_MESSAGE = "메뉴 정보를 제공해야 합니다.";
     public static final int NAME_MAX = 30;
     public static final String NAME_MAX_MESSAGE = "메뉴명은 30글자를 넘을 수 없습니다.";
     public static final String NAME_BLANK_MESSAGE = "메뉴명을 입력해주세요.";

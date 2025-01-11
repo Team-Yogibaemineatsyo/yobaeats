@@ -51,18 +51,18 @@ public class User extends BaseEntity {
     }
 
     public void update(String password, String nickName) {
-      updatePassword(password);
-      updateNickName(nickName);
+        updatePassword(password);
+        updateNickName(nickName);
     }
 
     private void updatePassword(String newPassword) {
-        if (newPassword != null) {
+        if (newPassword != null && !newPassword.isBlank()) {
             this.password = newPassword;
         }
     }
 
-    private  void updateNickName(String newNickName) {
-        if (newNickName != null) {
+    private void updateNickName(String newNickName) {
+        if (newNickName != null && !newNickName.isBlank()) {
             this.nickName = newNickName;
         }
     }

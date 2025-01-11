@@ -54,7 +54,7 @@ public class StoreController {
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(
             @PathVariable Long storeId,
-            @RequestBody StoreUpdateReq request,
+            @RequestBody @Valid StoreUpdateReq request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         storeService.updateStore(storeId, request, userDetails.getId());

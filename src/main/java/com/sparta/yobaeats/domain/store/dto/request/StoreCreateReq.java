@@ -11,7 +11,10 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalTime;
 
 public record StoreCreateReq(
-        @Size(max = StoreValidationMessage.NAME_MAX, message = StoreValidationMessage.NAME_MAX_MESSAGE)
+        @Size(
+                max = StoreValidationMessage.NAME_MAX,
+                message = StoreValidationMessage.NAME_MAX_MESSAGE
+        )
         @NotBlank(message = StoreValidationMessage.NAME_BLANK_MESSAGE)
         String storeName,
 
@@ -21,7 +24,10 @@ public record StoreCreateReq(
         @NotNull(message = StoreValidationMessage.CLOSE_AT_NULL_MESSAGE)
         LocalTime closeAt,
 
-        @Min(value = StoreValidationMessage.MIN_ORDER_PRICE_MIN, message = StoreValidationMessage.MIN_ORDER_PRICE_MIN_MESSAGE)
+        @Min(
+                value = StoreValidationMessage.MIN_ORDER_PRICE_MIN,
+                message = StoreValidationMessage.MIN_ORDER_PRICE_MIN_MESSAGE
+        )
         @NotNull(message = StoreValidationMessage.MIN_ORDER_PRICE_NULL_MESSAGE)
         Integer minOrderPrice
 ) {
