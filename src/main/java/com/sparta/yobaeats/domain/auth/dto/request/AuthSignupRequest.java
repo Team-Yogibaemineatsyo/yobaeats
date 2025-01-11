@@ -1,22 +1,36 @@
 package com.sparta.yobaeats.domain.auth.dto.request;
 
+import com.sparta.yobaeats.domain.user.dto.UserValidationMessage;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.Size;
 
 public record AuthSignupRequest(
-//        @NotBlank @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+        @NotBlank(message = UserValidationMessage.EMAIL_BLANK_MESSAGE)
+        @Pattern(
+                regexp = UserValidationMessage.EMAIL_REG,
+                message = UserValidationMessage.INVALID_EMAIL_MESSAGE
+        )
         String email,
 
-//        @NotBlank @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$")
+        @NotBlank(message = UserValidationMessage.PASSWORD_BLANK_MESSAGE)
+        @Pattern(
+                regexp = UserValidationMessage.PASSWORD_REG,
+                message = UserValidationMessage.INVALID_PASSWORD_MESSAGE
+        )
         String password,
 
-//        @NotBlank @Length(min = 2, max = 15)
+        @NotBlank(message = UserValidationMessage.NICKNAME_BLANK_MESSAGE)
+        @Size(
+                min = UserValidationMessage.NICKNAME_MIN,
+                max = UserValidationMessage.NICKNAME_MAX,
+                message = UserValidationMessage.NICKNAME_RANGE_MESSAGE
+        )
         String nickName,
 
-        @NotBlank
+        @NotBlank(message = UserValidationMessage.ROLE_BLANK_MESSAGE)
         String role
 ) {
 
