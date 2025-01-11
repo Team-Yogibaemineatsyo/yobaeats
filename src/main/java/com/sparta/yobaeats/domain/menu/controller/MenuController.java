@@ -25,7 +25,7 @@ public class MenuController {
     /**
      * 메뉴 생성 API
      *
-     * @param menuCreateReqList 메뉴 생성 요청 데이터 (JSON 형식)
+     * @param menuCreateReq 메뉴 생성 요청 데이터 (JSON 형식)
      *                          - 이름, 가격, 설명 등 메뉴 정보를 포함
      *                          - 요청에 포함된 모든 메뉴를 생성하고 생성된 메뉴 ID 리스트를 반환
      * @param userDetails       현재 인증된 사용자 정보
@@ -34,10 +34,10 @@ public class MenuController {
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping
     public ResponseEntity<Void> createMenus(
-            @RequestBody @Valid List<MenuCreateReq> menuCreateReqList,
+            @RequestBody @Valid MenuCreateReq menuCreateReq,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList, userDetails.getId());
+        List<Long> createdMenuIds = menuService.createMenus(List.of(menuCreateReq), userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/menus/{menuId}", createdMenuIds.get(0));
 
         return ResponseEntity.created(uri).build();

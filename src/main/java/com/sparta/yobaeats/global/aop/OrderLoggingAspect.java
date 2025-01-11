@@ -45,9 +45,6 @@ public class OrderLoggingAspect {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.ORDER_NOT_FOUND)); // 주문이 없으면 예외 처리
 
-        // 현재 주문 상태로부터 다음 상태를 자동으로 결정합니다.
-        order.changeStatusToNext();
-
         // 해당 주문의 가게 ID를 가져옵니다.
         Long storeId = order.getStore().getId();
 
