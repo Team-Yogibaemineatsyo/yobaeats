@@ -57,6 +57,6 @@ public class Order extends BaseEntity {
      * 상태 전환은 OrderStatus Enum의 nextStatus() 메서드를 통해 처리됩니다.
      */
     public void changeStatusToNext() {
-        this.orderStatus = this.orderStatus.nextStatus();  // nextStatus 호출하여 상태 전환
+        this.orderStatus = this.orderStatus.nextStatus();
     }
 }
