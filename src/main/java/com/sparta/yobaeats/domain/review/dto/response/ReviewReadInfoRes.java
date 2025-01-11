@@ -8,14 +8,14 @@ import lombok.Builder;
 public record ReviewReadInfoRes(
     Long reviewId,
     int star,
-    String contents
+    String content
 ) {
 
     public static ReviewReadInfoRes from(Review review) {
         return ReviewReadInfoRes.builder()
             .reviewId(review.getId())
             .star(review.getStar())
-            .contents(review.getContents())
+            .content(review.getContent())
             .build();
     }
 }
