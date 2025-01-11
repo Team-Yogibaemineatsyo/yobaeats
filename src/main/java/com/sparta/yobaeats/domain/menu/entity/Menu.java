@@ -69,17 +69,6 @@ public class Menu {
     }
 
     /**
-     * 메뉴 삭제 처리 메서드
-     *
-     * 이미 삭제된 메뉴일 경우 예외를 발생시킴
-     */
-    public void delete() {
-        if (this.isDeleted) {
-            throw new ConflictException(ErrorCode.MENU_ALREADY_DELETED);
-        }
-    }
-
-    /**
      * 메뉴 삭제 상태를 변경하는 메서드
      *
      * 이 메서드는 메뉴를 삭제 상태로 표시합니다.
@@ -94,7 +83,7 @@ public class Menu {
      * @param newName 새로운 메뉴 이름
      */
     private void updateName(String newName) {
-        if (newName != null) {
+        if (newName != null && !newName.isBlank()) {
             this.menuName = newName; // 새로운 이름으로 업데이트
         }
     }
@@ -116,7 +105,7 @@ public class Menu {
      * @param newDescription 새로운 메뉴 설명
      */
     private void updateDescription(String newDescription) {
-        if (newDescription != null) {
+        if (newDescription != null && !newDescription.isBlank()) {
             this.description = newDescription; // 새로운 설명으로 업데이트
         }
     }

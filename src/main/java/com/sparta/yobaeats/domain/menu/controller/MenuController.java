@@ -8,6 +8,7 @@ import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +30,13 @@ public class MenuController {
      *                          - 요청에 포함된 메뉴를 생성하고 생성된 메뉴 ID를 반환
      * @return HTTP 201(CREATED) 상태 코드와 생성된 메뉴의 URI를 포함하는 응답
      */
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping
     public ResponseEntity<Void> createMenus(
             @RequestBody @Valid List<MenuCreateReq> menuCreateReqList,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList, userDetails);
+        List<Long> createdMenuIds = menuService.createMenus(menuCreateReqList, userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/menus/{menuId}", createdMenuIds.get(0));
 
         return ResponseEntity.created(uri).build();
@@ -49,13 +51,14 @@ public class MenuController {
      *                       - 메뉴를 수정한 후 HTTP 200(OK) 상태 코드를 반환
      * @return HTTP 200(OK) 상태 코드 반환
      */
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{menuId}")
     public ResponseEntity<Void> updateMenu(
             @PathVariable("menuId") Long menuId,
             @RequestBody @Valid MenuUpdateReq menuUpdateReq,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        menuService.updateMenu(menuId, menuUpdateReq, userDetails);
+        menuService.updateMenu(menuId, menuUpdateReq, userDetails.getId());
         return ResponseEntity.ok().build();
     }
 
@@ -66,12 +69,13 @@ public class MenuController {
      *               - 메뉴를 삭제한 후 HTTP 204(NO CONTENT) 상태 코드를 반환
      * @return HTTP 204(NO CONTENT) 상태 코드 반환
      */
+    @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> deleteMenu(
             @PathVariable("menuId") Long menuId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        menuService.deleteMenu(menuId, userDetails);
+        menuService.deleteMenu(menuId, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 }

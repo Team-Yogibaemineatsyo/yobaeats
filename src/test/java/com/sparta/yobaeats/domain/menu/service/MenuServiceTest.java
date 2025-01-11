@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.menu.service;
 
 import com.sparta.yobaeats.domain.menu.dto.request.MenuCreateReq;
+import com.sparta.yobaeats.domain.menu.dto.request.MenuInfoCreateReq;
 import com.sparta.yobaeats.domain.menu.dto.request.MenuUpdateReq;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.repository.MenuRepository;
@@ -12,7 +13,7 @@ import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
-import org.junit.jupiter.api.BeforeEach; // 추가된 import
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,7 +50,7 @@ public class MenuServiceTest {
     private CustomUserDetails ownerDetails;
     private Store store;
 
-    @BeforeEach // 각 테스트 실행 전 호출
+    @BeforeEach
     void setUp() {
         owner = User.builder()
                 .id(1L)
@@ -59,10 +60,8 @@ public class MenuServiceTest {
                 .role(UserRole.ROLE_OWNER)
                 .build();
 
-        // UserDetailsCustom 객체 생성
         ownerDetails = new CustomUserDetails(owner);
 
-        // Security Context 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 ownerDetails,
                 null,
@@ -82,23 +81,27 @@ public class MenuServiceTest {
                 .build();
     }
 
-    // 메뉴 여러 개 생성 테스트
     @Test
-    @WithMockUser(roles = "OWNER", username = "owner@example.com")
+    @WithMockUser(roles = "OWNER")
     void 메뉴_여러개_생성_성공() {
         // given
-        MenuCreateReq menuCreateReq1 = new MenuCreateReq(store.getId(), "메뉴 이름 1", 10000, "메뉴 설명 1");
-        MenuCreateReq menuCreateReq2 = new MenuCreateReq(store.getId(), "메뉴 이름 2", 12000, "메뉴 설명 2");
-        List<MenuCreateReq> menuCreateReqList = Arrays.asList(menuCreateReq1, menuCreateReq2);
+        Long storeId = store.getId();
 
-        when(storeService.findStoreById(store.getId())).thenReturn(store);
+        // 메뉴 정보 생성
+        MenuInfoCreateReq menuInfo1 = new MenuInfoCreateReq("메뉴 이름 1", 10000, "메뉴 설명 1");
+        MenuInfoCreateReq menuInfo2 = new MenuInfoCreateReq("메뉴 이름 2", 12000, "메뉴 설명 2");
+
+        // MenuCreateReq 생성
+        MenuCreateReq menuCreateReq = new MenuCreateReq(storeId, List.of(menuInfo1, menuInfo2));
+
+        when(storeService.findStoreById(storeId)).thenReturn(store);
 
         Menu menu1 = new Menu(1L, store, "메뉴 이름 1", 10000, "메뉴 설명 1", false);
         Menu menu2 = new Menu(2L, store, "메뉴 이름 2", 12000, "메뉴 설명 2", false);
         when(menuRepository.saveAll(anyList())).thenReturn(Arrays.asList(menu1, menu2));
 
         // when
-        List<Long> menuIds = menuService.createMenus(menuCreateReqList, ownerDetails);
+        List<Long> menuIds = menuService.createMenus(List.of(menuCreateReq), owner.getId());
 
         // then
         verify(menuRepository).saveAll(anyList());
@@ -107,7 +110,6 @@ public class MenuServiceTest {
         assertEquals(2L, menuIds.get(1));
     }
 
-    // 메뉴 수정 테스트
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_수정_성공() {
@@ -117,16 +119,13 @@ public class MenuServiceTest {
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
 
-        // when
-        menuService.updateMenu(menuId, updateReq, ownerDetails);
+        menuService.updateMenu(menuId, updateReq, owner.getId());
 
-        // then
         assertEquals("New Name", existingMenu.getMenuName());
         assertEquals(12000, existingMenu.getMenuPrice());
         assertEquals("New Description", existingMenu.getDescription());
     }
 
-    // 메뉴 삭제 테스트
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_삭제_성공() {
@@ -135,15 +134,12 @@ public class MenuServiceTest {
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
 
-        // when
-        menuService.deleteMenu(menuId, ownerDetails);
+        menuService.deleteMenu(menuId, owner.getId());
 
-        // then
         verify(menuRepository).save(existingMenu);
         assertTrue(existingMenu.isDeleted());
     }
 
-    // 메뉴 수정 실패 - 메뉴가 존재하지 않음
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_수정_실패_메뉴_존재하지않음() {
@@ -152,14 +148,12 @@ public class MenuServiceTest {
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.empty());
 
-        // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            menuService.updateMenu(menuId, updateReq, ownerDetails); // ownerDetails로 수정
+            menuService.updateMenu(menuId, updateReq, owner.getId());
         });
         assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
     }
 
-    // 메뉴 삭제 실패 - 메뉴가 존재하지 않음
     @Test
     @WithMockUser(roles = "OWNER")
     void 메뉴_삭제_실패_메뉴_존재하지않음() {
@@ -167,9 +161,8 @@ public class MenuServiceTest {
 
         when(menuRepository.findById(menuId)).thenReturn(Optional.empty());
 
-        // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            menuService.deleteMenu(menuId, ownerDetails); // ownerDetails로 수정
+            menuService.deleteMenu(menuId, owner.getId());
         });
         assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
     }
