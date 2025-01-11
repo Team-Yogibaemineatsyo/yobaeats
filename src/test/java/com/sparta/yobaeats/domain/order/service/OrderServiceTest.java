@@ -3,7 +3,6 @@ package com.sparta.yobaeats.domain.order.service;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
-import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.repository.OrderRepository;
@@ -21,14 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,57 +47,51 @@ public class OrderServiceTest {
     private UserService userService;
 
     private User user;
-    private CustomUserDetails customUserDetails;
     private Store store;
     private Menu menu;
 
     @BeforeEach
     void setUp() {
-        // 공통적으로 사용되는 객체 초기화
         user = User.builder()
                 .id(1L)
                 .email("user@example.com")
                 .password("password")
-                .nickName("username")
+                .nickName("testUser")
                 .role(UserRole.ROLE_USER)
                 .build();
-        customUserDetails = new CustomUserDetails(user);
 
         store = Store.builder()
                 .id(1L)
-                .name("가게 이름")
-                .minOrderPrice(5000)
-                .starRate(0.0)
+                .name("Test Store")
+                .minOrderPrice(10000)
+                .starRate(4.5)
                 .isDeleted(false)
                 .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(21, 0))
+                .closeAt(LocalTime.of(22, 0))
                 .user(user)
                 .build();
 
-        menu = new Menu(1L, store, "메뉴 이름", 10000, "메뉴 설명", false);
+        menu = new Menu(1L, store, "Test Menu", 15000, "Delicious food", false);
     }
 
-    // 주문 생성 성공 테스트
     @Test
-    @WithMockUser(roles = "USER")
     void 주문_생성_성공() {
         // given
         OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId(), menu.getId());
 
-        // Mock 설정
         when(storeService.findStoreById(store.getId())).thenReturn(store);
         when(menuService.findMenuById(menu.getId())).thenReturn(menu);
+        when(userService.findUserById(user.getId())).thenReturn(user);
         when(orderRepository.save(any(Order.class))).thenReturn(new Order(1L, user, store, menu, OrderStatus.PENDING));
 
         // when
-        Long orderId = orderService.createOrder(orderCreateReq, customUserDetails);
+        Long orderId = orderService.createOrder(orderCreateReq, user.getId());
 
         // then
         assertNotNull(orderId);
         verify(orderRepository).save(any(Order.class));
     }
 
-    // 주문 조회 성공 테스트
     @Test
     void 주문_조회_성공() {
         // given
@@ -118,7 +106,6 @@ public class OrderServiceTest {
         assertEquals(user.getId(), foundOrder.getUser().getId());
     }
 
-    // 주문 조회 실패 테스트
     @Test
     void 주문_조회_실패() {
         // given
@@ -132,57 +119,48 @@ public class OrderServiceTest {
         assertEquals(ErrorCode.ORDER_NOT_FOUND, exception.getErrorCode());
     }
 
-    // 주문 상태 변경 성공 테스트
     @Test
     @WithMockUser(roles = "OWNER")
     void 주문_상태_변경_성공() {
         // given
         User owner = User.builder()
-                .id(1L)
+                .id(2L)
                 .email("owner@example.com")
                 .password("password")
-                .nickName("ownerUsername")
+                .nickName("ownerUser")
                 .role(UserRole.ROLE_OWNER)
                 .build();
 
-        CustomUserDetails ownerDetails = new CustomUserDetails(owner);
+        Store ownerStore = Store.builder()
+                .id(2L)
+                .name("Owner's Store")
+                .user(owner)
+                .minOrderPrice(15000)
+                .build();
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                ownerDetails,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_OWNER"))
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Order order = new Order(1L, user, ownerStore, menu, OrderStatus.PENDING);
 
-        // 주문 객체 생성
-        Order order = new Order(1L, owner, store, menu, OrderStatus.PENDING); // 올바른 소유자 연결
-
-        // Mock 설정
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
-        when(storeService.findStoreById(store.getId())).thenReturn(store);
+        doNothing().when(userService).validateUser(ownerStore.getUser().getId(), owner.getId());
 
-        OrderUpdateReq orderUpdateReq = new OrderUpdateReq(OrderStatus.ORDER_REQUESTED);
 
         // when
-        orderService.updateOrderStatus(order.getId(), orderUpdateReq, ownerDetails);
+        orderService.updateOrderStatus(order.getId(), owner.getId());
 
         // then
         assertEquals(OrderStatus.ORDER_REQUESTED, order.getOrderStatus());
         verify(orderRepository).findById(order.getId());
-        verify(storeService).findStoreById(store.getId());
     }
 
-    // 주문 생성 실패 테스트 - 스토어가 존재하지 않음
     @Test
-    @WithMockUser(roles = "USER")
-    void 주문_생성_실패_스토어_존재하지않음() {
+    void 주문_생성_실패_스토어_없음() {
         // given
         when(storeService.findStoreById(store.getId())).thenThrow(new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND));
         OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId(), menu.getId());
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            orderService.createOrder(orderCreateReq, customUserDetails);
+            orderService.createOrder(orderCreateReq, user.getId());
         });
         assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
     }

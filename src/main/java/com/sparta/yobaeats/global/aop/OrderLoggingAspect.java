@@ -1,17 +1,15 @@
 package com.sparta.yobaeats.global.aop;
 
 import com.sparta.yobaeats.domain.order.entity.Order;
-import com.sparta.yobaeats.domain.order.dto.request.OrderUpdateReq;
-import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.repository.OrderRepository;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,10 +40,6 @@ public class OrderLoggingAspect {
         // 조인 포인트에서 인수들을 가져옵니다.
         Object[] args = joinPoint.getArgs();
         Long orderId = (Long) args[0]; // 첫 번째 인수는 주문 ID
-        OrderUpdateReq orderUpdateReq = (OrderUpdateReq) args[1]; // 두 번째 인수는 주문 업데이트 요청
-
-        // 새로운 상태를 가져옵니다.
-        OrderStatus newStatus = orderUpdateReq.orderStatus();
 
         // 주문 ID로 주문을 조회합니다.
         Order order = orderRepository.findById(orderId)
@@ -55,11 +49,7 @@ public class OrderLoggingAspect {
         Long storeId = order.getStore().getId();
 
         // 로그에 주문 상태 업데이트 정보를 기록합니다.
-        if (newStatus != null) {
-            log.info("Order status updated: time={}, storeId={}, orderId={}, newStatus={}",
-                    formattedTime, storeId, orderId, newStatus);
-        } else {
-            log.warn("Order status is null for orderId={}", orderId);
-        }
+        log.info("Order status updated: time={}, storeId={}, orderId={}, newStatus={}",
+                formattedTime, storeId, orderId, order.getOrderStatus());
     }
 }

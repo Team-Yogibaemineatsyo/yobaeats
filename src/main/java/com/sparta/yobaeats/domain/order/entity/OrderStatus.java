@@ -9,16 +9,18 @@ public enum OrderStatus {
     DELIVERED;           // 배달 완료
 
     /**
-     * 주어진 새로운 상태로의 전환이 가능한지 여부를 체크하는 메서드.
-     * 상태 전환은 다음과 같은 규칙을 따릅니다:
+     * 현재 주문 상태에서 다음 상태로 전환하는 메서드.
+     * 이 메서드는 주문의 상태 전환 규칙을 따릅니다:
      *     '대기중' -> '주문 요청됨'
      *     '주문 요청됨' -> '주문 수락됨'
      *     '주문 수락됨' -> '조리 완료됨'
      *     '조리 완료됨' -> '배달 중'
      *     '배달 중' -> '배달 완료됨'
-     *     이 순서를 따라서만 상태 변경이 가능합니다.
      *
-     * @return 전환이 가능한 상태를 반환하며, 불가능한 경우 IllegalStateException을 던집니다.
+     * 전환이 불가능한 경우 IllegalStateException이 발생합니다.
+     *
+     * @return 다음으로 전환 가능한 주문 상태
+     * @throws IllegalStateException 전환이 불가능한 경우 발생
      */
     public OrderStatus nextStatus() {
         // 불가능한 전환 시 예외 발생

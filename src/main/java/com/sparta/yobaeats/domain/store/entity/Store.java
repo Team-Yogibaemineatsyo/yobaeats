@@ -111,7 +111,7 @@ public class Store extends BaseEntity {
     }
 
     private void updateName(String newName) {
-        if (newName != null) {
+        if (newName != null && !newName.isBlank()) {
             this.name = newName;
         }
     }

@@ -23,8 +23,12 @@ public class AtLeastOneNotNullValidator implements ConstraintValidator<AtLeastOn
             try {
                 Object value = field.get(object);
 
-                if (value != null) {
-                    if (value instanceof String && !((String) value).isBlank()) {
+                if (value instanceof String) {
+                    if(!((String) value).isBlank()) {
+                        return true;
+                    }
+                } else {
+                    if (value != null) {
                         return true;
                     }
                 }

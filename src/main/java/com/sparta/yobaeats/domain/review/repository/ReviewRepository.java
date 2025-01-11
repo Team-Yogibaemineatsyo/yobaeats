@@ -15,4 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     @Query("SELECT ROUND(AVG(r.star),1) FROM Review r WHERE r.store.id = :storeId AND r.isDeleted = false")
     Double getAverageStarRate(@Param("storeId") Long storeId);
+
+    int countByStoreIdAndIsDeletedFalse(Long storeId);
 }
