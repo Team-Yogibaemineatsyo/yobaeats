@@ -35,7 +35,7 @@ public class Review extends BaseEntity {
     private Order order;
 
     @Column(nullable = false)
-    private String contents;
+    private String content;
 
     @Column(nullable = false)
     private int star;
@@ -50,14 +50,14 @@ public class Review extends BaseEntity {
         User user,
         Store store,
         Order order,
-        String contents,
+        String content,
         int star
     ) {
         this.id = id;
         this.user = user;
         this.store = store;
         this.order = order;
-        this.contents = contents;
+        this.content = content;
         this.star = star;
     }
 

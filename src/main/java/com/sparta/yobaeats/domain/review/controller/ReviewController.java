@@ -38,9 +38,9 @@ public class ReviewController {
         return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping
+    @GetMapping("/{storeId}")
     public ResponseEntity<ReviewReadInfoListRes> readReviews(
-        @RequestParam Long storeId,
+        @PathVariable Long storeId,
         @RequestParam(required = false) Integer startStar,
         @RequestParam(required = false) Integer endStar
     ) {
