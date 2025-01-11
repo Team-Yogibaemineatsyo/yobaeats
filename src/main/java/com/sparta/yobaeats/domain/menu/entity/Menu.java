@@ -56,7 +56,7 @@ public class Menu {
     }
 
     /**
-     * 메뉴 정보를 업데이트하는 메서드
+     * 메뉴 정보를 업데이트합니다.
      *
      * @param menuName 업데이트할 메뉴 이름
      * @param menuPrice 업데이트할 메뉴 가격
@@ -69,16 +69,16 @@ public class Menu {
     }
 
     /**
-     * 메뉴 삭제 상태를 변경하는 메서드
+     * 메뉴를 삭제 상태로 표시합니다.
      *
-     * 이 메서드는 메뉴를 삭제 상태로 표시합니다.
+     * 이 메서드는 메뉴의 삭제 상태를 true로 설정합니다.
      */
     public void markAsDeleted() {
         this.isDeleted = true;
     }
 
     /**
-     * 메뉴 이름을 업데이트하는 메서드
+     * 메뉴 이름을 업데이트합니다.
      *
      * @param newName 새로운 메뉴 이름
      */
@@ -89,7 +89,7 @@ public class Menu {
     }
 
     /**
-     * 메뉴 가격을 업데이트하는 메서드
+     * 메뉴 가격을 업데이트합니다.
      *
      * @param newPrice 새로운 메뉴 가격
      */
@@ -100,7 +100,7 @@ public class Menu {
     }
 
     /**
-     * 메뉴 설명을 업데이트하는 메서드
+     * 메뉴 설명을 업데이트합니다.
      *
      * @param newDescription 새로운 메뉴 설명
      */

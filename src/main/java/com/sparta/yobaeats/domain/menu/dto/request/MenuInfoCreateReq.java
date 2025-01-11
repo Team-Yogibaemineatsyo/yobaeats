@@ -22,10 +22,10 @@ public record MenuInfoCreateReq(
         String description
 ) {
     /**
-     * MenuInfoCreateReq를 사용하여 Menu 엔티티 생성
+     * MenuInfoCreateReq를 사용하여 Menu 엔티티를 생성합니다.
      *
      * @param store 메뉴가 속한 Store 엔티티
-     * @return Menu 객체
+     * @return 생성된 Menu 객체
      */
     public Menu toEntity(Store store) {
         return Menu.builder()

@@ -33,6 +33,7 @@ public class OrderService {
      * 스토어와 메뉴 정보를 확인하고, 현재 인증된 사용자 정보를 기반으로 주문을 저장합니다.
      *
      * @param orderCreateReq 주문 생성 요청 DTO
+     * @param userId         주문을 생성하는 사용자 ID
      * @return 생성된 주문의 ID
      */
     public Long createOrder(OrderCreateReq orderCreateReq, Long userId) {
@@ -61,7 +62,8 @@ public class OrderService {
      * 주어진 주문 ID와 주문 업데이트 요청 DTO를 사용하여 주문 상태를 업데이트합니다.
      * 주문의 현재 상태와 요청된 상태가 일치하는지 확인 후 상태를 변경합니다.
      *
-     * @param orderId        주문 ID
+     * @param orderId 주문 ID
+     * @param userId  주문 상태를 업데이트하는 사용자 ID
      */
     public void updateOrderStatus(Long orderId, Long userId) {
         // 주문 조회
@@ -82,6 +84,7 @@ public class OrderService {
      *
      * @param orderId 찾고자 하는 주문의 ID
      * @return 주문 객체
+     * @throws CustomRuntimeException 주문이 존재하지 않는 경우 발생
      */
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)

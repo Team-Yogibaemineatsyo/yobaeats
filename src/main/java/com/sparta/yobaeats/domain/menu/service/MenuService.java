@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,9 +26,10 @@ public class MenuService {
     private final UserService userService;
 
     /**
-     * 메뉴 여러 개를 생성하는 메서드
+     * 여러 개의 메뉴를 생성합니다.
      *
      * @param menuCreateReqList 생성할 메뉴의 요청 데이터 리스트
+     * @param userId 메뉴를 생성하는 사용자의 ID
      * @return 생성된 메뉴의 ID 리스트
      */
     public List<Long> createMenus(List<MenuCreateReq> menuCreateReqList, Long userId) {
@@ -55,10 +54,11 @@ public class MenuService {
     }
 
     /**
-     * 메뉴를 수정하는 메서드
+     * 메뉴를 수정합니다.
      *
      * @param menuId 수정할 메뉴의 ID
      * @param menuUpdateReq 수정 요청 데이터
+     * @param userId 메뉴를 수정하는 사용자의 ID
      */
     public void updateMenu(Long menuId, MenuUpdateReq menuUpdateReq, Long userId) {
         Menu menu = findMenuById(menuId);
@@ -77,9 +77,10 @@ public class MenuService {
     }
 
     /**
-     * 메뉴를 삭제하는 메서드
+     * 메뉴를 삭제합니다.
      *
      * @param menuId 삭제할 메뉴의 ID
+     * @param userId 메뉴를 삭제하는 사용자의 ID
      */
     public void deleteMenu(Long menuId, Long userId) {
         Menu menu = findMenuById(menuId);
@@ -95,7 +96,7 @@ public class MenuService {
     }
 
     /**
-     * 메뉴 ID로 메뉴를 조회하는 메서드
+     * 메뉴 ID로 메뉴를 조회합니다.
      *
      * @param menuId 조회할 메뉴의 ID
      * @return 조회된 메뉴 객체
