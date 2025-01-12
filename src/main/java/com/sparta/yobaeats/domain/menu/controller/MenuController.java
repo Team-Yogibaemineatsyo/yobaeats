@@ -37,7 +37,7 @@ public class MenuController {
             @RequestBody @Valid MenuCreateReq menuCreateReq,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        List<Long> createdMenuIds = menuService.createMenus(List.of(menuCreateReq), userDetails.getId());
+        List<Long> createdMenuIds = menuService.createMenus(menuCreateReq, userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/menus/{menuId}", createdMenuIds.get(0));
 
         return ResponseEntity.created(uri).build();

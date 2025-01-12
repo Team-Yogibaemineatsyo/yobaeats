@@ -28,23 +28,24 @@ public class MenuService {
     /**
      * 여러 개의 메뉴를 생성합니다.
      *
-     * @param menuCreateReqList 생성할 메뉴의 요청 데이터 리스트
+     * @param menuCreateReq 생성할 메뉴의 요청 데이터 리스트
      * @param userId 메뉴를 생성하는 사용자의 ID
      * @return 생성된 메뉴의 ID 리스트
      */
-    public List<Long> createMenus(List<MenuCreateReq> menuCreateReqList, Long userId) {
-        List<Menu> menus = menuCreateReqList.stream()
-                .flatMap(menuCreateReq -> {
+    public List<Long> createMenus(MenuCreateReq menuCreateReq, Long userId) {
                     // 스토어 조회
                     Store store = storeService.findStoreById(menuCreateReq.storeId());
 
                     // 소유자 체크
                     userService.validateUser(store.getUser().getId(), userId);
 
+        List<Menu> menus = menuCreateReq.menus()
+                .stream()
+                .map(menuReq -> {
                     // Store 엔티티를 사용하여 List<Menu> 생성
-                    return menuCreateReq.toEntities(store).stream();
+                    return menuReq.toEntity(store);
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         List<Menu> savedMenus = menuRepository.saveAll(menus);
 
