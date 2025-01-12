@@ -54,7 +54,7 @@ public class ReplyService {
     }
 
     public List<ReplyReadRes> readReplies(Long userId) {
-        List<Reply> replies = replyRepository.findAllByUserIdOrderByUpdatedAtDesc(userId);
+        List<Reply> replies = replyRepository.findAllByUserIdAndIsDeletedFalseOrderByUpdatedAtDesc(userId);
 
         return replies.stream()
                 .map(ReplyReadRes::from)

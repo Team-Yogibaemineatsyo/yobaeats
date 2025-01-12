@@ -10,5 +10,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     Optional<Reply> findByIdAndIsDeletedFalse(Long replyId);
 
-    List<Reply> findAllByUserIdOrderByUpdatedAtDesc(Long userId);
+    List<Reply> findAllByUserIdAndIsDeletedFalseOrderByUpdatedAtDesc(Long userId);
 }
