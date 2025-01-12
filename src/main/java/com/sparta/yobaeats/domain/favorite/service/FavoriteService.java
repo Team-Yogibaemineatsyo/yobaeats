@@ -7,8 +7,11 @@ import com.sparta.yobaeats.domain.favorite.repository.FavoriteRepository;
 import com.sparta.yobaeats.domain.store.service.StoreService;
 import com.sparta.yobaeats.global.exception.ConflictException;
 import com.sparta.yobaeats.global.exception.NotFoundException;
+import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +30,16 @@ public class FavoriteService {
             throw new ConflictException(ErrorCode.DUPLICATED_FAVORITE);
         }
 
-        storeService.findStoreById(favoriteCreateReq.storeId());
+        Long storeId = favoriteCreateReq.storeId();
+        if (userId.equals(storeService.findStoreById(storeId).getUser().getId())) {
+            throw new UnauthorizedException(ErrorCode.SELF_FAVORITE_NOT_ALLOWED);
+        }
 
         favoriteRepository.save(favoriteCreateReq.to(userId));
 
-        return favoriteCreateReq.storeId();
+        return storeId;
     }
+
 
     public List<FavoriteReadRes> readFavorites(Long userId) {
         List<Favorite> favorites = favoriteRepository.findByUserId(userId);
@@ -41,13 +48,13 @@ public class FavoriteService {
             throw new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND);
         }
         return favorites.stream()
-            .map(FavoriteReadRes::from)
-            .toList();
+                .map(FavoriteReadRes::from)
+                .toList();
     }
 
     public FavoriteReadRes readFavorite(Long userId, Long favoriteId) {
         Favorite favorite = favoriteRepository.findByIdAndUserId(favoriteId, userId)
-            .orElseThrow(() -> new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND));
 
         storeService.findStoreById(favorite.getStoreId());
 
@@ -57,7 +64,7 @@ public class FavoriteService {
     @Transactional
     public void deleteFavorite(Long userId, Long favoriteId) {
         Favorite favorite = favoriteRepository.findByIdAndUserId(favoriteId, userId)
-            .orElseThrow(() -> new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND));
 
         favoriteRepository.delete(favorite);
     }
