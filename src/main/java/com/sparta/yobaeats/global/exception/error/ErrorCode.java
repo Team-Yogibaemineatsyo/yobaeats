@@ -43,7 +43,11 @@ public enum ErrorCode {
     AUTHORIZATION_EXCEPTION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
 
     // JWT 관련 익셉션
-    JWT_TOKEN_ERROR(HttpStatus.BAD_REQUEST, "jwt token error");
+    JWT_TOKEN_ERROR(HttpStatus.BAD_REQUEST, "jwt token error"),
+
+    // 장바구니 관련 익셉션
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 장바구니가 존재하지 않습니다."),
+    INVALID_DECREASE_QUANTITY(HttpStatus.BAD_REQUEST, "수량이 0보다 적을 순 없습니다.");
 
     private final HttpStatus status;
     private final String message;
