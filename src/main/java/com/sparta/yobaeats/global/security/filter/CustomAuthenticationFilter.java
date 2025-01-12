@@ -2,12 +2,12 @@ package com.sparta.yobaeats.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.yobaeats.global.security.dto.request.AuthLoginRequest;
-import com.sparta.yobaeats.global.security.authentication.CustomAuthenticationToken;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -37,13 +37,12 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
         String email = authLoginRequest.email();
         String password = authLoginRequest.password();
 
-        CustomAuthenticationToken token = new CustomAuthenticationToken(email, password);
-        return getAuthenticationManager().authenticate(token);
+        return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(email, password));
     }
 
     private void validateAuthLoginRequest(AuthLoginRequest authLoginRequest) {
         if (!StringUtils.hasText(authLoginRequest.email()) || !StringUtils.hasText(authLoginRequest.password())) {
-            throw new BadCredentialsException("Email and password are required");
+            throw new BadCredentialsException("이메일과 비밀번호를 입력해주세요.");
         }
 
         // TODO 추가 validation 필요??
