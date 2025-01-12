@@ -22,12 +22,8 @@ public class CartItem implements Serializable {
         this.quantity = quantity;
     }
 
-    public void increaseQuantity(Integer quantity) {
-        this.quantity += quantity;
-    }
-
-    public void decreaseQuantity(Integer quantity) {
-        if (this.quantity - quantity < 0) {
+    public void changeQuantity(int changeValue) {
+        if (this.quantity + changeValue < 0) {
             throw new InvalidException(ErrorCode.INVALID_DECREASE_QUANTITY);
         }
 

@@ -1,16 +1,15 @@
 package com.sparta.yobaeats.domain.cart.controller;
 
 import com.sparta.yobaeats.domain.cart.dto.request.CartCreateReq;
+import com.sparta.yobaeats.domain.cart.dto.request.CartItemQuantityUpdateReq;
 import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +25,17 @@ public class CartController {
     ) {
         cartService.addItemToCart(request, userDetails.getId());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping("/{menuId}/quantity")
+    public ResponseEntity<Void> updateCart(
+            @PathVariable Long menuId,
+            @RequestBody @Valid CartItemQuantityUpdateReq request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        cartService.updateCartItemQuantity(menuId, request, userDetails.getId());
+
+        return ResponseEntity.noContent().build();
     }
 }

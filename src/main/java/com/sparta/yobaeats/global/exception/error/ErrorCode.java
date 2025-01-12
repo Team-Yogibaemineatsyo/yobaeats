@@ -47,6 +47,7 @@ public enum ErrorCode {
 
     // 장바구니 관련 익셉션
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 장바구니가 존재하지 않습니다."),
+    CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니에 해당 메뉴가 존재하지 않습니다."),
     INVALID_DECREASE_QUANTITY(HttpStatus.BAD_REQUEST, "수량이 0보다 적을 순 없습니다.");
 
     private final HttpStatus status;
