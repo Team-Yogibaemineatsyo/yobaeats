@@ -1,9 +1,12 @@
 package com.sparta.yobaeats.domain.order.service;
 
+import com.sparta.yobaeats.domain.cart.entity.Cart;
+import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.entity.Order;
+import com.sparta.yobaeats.domain.order.entity.OrderMenu;
 import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.repository.OrderRepository;
 import com.sparta.yobaeats.domain.store.entity.Store;
@@ -13,7 +16,6 @@ import com.sparta.yobaeats.domain.user.entity.UserRole;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
-import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +48,9 @@ public class OrderServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private CartService cartService;
 
     private User user;
     private Store store;
@@ -77,12 +83,16 @@ public class OrderServiceTest {
     @Test
     void 주문_생성_성공() {
         // given
-        OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId(), menu.getId());
+        OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId());
+        Cart cart = Cart.builder().userId(user.getId()).build();
+        List<OrderMenu> menus = List.of(OrderMenu.builder().build());
 
         when(storeService.findStoreById(store.getId())).thenReturn(store);
-        when(menuService.findMenuById(menu.getId())).thenReturn(menu);
+//        when(menuService.findMenuById(menu.getId())).thenReturn(menu);
         when(userService.findUserById(user.getId())).thenReturn(user);
-        when(orderRepository.save(any(Order.class))).thenReturn(new Order(1L, user, store, menu, OrderStatus.PENDING));
+        when(cartService.findCartByUserId(user.getId())).thenReturn(cart);
+        when(orderRepository.save(any(Order.class)))
+                .thenReturn(Order.builder().id(1L).totalPrice(30000).user(user).store(store).menus(menus).build());
 
         // when
         Long orderId = orderService.createOrder(orderCreateReq, user.getId());
@@ -95,7 +105,7 @@ public class OrderServiceTest {
     @Test
     void 주문_조회_성공() {
         // given
-        Order order = new Order(1L, user, store, menu, OrderStatus.PENDING);
+        Order order = Order.builder().id(1L).user(user).store(store).build();
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
         // when
@@ -138,7 +148,7 @@ public class OrderServiceTest {
                 .minOrderPrice(15000)
                 .build();
 
-        Order order = new Order(1L, user, ownerStore, menu, OrderStatus.PENDING);
+        Order order = Order.builder().id(1L).user(user).store(ownerStore).orderStatus(OrderStatus.ORDER_REQUESTED).build();
 
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
         doNothing().when(userService).validateUser(ownerStore.getUser().getId(), owner.getId());
@@ -148,7 +158,7 @@ public class OrderServiceTest {
         orderService.updateOrderStatus(order.getId(), owner.getId());
 
         // then
-        assertEquals(OrderStatus.ORDER_REQUESTED, order.getOrderStatus());
+        assertEquals(OrderStatus.ORDER_ACCEPTED, order.getOrderStatus());
         verify(orderRepository).findById(order.getId());
     }
 
@@ -156,7 +166,7 @@ public class OrderServiceTest {
     void 주문_생성_실패_스토어_없음() {
         // given
         when(storeService.findStoreById(store.getId())).thenThrow(new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND));
-        OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId(), menu.getId());
+        OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId());
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {

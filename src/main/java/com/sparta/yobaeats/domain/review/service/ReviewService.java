@@ -74,10 +74,6 @@ public class ReviewService {
         List<Review> reviewList = reviewRepository
                 .findReviewsByStoreIdAndStar(storeId, startStar, endStar);
 
-        if (reviewList.isEmpty()) {
-            throw new NotFoundException(ErrorCode.REVIEW_NOT_FOUND);
-        }
-
         return reviewList.stream()
                 .map(ReviewReadInfoRes::from)
                 .toList();
@@ -108,5 +104,10 @@ public class ReviewService {
         userService.validateUser(review.getUser().getId(), userId);
 
         review.softDelete();
+    }
+
+    public Review findReviewById(Long reviewId) {
+        return reviewRepository.findByIdAndIsDeletedFalse(reviewId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
     }
 }

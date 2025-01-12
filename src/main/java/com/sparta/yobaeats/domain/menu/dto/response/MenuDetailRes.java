@@ -1,4 +1,4 @@
-package com.sparta.yobaeats.domain.store.dto.response;
+package com.sparta.yobaeats.domain.menu.dto.response;
 
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import lombok.AccessLevel;

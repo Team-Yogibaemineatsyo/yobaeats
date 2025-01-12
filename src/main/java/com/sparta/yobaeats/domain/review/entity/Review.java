@@ -2,6 +2,7 @@ package com.sparta.yobaeats.domain.review.entity;
 
 import com.sparta.yobaeats.domain.common.BaseEntity;
 import com.sparta.yobaeats.domain.order.entity.Order;
+import com.sparta.yobaeats.domain.reply.entity.Reply;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import com.sparta.yobaeats.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -40,18 +41,21 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private int star;
 
+    @OneToOne(mappedBy = "review")
+    private Reply reply;
+
     @Column
     @ColumnDefault("false")
     private boolean isDeleted = false;
 
     @Builder
     public Review(
-        Long id,
-        User user,
-        Store store,
-        Order order,
-        String content,
-        int star
+            Long id,
+            User user,
+            Store store,
+            Order order,
+            String content,
+            int star
     ) {
         this.id = id;
         this.user = user;
@@ -63,5 +67,8 @@ public class Review extends BaseEntity {
 
     public void softDelete() {
         this.isDeleted = true;
+        if (this.reply != null) {
+            this.getReply().softDelete();
+        }
     }
 }

@@ -81,7 +81,7 @@ public class Store extends BaseEntity {
         this.closeAt = closeAt;
         this.isDeleted = isDeleted;
         this.user = user;
-        this.menus = menus;
+        this.menus = menus != null ? menus : new ArrayList<>();
     }
 
     public void update(
