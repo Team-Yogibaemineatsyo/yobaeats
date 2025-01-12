@@ -43,6 +43,11 @@ public enum ErrorCode {
     SELF_FAVORITE_NOT_ALLOWED(HttpStatus.UNAUTHORIZED,"자기 자신의 가게를 즐겨찾기할 수 없습니다."),
     SELF_ADD_REVIEW_NOT_ALLOWED(HttpStatus.UNAUTHORIZED,"자기 자신의 가게에 리뷰를 등록할 수 없습니다."),
 
+    // 즐겨찾기 관련 익셉션
+    DUPLICATED_FAVORITE(HttpStatus.CONFLICT, "이미 즐겨찾기한 가게입니다."),
+    FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기가 존재하지 않습니다."),
+    SELF_FAVORITE_NOT_ALLOWED(HttpStatus.UNAUTHORIZED,"자기 자신의 가게를 즐겨찾기할 수 없습니다."),
+
     // Security 관련 익셉션
     LOGIN_FAILED_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다."),
     NEED_LOGIN_EXCEPTION(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
