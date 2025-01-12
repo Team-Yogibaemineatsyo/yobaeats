@@ -104,7 +104,7 @@ public class MenuService {
      * @throws CustomRuntimeException 메뉴를 찾을 수 없는 경우 발생
      */
     public Menu findMenuById(Long menuId) {
-        return menuRepository.findById(menuId)
+        return menuRepository.findByIdAndIsDeletedFalse(menuId)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MENU_NOT_FOUND));
     }
 }
