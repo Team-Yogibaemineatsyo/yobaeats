@@ -1,5 +1,6 @@
 package com.sparta.yobaeats.domain.store.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.yobaeats.domain.menu.dto.response.MenuDetailRes;
 import com.sparta.yobaeats.domain.store.entity.Store;
 import lombok.AccessLevel;
@@ -12,7 +13,9 @@ import java.util.List;
 public record StoreReadDetailRes(
         Long storeId,
         String storeName,
+        @JsonFormat(pattern = "HH:mm")
         LocalTime openAt,
+        @JsonFormat(pattern = "HH:mm")
         LocalTime closeAt,
         Integer minOrderPrice,
         Double starRate,
