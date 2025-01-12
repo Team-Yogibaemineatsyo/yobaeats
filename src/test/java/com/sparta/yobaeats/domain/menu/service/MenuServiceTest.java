@@ -101,7 +101,7 @@ public class MenuServiceTest {
         when(menuRepository.saveAll(anyList())).thenReturn(Arrays.asList(menu1, menu2));
 
         // when
-        List<Long> menuIds = menuService.createMenus(List.of(menuCreateReq), owner.getId());
+        List<Long> menuIds = menuService.createMenus(menuCreateReq, owner.getId());
 
         // then
         verify(menuRepository).saveAll(anyList());
