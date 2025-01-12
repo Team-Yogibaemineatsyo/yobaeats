@@ -1,9 +1,10 @@
 package com.sparta.yobaeats.domain.order.controller;
 
-import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
+import com.sparta.yobaeats.domain.order.dto.response.OrderReadDetailRes;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.service.OrderService;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.global.util.UriBuilderUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +42,18 @@ public class OrderController {
         return ResponseEntity.created(uri).build(); // 201 Created 응답
     }
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderReadDetailRes> readOrder(
+            @PathVariable("orderId") Long orderId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(orderService.readOrderInfo(orderId, userDetails.getId())); // 200 OK 응답
+    }
+
     /**
      * 주문 상태를 업데이트하는 API
      *
-     * @param orderId 주문의 ID
+     * @param orderId     주문의 ID
      * @param userDetails 인증된 사용자 정보
      * @return 200 OK 응답
      */

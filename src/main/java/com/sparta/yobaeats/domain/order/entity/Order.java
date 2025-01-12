@@ -26,6 +26,9 @@ public class Order extends BaseEntity {
     @Column(name = "order_id")
     private Long id;
 
+    @Column
+    private Integer totalPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -43,8 +46,16 @@ public class Order extends BaseEntity {
     private OrderStatus orderStatus;
 
     @Builder
-    public Order(Long id, User user, Store store, List<OrderMenu> menus, OrderStatus orderStatus) {
+    public Order(
+            Long id,
+            Integer totalPrice,
+            User user,
+            Store store,
+            List<OrderMenu> menus,
+            OrderStatus orderStatus
+    ) {
         this.id = id;
+        this.totalPrice = totalPrice;
         this.user = user;
         this.store = store;
         this.menus = menus != null ? menus : new ArrayList<>();
@@ -63,5 +74,9 @@ public class Order extends BaseEntity {
 
     public void addOrderMenu(OrderMenu orderMenu) {
         this.menus.add(orderMenu);
+    }
+
+    public void addTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

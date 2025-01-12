@@ -5,6 +5,7 @@ import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
+import com.sparta.yobaeats.domain.order.dto.response.OrderReadDetailRes;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderMenu;
 import com.sparta.yobaeats.domain.order.repository.OrderRepository;
@@ -17,6 +18,8 @@ import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -52,16 +55,21 @@ public class OrderService {
         Order order = request.toEntity(store, user);
 
         // 메뉴 조회
-        cart.getItems().stream()
+        List<OrderMenu> orderMenus = cart.getItems().stream()
                 .map(item -> {
                     Menu menu = menuService.findMenuById(item.getMenuId());
                     return OrderMenu.builder()
                             .order(order)
                             .menu(menu)
                             .quantity(item.getQuantity())
+                            .menuNameHistory(menu.getMenuName())
+                            .menuPriceHistory(menu.getMenuPrice())
                             .build();
-                })
-                .forEach(order::addOrderMenu);
+                }).toList();
+        orderMenus.forEach(order::addOrderMenu);
+        int totalPrice = orderMenus.stream().mapToInt(OrderMenu::getMenuTotalPrice).sum();
+
+        order.addTotalPrice(totalPrice);
 
         // 주문 저장
         Order savedOrder = orderRepository.save(order);
@@ -70,6 +78,14 @@ public class OrderService {
 
         // 생성된 주문 ID 반환
         return savedOrder.getId();
+    }
+
+    public OrderReadDetailRes readOrderInfo(Long orderId, Long userId) {
+        Order order = findOrderById(orderId);
+
+        userService.validateUser(order.getUser().getId(), userId);
+
+        return OrderReadDetailRes.from(order);
     }
 
     /**
