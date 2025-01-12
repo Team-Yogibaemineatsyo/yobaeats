@@ -29,11 +29,30 @@ public class OrderMenu {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
+    @Column(nullable = false)
+    private String menuNameHistory; // 주문 시점의 메뉴 이름
+
+    @Column(nullable = false)
+    private Integer menuPriceHistory; // 주문 시점의 메뉴 가격
+
     @Builder
-    public OrderMenu(Long id, Integer quantity, Order order, Menu menu) {
+    public OrderMenu(
+            Long id,
+            Integer quantity,
+            Order order,
+            Menu menu,
+            String menuNameHistory,
+            Integer menuPriceHistory
+    ) {
         this.id = id;
         this.quantity = quantity;
         this.order = order;
         this.menu = menu;
+        this.menuNameHistory = menuNameHistory;
+        this.menuPriceHistory = menuPriceHistory;
+    }
+
+    public Integer getMenuTotalPrice() {
+        return this.quantity * this.menuPriceHistory;
     }
 }
