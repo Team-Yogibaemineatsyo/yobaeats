@@ -103,33 +103,6 @@ public class MenuControllerTest {
         verify(menuService, times(1)).createMenus(any(MenuCreateReq.class), eq(owner.getId()));
     }
 
-//    @Test
-//    void 메뉴_수정_성공() throws Exception {
-//        // given
-//        String token = setAuthentication(); // 오너로 인증 설정
-//        Long menuId = 1L;
-//        Long ownerId = owner.getId();
-//
-//        MenuUpdateReq updateRequest = new MenuUpdateReq(
-//                "맛있는 치킨", // 메뉴 이름
-//                20000,         // 메뉴 가격
-//                "더욱 맛있어진 치킨" // 메뉴 설명
-//        );
-//
-//        String updateJson = objectMapper.writeValueAsString(updateRequest);
-//
-//        // when & then
-//        mockMvc.perform(MockMvcRequestBuilders.put("/api/menus/{menuId}", menuId)
-//                        .header("Authorization", "Bearer " + token)
-//                        .contentType(MediaType.APPLICATION_JSON) // Content-Type 설정
-//                        .content(updateJson)) // 요청 본문 추가
-//                .andExpect(status().isNoContent());
-//
-//        // 메뉴 수정 메서드 호출 검증
-//        verify(menuService, times(1)).updateMenu(eq(menuId), any(MenuUpdateReq.class), eq(ownerId));
-//    }
-
-
     @Test
     void 메뉴_삭제_성공() throws Exception {
         // given
