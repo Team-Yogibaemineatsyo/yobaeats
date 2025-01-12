@@ -34,7 +34,7 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "user_Id", nullable = false)
     private User user;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
