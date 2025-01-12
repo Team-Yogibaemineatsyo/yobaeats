@@ -65,6 +65,17 @@ public class ReplyController {
     ) {
         replyService.updateReply(replyId, userDetails.getId(), replyUpdateReq);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @DeleteMapping("/{replyId}")
+    public ResponseEntity<Void> deleteReply(
+            @PathVariable Long replyId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        replyService.deleteReply(replyId, userDetails.getId());
+
+        return ResponseEntity.noContent().build();
     }
 }

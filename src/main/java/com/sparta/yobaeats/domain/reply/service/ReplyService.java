@@ -71,6 +71,16 @@ public class ReplyService {
         reply.updateReply(replyUpdateReq.content());
     }
 
+    @Transactional
+    public void deleteReply(Long replyId, Long userId) {
+        // 댓글 존재 확인
+        Reply reply = findReplyById(replyId);
+        // 권한 확인
+        validateUser(userId, reply.getUser().getId());
+
+        reply.softDelete();
+    }
+
     public Reply findReplyById(Long replyId) {
         return replyRepository.findByIdAndIsDeletedFalse(replyId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REPLY_NOT_FOUND));
