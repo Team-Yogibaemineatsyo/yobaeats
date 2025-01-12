@@ -27,16 +27,15 @@ public class OrderController {
     /**
      * 주문을 생성하는 API
      *
-     * @param orderCreateReq 주문 생성에 필요한 요청 데이터
      * @param userDetails 인증된 사용자 정보
      * @return 생성된 주문의 URI와 함께 201 Created 응답
      */
     @PostMapping
     public ResponseEntity<Order> createOrder(
-            @RequestBody @Valid OrderCreateReq orderCreateReq,
+            @RequestBody @Valid OrderCreateReq request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long orderId = orderService.createOrder(orderCreateReq, userDetails.getId());
+        Long orderId = orderService.createOrder(request, userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/orders/{orderId}", orderId);
 
         return ResponseEntity.created(uri).build(); // 201 Created 응답

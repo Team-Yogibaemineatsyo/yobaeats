@@ -101,15 +101,19 @@ public class CartService {
                 );
 
         if (cartItems.isEmpty()) {
-            cartRepository.delete(cart);
+            deleteCart(cart);
         } else {
             cartRepository.save(cart);
         }
     }
 
-    private Cart findCartByUserId(Long userId) {
+    public Cart findCartByUserId(Long userId) {
         return cartRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.CART_NOT_FOUND));
+    }
+
+    public void deleteCart(Cart cart) {
+        cartRepository.delete(cart);
     }
 
     private Cart findAddCartByUserId(Long userId) {
