@@ -40,13 +40,9 @@ public class FavoriteService {
         return storeId;
     }
 
-
     public List<FavoriteReadRes> readFavorites(Long userId) {
         List<Favorite> favorites = favoriteRepository.findByUserId(userId);
 
-        if (favorites.isEmpty()) {
-            throw new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND);
-        }
         return favorites.stream()
                 .map(FavoriteReadRes::from)
                 .toList();
