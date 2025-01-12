@@ -22,7 +22,7 @@ public record ReviewCreateReq(
 
     @NotBlank(message = ReviewValidationMessage.REVIEW_BLANK_MESSAGE)
     @Size(max = ReviewValidationMessage.REVIEW_MAX, message = ReviewValidationMessage.REVIEW_MAX_MESSAGE)
-    String contents
+    String content
 ) {
 
     public Review to(User user, Order order, Store store) {
@@ -30,7 +30,7 @@ public record ReviewCreateReq(
             .user(user)
             .order(order)
             .store(store)
-            .contents(this.contents)
+            .content(this.content)
             .star(this.star)
             .build();
     }

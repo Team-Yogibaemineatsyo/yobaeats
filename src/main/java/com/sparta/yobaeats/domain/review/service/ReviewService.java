@@ -15,7 +15,11 @@ import com.sparta.yobaeats.global.exception.InvalidException;
 import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +38,11 @@ public class ReviewService {
         User user = userService.findUserById(userId);
         Order order = orderService.findOrderById(reviewCreateReq.orderId());
         Store store = order.getStore();
+
+        // 자기 자신의 가게인지 검증
+        if (user.getId().equals(store.getUser().getId())) {
+            throw new UnauthorizedException(ErrorCode.SELF_ADD_REVIEW_NOT_ALLOWED);
+        }
         // 리뷰 중복 작성 검증
         if (reviewRepository.existsByOrder(order)) {
             throw new ConflictException(ErrorCode.DUPLICATE_REVIEW);
@@ -50,34 +59,51 @@ public class ReviewService {
         reviewRepository.save(reviewCreateReq.to(user, order, store));
 
         Double averageStarRate = reviewRepository.getAverageStarRate(store.getId());
-//        store.updateStarRate(averageStarRate != null ? averageStarRate : 0.0);
+        store.updateStarRate(averageStarRate != null ? averageStarRate : 0.0);
 
         return store.getId();
     }
 
     public List<ReviewReadInfoRes> readReviews(
-        Long storeId, Integer startStar, Integer endStar
+            Long storeId, Integer startStar, Integer endStar
     ) {
         if (startStar != null && endStar != null && startStar > endStar) {
             throw new InvalidException(ErrorCode.INVALID_STAR_RANGE);
         }
 
         List<Review> reviewList = reviewRepository
-            .findReviewsByStoreIdAndStar(storeId, startStar, endStar);
+                .findReviewsByStoreIdAndStar(storeId, startStar, endStar);
 
         if (reviewList.isEmpty()) {
             throw new NotFoundException(ErrorCode.REVIEW_NOT_FOUND);
         }
 
         return reviewList.stream()
-            .map(ReviewReadInfoRes::from)
-            .toList();
+                .map(ReviewReadInfoRes::from)
+                .toList();
     }
 
     @Transactional
     public void deleteReview(Long reviewId, Long userId) {
         Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
-            .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+
+        Store store = review.getStore();
+        int toDeleteStar = review.getStar();
+        int reviewCount = reviewRepository.countByStoreIdAndIsDeletedFalse(store.getId());
+
+        // 리뷰 삭제 시 별점 변경
+        if (reviewCount == 1) {
+            store.updateStarRate(0.0);
+        } else {
+            BigDecimal currentAvg = BigDecimal.valueOf(store.getStarRate());
+            BigDecimal count = BigDecimal.valueOf(reviewCount);
+            BigDecimal totalSum = currentAvg.multiply(count);
+            BigDecimal newSum = totalSum.subtract(BigDecimal.valueOf(toDeleteStar));
+            BigDecimal newAvg = newSum.divide(count.subtract(BigDecimal.ONE), 2, RoundingMode.HALF_UP);
+
+            store.updateStarRate(newAvg.doubleValue());
+        }
 
         userService.validateUser(review.getUser().getId(), userId);
 

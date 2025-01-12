@@ -56,7 +56,7 @@ public class Menu {
     }
 
     /**
-     * 메뉴 정보를 업데이트하는 메서드
+     * 메뉴 정보를 업데이트합니다.
      *
      * @param menuName 업데이트할 메뉴 이름
      * @param menuPrice 업데이트할 메뉴 가격
@@ -69,38 +69,27 @@ public class Menu {
     }
 
     /**
-     * 메뉴 삭제 처리 메서드
+     * 메뉴를 삭제 상태로 표시합니다.
      *
-     * 이미 삭제된 메뉴일 경우 예외를 발생시킴
-     */
-    public void delete() {
-        if (this.isDeleted) {
-            throw new ConflictException(ErrorCode.MENU_ALREADY_DELETED);
-        }
-    }
-
-    /**
-     * 메뉴 삭제 상태를 변경하는 메서드
-     *
-     * 이 메서드는 메뉴를 삭제 상태로 표시합니다.
+     * 이 메서드는 메뉴의 삭제 상태를 true로 설정합니다.
      */
     public void markAsDeleted() {
         this.isDeleted = true;
     }
 
     /**
-     * 메뉴 이름을 업데이트하는 메서드
+     * 메뉴 이름을 업데이트합니다.
      *
      * @param newName 새로운 메뉴 이름
      */
     private void updateName(String newName) {
-        if (newName != null) {
+        if (newName != null && !newName.isBlank()) {
             this.menuName = newName; // 새로운 이름으로 업데이트
         }
     }
 
     /**
-     * 메뉴 가격을 업데이트하는 메서드
+     * 메뉴 가격을 업데이트합니다.
      *
      * @param newPrice 새로운 메뉴 가격
      */
@@ -111,12 +100,12 @@ public class Menu {
     }
 
     /**
-     * 메뉴 설명을 업데이트하는 메서드
+     * 메뉴 설명을 업데이트합니다.
      *
      * @param newDescription 새로운 메뉴 설명
      */
     private void updateDescription(String newDescription) {
-        if (newDescription != null) {
+        if (newDescription != null && !newDescription.isBlank()) {
             this.description = newDescription; // 새로운 설명으로 업데이트
         }
     }
