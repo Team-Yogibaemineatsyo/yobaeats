@@ -69,7 +69,7 @@ class OrderControllerTest {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        OrderCreateReq orderRequest = new OrderCreateReq(1L, 1L);
+        OrderCreateReq orderRequest = new OrderCreateReq(1L);
         String orderJson = objectMapper.writeValueAsString(orderRequest);
 
         // JWT 토큰 생성
