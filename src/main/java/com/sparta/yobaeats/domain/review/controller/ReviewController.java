@@ -33,7 +33,7 @@ public class ReviewController {
     ) {
         Long userId = userDetails.getId();
         Long StoreId = reviewService.createReview(userId, reviewReq);
-        URI uri = UriBuilderUtil.create("/api/reviews/{reviewId}", StoreId);
+        URI uri = UriBuilderUtil.create("/api/reviews/{StoreId}", StoreId);
 
         return ResponseEntity.created(uri).build();
     }
