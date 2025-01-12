@@ -30,17 +30,42 @@ public class ReplyService {
     public Long createReply(ReplyCreateReq replyContentReq, Long userId) {
         // 리뷰 존재 확인
         Review review = reviewService.findReviewById(replyContentReq.reviewId());
-        // 권한 확인
-        if (!userId.equals(review.getStore().getUser().getId())) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
         // 중복 댓글 확인
         if (review.getReply() != null) {
             throw new ConflictException(ErrorCode.DUPLICATED_REPLY);
         }
+        // 권한 확인
+        if (!userId.equals(review.getStore().getUser().getId())) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
 
-        replyRepository.save(replyContentReq.to(userService.findUserById(userId), review));
+        Reply reply = replyContentReq.to(userService.findUserById(userId), review);
+        replyRepository.save(reply);
 
-        return review.getId();
+        return reply.getId();
+    }
+
+    public ReplyReadRes readReply(Long replyId, Long userId) {
+        // 댓글 존재 확인
+        Reply reply = findReplyById(replyId);
+        // 권한 확인
+        if (!userId.equals(reply.getUser().getId())) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
+        return ReplyReadRes.from(reply);
+    }
+
+    public List<ReplyReadRes> readReplies(Long userId) {
+        List<Reply> replies = replyRepository.findAllByUserIdOrderByUpdatedAtDesc(userId);
+
+        return replies.stream()
+                .map(ReplyReadRes::from)
+                .toList();
+    }
+
+    public Reply findReplyById(Long replyId) {
+        return replyRepository.findByIdAndIsDeletedFalse(replyId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REPLY_NOT_FOUND));
     }
 }
