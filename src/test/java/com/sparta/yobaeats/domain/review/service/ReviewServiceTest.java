@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderStatus;
@@ -24,9 +23,11 @@ import com.sparta.yobaeats.global.exception.InvalidException;
 import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,20 +58,25 @@ class ReviewServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(1L, "user1@mail.com", "12345!", "유저1", UserRole.ROLE_USER);
+        // 기본 테스트 데이터
+        User owner = new User(2L, "owner@mail.com", "12345!", "사장님", UserRole.ROLE_OWNER);
+        user = new User(1L, "user1@mail.com", "12345!", "유저", UserRole.ROLE_USER);
+
         store = Store.builder()
-            .id(1L)
-            .name("오늘파스타")
-            .starRate(4.5)
-            .minOrderPrice(10000)
-            .build();
+                .id(1L)
+                .name("오늘파스타")
+                .starRate(4.5)
+                .minOrderPrice(10000)
+                .user(owner)  // 기본 데이터에도 가게 주인 설정
+                .build();
 
         order = Order.builder()
-            .id(3L)
-            .user(user)
-            .store(store)
-            .orderStatus(OrderStatus.DELIVERED)
-            .build();
+                .id(3L)
+                .user(user)
+                .store(store)
+                .orderStatus(OrderStatus.DELIVERED)
+                .build();
+
         review = new Review(1L, user, store, order, "맨날 먹어도 맛있어요.", 5);
         reviewCreateReq = new ReviewCreateReq(order.getId(), 5, "오늘 또 먹었어요.");
     }
@@ -86,7 +92,7 @@ class ReviewServiceTest {
 
         // when & then
         ConflictException exception = assertThrows(ConflictException.class,
-            () -> reviewService.createReview(user.getId(), reviewCreateReq));
+                () -> reviewService.createReview(user.getId(), reviewCreateReq));
 
         assertEquals(ErrorCode.DUPLICATE_REVIEW, exception.getErrorCode());
     }
@@ -95,15 +101,15 @@ class ReviewServiceTest {
     @Test
     void validateUserFail() {
         // given
-        Long differUserId = 2L;
+        Long differUserId = 3L;
         User differUser = new User(differUserId, "user2@mail.com", "123456!", "유저2",
-            UserRole.ROLE_USER);
+                UserRole.ROLE_USER);
         given(userService.findUserById(differUserId)).willReturn(differUser);
         given(orderService.findOrderById(reviewCreateReq.orderId())).willReturn(order);
 
         // when & then
         UnauthorizedException exception = assertThrows(UnauthorizedException.class,
-            () -> reviewService.createReview(differUserId, reviewCreateReq));
+                () -> reviewService.createReview(differUserId, reviewCreateReq));
 
         assertEquals(ErrorCode.UNAUTHORIZED_USER, exception.getErrorCode());
     }
@@ -113,13 +119,13 @@ class ReviewServiceTest {
     void createReviewWithInvalidOrderStatus() {
         // given
         Order deliveringOrder = Order.builder().id(4L).user(user).store(store)
-            .orderStatus(OrderStatus.DELIVERING).build();
+                .orderStatus(OrderStatus.DELIVERING).build();
         given(userService.findUserById(user.getId())).willReturn(user);
         given(orderService.findOrderById(reviewCreateReq.orderId())).willReturn(deliveringOrder);
 
         // when & then
         InvalidException exception = assertThrows(InvalidException.class,
-            () -> reviewService.createReview(user.getId(), reviewCreateReq));
+                () -> reviewService.createReview(user.getId(), reviewCreateReq));
         assertEquals(ErrorCode.INVALID_ORDER_STATUS, exception.getErrorCode());
     }
 
@@ -164,7 +170,7 @@ class ReviewServiceTest {
 
         // when & then
         InvalidException exception = assertThrows(InvalidException.class,
-            () -> reviewService.readReviews(store.getId(), startStar, endStar));
+                () -> reviewService.readReviews(store.getId(), startStar, endStar));
 
         assertEquals(ErrorCode.INVALID_STAR_RANGE, exception.getErrorCode());
     }
@@ -176,11 +182,11 @@ class ReviewServiceTest {
         int startStar = 1;
         int endStar = 2;
         given(reviewRepository.findReviewsByStoreIdAndStar(store.getId(), startStar,
-            endStar)).willReturn(new ArrayList<>());
+                endStar)).willReturn(new ArrayList<>());
 
         // when & then
         NotFoundException exception = assertThrows(NotFoundException.class,
-            () -> reviewService.readReviews(store.getId(), startStar, endStar));
+                () -> reviewService.readReviews(store.getId(), startStar, endStar));
         assertEquals(ErrorCode.REVIEW_NOT_FOUND, exception.getErrorCode());
     }
 
@@ -192,11 +198,11 @@ class ReviewServiceTest {
         int endStar = 5;
         List<Review> reviews = List.of(review);
         given(reviewRepository.findReviewsByStoreIdAndStar(store.getId(), startStar,
-            endStar)).willReturn(reviews);
+                endStar)).willReturn(reviews);
 
         // when
         List<ReviewReadInfoRes> reviewReadInfoResList = reviewService.readReviews(store.getId(),
-            startStar, endStar);
+                startStar, endStar);
 
         // then
         assertFalse(reviewReadInfoResList.isEmpty());
@@ -211,7 +217,7 @@ class ReviewServiceTest {
 
         // when & then
         NotFoundException exception = assertThrows(NotFoundException.class,
-            () -> reviewService.deleteReview(reviewId, user.getId()));
+                () -> reviewService.deleteReview(reviewId, user.getId()));
         assertEquals(ErrorCode.REVIEW_NOT_FOUND, exception.getErrorCode());
     }
 
