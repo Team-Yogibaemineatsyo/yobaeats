@@ -2,6 +2,7 @@ package com.sparta.yobaeats.domain.cart.controller;
 
 import com.sparta.yobaeats.domain.cart.dto.request.CartCreateReq;
 import com.sparta.yobaeats.domain.cart.dto.request.CartItemQuantityUpdateReq;
+import com.sparta.yobaeats.domain.cart.dto.response.CartReadDetailRes;
 import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import jakarta.validation.Valid;
@@ -26,6 +27,13 @@ public class CartController {
         cartService.addItemToCart(request, userDetails.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<CartReadDetailRes> readCart(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(cartService.readCartInfo(userDetails.getId()));
     }
 
     @PatchMapping("/{menuId}/quantity")

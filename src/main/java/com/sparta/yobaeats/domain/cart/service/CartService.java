@@ -2,6 +2,8 @@ package com.sparta.yobaeats.domain.cart.service;
 
 import com.sparta.yobaeats.domain.cart.dto.request.CartCreateReq;
 import com.sparta.yobaeats.domain.cart.dto.request.CartItemQuantityUpdateReq;
+import com.sparta.yobaeats.domain.cart.dto.response.CartItemInfoRes;
+import com.sparta.yobaeats.domain.cart.dto.response.CartReadDetailRes;
 import com.sparta.yobaeats.domain.cart.entity.Cart;
 import com.sparta.yobaeats.domain.cart.entity.CartItem;
 import com.sparta.yobaeats.domain.cart.repository.CartRedisRepository;
@@ -25,7 +27,7 @@ public class CartService {
     private final CartRedisRepository cartRepository;
 
     public void addItemToCart(CartCreateReq request, Long userId) {
-        Cart cart = findCartByUserId(userId);
+        Cart cart = findAddCartByUserId(userId);
 
         menuService.findMenuById(request.menuId());
 
@@ -41,8 +43,19 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    public CartReadDetailRes readCartInfo(Long userId) {
+        Cart cart = findCartByUserId(userId);
+
+        List<CartItem> items = cart.getItems();
+        List<CartItemInfoRes> cartItems = items.stream()
+                .map(cartItem -> CartItemInfoRes.of(cartItem, menuService.findMenuById(cartItem.getMenuId())))
+                .toList();
+
+        return CartReadDetailRes.from(cartItems);
+    }
+
     public void updateCartItemQuantity(Long menuId, CartItemQuantityUpdateReq request, Long userId) {
-        Cart cart = findChangeCartByUserId(userId);
+        Cart cart = findCartByUserId(userId);
 
         menuService.findMenuById(menuId);
 
@@ -73,12 +86,12 @@ public class CartService {
 
     private Cart findCartByUserId(Long userId) {
         return cartRepository.findById(userId)
-                .orElseGet(() -> createNewCart(userId));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.CART_NOT_FOUND));
     }
 
-    private Cart findChangeCartByUserId(Long userId) {
+    private Cart findAddCartByUserId(Long userId) {
         return cartRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.CART_NOT_FOUND));
+                .orElseGet(() -> createNewCart(userId));
     }
 
     private Cart createNewCart(Long userId) {
