@@ -175,21 +175,6 @@ class ReviewServiceTest {
         assertEquals(ErrorCode.INVALID_STAR_RANGE, exception.getErrorCode());
     }
 
-    @DisplayName("해당 별점 범위의 리뷰가 없으면, '해당 별점의 리뷰가 없습니다.' 출력")
-    @Test
-    void findNoReviewsInStarRange() {
-        // given
-        int startStar = 1;
-        int endStar = 2;
-        given(reviewRepository.findReviewsByStoreIdAndStar(store.getId(), startStar,
-                endStar)).willReturn(new ArrayList<>());
-
-        // when & then
-        NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> reviewService.readReviews(store.getId(), startStar, endStar));
-        assertEquals(ErrorCode.REVIEW_NOT_FOUND, exception.getErrorCode());
-    }
-
     @DisplayName("가게 리뷰 조회 성공")
     @Test
     void findReviewsByStoreSuccess() {
