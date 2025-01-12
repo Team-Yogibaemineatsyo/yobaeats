@@ -84,8 +84,7 @@ public class SecurityConfig {
 
         filter.setSecurityContextRepository(
                 new DelegatingSecurityContextRepository(
-                        new RequestAttributeSecurityContextRepository(),
-                        new HttpSessionSecurityContextRepository()
+                        new RequestAttributeSecurityContextRepository()
                 ));
 
         return filter;

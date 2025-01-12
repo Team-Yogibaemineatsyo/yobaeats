@@ -1,11 +1,12 @@
 package com.sparta.yobaeats.global.security.authentication;
 
-import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
+import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,11 +33,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException(ErrorCode.INVALID_PASSWORD.getMessage());
         }
 
-        return new CustomAuthenticationToken(userDetailsCustom, null, userDetailsCustom.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetailsCustom, null, userDetailsCustom.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.equals(CustomAuthenticationToken.class);
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }
