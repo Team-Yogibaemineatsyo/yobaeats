@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.reply.controller;
 
 import com.sparta.yobaeats.domain.reply.dto.request.ReplyCreateReq;
+import com.sparta.yobaeats.domain.reply.dto.request.ReplyUpdateReq;
 import com.sparta.yobaeats.domain.reply.dto.response.ReplyReadListRes;
 import com.sparta.yobaeats.domain.reply.dto.response.ReplyReadRes;
 import com.sparta.yobaeats.domain.reply.service.ReplyService;
@@ -30,7 +31,7 @@ public class ReplyController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long replyId = replyService.createReply(replyContentReq, userDetails.getId());
-        URI uri = UriBuilderUtil.create("/api/stores/{replyId}", replyId);
+        URI uri = UriBuilderUtil.create("/api/replies/{replyId}", replyId);
 
         return ResponseEntity.created(uri).build();
     }
@@ -53,5 +54,17 @@ public class ReplyController {
                 replyService.readReplies(userDetails.getId())
         );
         return ResponseEntity.ok(replyReadListRes);
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @PatchMapping("/{replyId}")
+    public ResponseEntity<Void> updateReply(
+            @PathVariable Long replyId,
+            @RequestBody @Valid ReplyUpdateReq replyUpdateReq,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        replyService.updateReply(replyId, userDetails.getId(), replyUpdateReq);
+
+        return ResponseEntity.ok().build();
     }
 }

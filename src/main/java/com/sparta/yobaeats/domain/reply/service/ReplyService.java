@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.reply.service;
 
 import com.sparta.yobaeats.domain.reply.dto.request.ReplyCreateReq;
+import com.sparta.yobaeats.domain.reply.dto.request.ReplyUpdateReq;
 import com.sparta.yobaeats.domain.reply.dto.response.ReplyReadRes;
 import com.sparta.yobaeats.domain.reply.entity.Reply;
 import com.sparta.yobaeats.domain.reply.repository.ReplyRepository;
@@ -35,9 +36,7 @@ public class ReplyService {
             throw new ConflictException(ErrorCode.DUPLICATED_REPLY);
         }
         // 권한 확인
-        if (!userId.equals(review.getStore().getUser().getId())) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+        validateUser(userId, review.getStore().getUser().getId());
 
         Reply reply = replyContentReq.to(userService.findUserById(userId), review);
         replyRepository.save(reply);
@@ -49,9 +48,7 @@ public class ReplyService {
         // 댓글 존재 확인
         Reply reply = findReplyById(replyId);
         // 권한 확인
-        if (!userId.equals(reply.getUser().getId())) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+        validateUser(userId, reply.getUser().getId());
 
         return ReplyReadRes.from(reply);
     }
@@ -64,8 +61,24 @@ public class ReplyService {
                 .toList();
     }
 
+    @Transactional
+    public void updateReply(Long replyId, Long userId, ReplyUpdateReq replyUpdateReq) {
+        // 댓글 존재 확인
+        Reply reply = findReplyById(replyId);
+        // 권한 확인
+        validateUser(userId, reply.getUser().getId());
+
+        reply.updateReply(replyUpdateReq.content());
+    }
+
     public Reply findReplyById(Long replyId) {
         return replyRepository.findByIdAndIsDeletedFalse(replyId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REPLY_NOT_FOUND));
+    }
+
+    private void validateUser(Long userId, Long targetId) {
+        if (!userId.equals(targetId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
     }
 }

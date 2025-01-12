@@ -52,6 +52,10 @@ public class Reply extends BaseEntity {
         this.content = content;
     }
 
+    public void updateReply(String content) {
+        this.content = content;
+    }
+
     public void softDelete() {
         this.isDeleted = true;
     }
