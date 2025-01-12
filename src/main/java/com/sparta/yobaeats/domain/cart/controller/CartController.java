@@ -46,4 +46,14 @@ public class CartController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<Void> deleteCart(
+            @PathVariable Long menuId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        cartService.deleteCartItem(menuId, userDetails.getId());
+
+        return ResponseEntity.noContent().build();
+    }
 }
