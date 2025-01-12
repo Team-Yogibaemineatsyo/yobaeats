@@ -55,7 +55,9 @@ public class Review extends BaseEntity {
             Store store,
             Order order,
             String content,
-            int star
+            int star,
+            Reply reply
+
     ) {
         this.id = id;
         this.user = user;
@@ -63,6 +65,7 @@ public class Review extends BaseEntity {
         this.order = order;
         this.content = content;
         this.star = star;
+        this.reply = reply;
     }
 
     public void softDelete() {

@@ -9,6 +9,6 @@ public class ReviewValidationMessage {
     public static final int STAR_MAX = 5;
     public static final int STAR_MIN = 1;
     public static final String REVIEW_BLANK_MESSAGE = "리뷰 내용을 입력해 주세요.";
-    public static final String REVIEW_MAX_MESSAGE = "리뷰 내용은 20자 이하로 입력해 주세요.";
-    public static final int REVIEW_MAX = 20;
+    public static final String REVIEW_MAX_MESSAGE = "리뷰 내용은 100자 이하로 입력해 주세요.";
+    public static final int REVIEW_MAX = 100;
 }
