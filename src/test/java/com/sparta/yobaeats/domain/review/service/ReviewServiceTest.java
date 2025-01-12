@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.service.OrderService;
+import com.sparta.yobaeats.domain.reply.entity.Reply;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewCreateReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoRes;
 import com.sparta.yobaeats.domain.review.entity.Review;
@@ -24,7 +25,6 @@ import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +54,7 @@ class ReviewServiceTest {
     private Order order;
     private Store store;
     private Review review;
+    private Reply reply;
     private ReviewCreateReq reviewCreateReq;
 
     @BeforeEach
@@ -76,8 +77,8 @@ class ReviewServiceTest {
                 .store(store)
                 .orderStatus(OrderStatus.DELIVERED)
                 .build();
-
-        review = new Review(1L, user, store, order, "맨날 먹어도 맛있어요.", 5);
+        reply = new Reply(1L, user, review, "감사합니다.");
+        review = new Review(1L, user, store, order, "맨날 먹어도 맛있어요.", 5,reply);
         reviewCreateReq = new ReviewCreateReq(order.getId(), 5, "오늘 또 먹었어요.");
     }
 

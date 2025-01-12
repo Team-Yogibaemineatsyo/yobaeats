@@ -20,7 +20,7 @@ public record ReplyReadRes(
 ) {
 
     public static ReplyReadRes from(Reply reply) {
-        if (reply == null) {
+        if (reply == null || reply.getReview() == null) {
             return empty();
         }
         return ReplyReadRes.builder()
