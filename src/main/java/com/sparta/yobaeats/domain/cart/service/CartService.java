@@ -84,9 +84,36 @@ public class CartService {
         }
     }
 
-    private Cart findCartByUserId(Long userId) {
+    public void deleteCartItem(Long menuId, Long userId) {
+        Cart cart = findCartByUserId(userId);
+
+        menuService.findMenuById(menuId);
+
+        List<CartItem> cartItems = cart.getItems();
+        cartItems.stream()
+                .filter(cartItem -> cartItem.getMenuId().equals(menuId))
+                .findFirst()
+                .ifPresentOrElse(
+                        cartItems::remove,
+                        () -> {
+                            throw new InvalidException(ErrorCode.CART_ITEM_NOT_FOUND);
+                        }
+                );
+
+        if (cartItems.isEmpty()) {
+            deleteCart(cart);
+        } else {
+            cartRepository.save(cart);
+        }
+    }
+
+    public Cart findCartByUserId(Long userId) {
         return cartRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.CART_NOT_FOUND));
+    }
+
+    public void deleteCart(Cart cart) {
+        cartRepository.delete(cart);
     }
 
     private Cart findAddCartByUserId(Long userId) {

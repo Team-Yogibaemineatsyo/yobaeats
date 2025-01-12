@@ -27,6 +27,6 @@ public class CartItem implements Serializable {
             throw new InvalidException(ErrorCode.INVALID_DECREASE_QUANTITY);
         }
 
-        this.quantity += quantity;
+        this.quantity += changeValue;
     }
 }

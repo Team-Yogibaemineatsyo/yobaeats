@@ -1,7 +1,6 @@
 package com.sparta.yobaeats.domain.order.entity;
 
 public enum OrderStatus {
-    PENDING,             // 대기중(기본값)
     ORDER_REQUESTED,     // 주문 요청
     ORDER_ACCEPTED,      // 주문 수락
     COOKING_COMPLETE,    // 조리 완료
@@ -25,7 +24,6 @@ public enum OrderStatus {
     public OrderStatus nextStatus() {
         // 불가능한 전환 시 예외 발생
         return switch (this) {
-            case PENDING -> ORDER_REQUESTED; // '대기중' -> '주문 요청됨'
             case ORDER_REQUESTED -> ORDER_ACCEPTED; // '주문 요청됨' -> '주문 수락됨'
             case ORDER_ACCEPTED -> COOKING_COMPLETE; // '주문 수락됨' -> '조리 완료됨'
             case COOKING_COMPLETE -> DELIVERING; // '조리 완료됨' -> '배달 중'
