@@ -1,7 +1,6 @@
 package com.sparta.yobaeats.domain.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.service.OrderService;
 import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
@@ -23,7 +22,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,29 +67,25 @@ class OrderControllerTest {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        OrderCreateReq orderRequest = new OrderCreateReq(1L);
-        String orderJson = objectMapper.writeValueAsString(orderRequest);
-
         // JWT 토큰 생성
         String token = jwtUtil.generateTokenByAuthentication(authentication);
         System.out.println("Generated Token: " + token); // 토큰 출력하여 확인
 
         // createOrder 메서드가 Long을 반환하도록 설정
         Long mockOrderId = 1L;
-        when(orderService.createOrder(any(OrderCreateReq.class), eq(user.getId()))).thenReturn(mockOrderId); // user.getId()로 변경
+        when(orderService.createOrder(eq(user.getId()))).thenReturn(mockOrderId); // user.getId()로 변경
 
         // when
         this.mockMvc.perform(
                         MockMvcRequestBuilders.post(BASE_URL)
                                 .header("Authorization", "Bearer " + token)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(orderJson)
                                 .with(csrf()))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         // then
-        verify(orderService, times(1)).createOrder(any(OrderCreateReq.class), eq(user.getId())); // user.getId()로 변경
+        verify(orderService, times(1)).createOrder(eq(user.getId())); // user.getId()로 변경
     }
 
 

@@ -4,7 +4,6 @@ import com.sparta.yobaeats.domain.cart.entity.Cart;
 import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
-import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderMenu;
 import com.sparta.yobaeats.domain.order.entity.OrderStatus;
@@ -83,7 +82,6 @@ public class OrderServiceTest {
     @Test
     void 주문_생성_성공() {
         // given
-        OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId());
         Cart cart = Cart.builder().userId(user.getId()).build();
         List<OrderMenu> menus = List.of(OrderMenu.builder().build());
 
@@ -95,7 +93,7 @@ public class OrderServiceTest {
                 .thenReturn(Order.builder().id(1L).totalPrice(30000).user(user).store(store).menus(menus).build());
 
         // when
-        Long orderId = orderService.createOrder(orderCreateReq, user.getId());
+        Long orderId = orderService.createOrder(user.getId());
 
         // then
         assertNotNull(orderId);
@@ -166,11 +164,10 @@ public class OrderServiceTest {
     void 주문_생성_실패_스토어_없음() {
         // given
         when(storeService.findStoreById(store.getId())).thenThrow(new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND));
-        OrderCreateReq orderCreateReq = new OrderCreateReq(store.getId());
 
         // when & then
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
-            orderService.createOrder(orderCreateReq, user.getId());
+            orderService.createOrder(user.getId());
         });
         assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
     }
