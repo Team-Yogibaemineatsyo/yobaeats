@@ -1,12 +1,10 @@
 package com.sparta.yobaeats.domain.order.controller;
 
-import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.dto.response.OrderReadDetailRes;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.service.OrderService;
 import com.sparta.yobaeats.global.security.entity.CustomUserDetails;
 import com.sparta.yobaeats.global.util.UriBuilderUtil;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
