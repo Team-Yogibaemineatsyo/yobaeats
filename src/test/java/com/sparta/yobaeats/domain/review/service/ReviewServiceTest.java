@@ -77,7 +77,7 @@ class ReviewServiceTest {
                 .store(store)
                 .orderStatus(OrderStatus.DELIVERED)
                 .build();
-        reply = new Reply(1L, user, review, "감사합니다.");
+        reply = new Reply(1L, review, "감사합니다.");
         review = new Review(1L, user, store, order, "맨날 먹어도 맛있어요.", 5,reply);
         reviewCreateReq = new ReviewCreateReq(order.getId(), 5, "오늘 또 먹었어요.");
     }

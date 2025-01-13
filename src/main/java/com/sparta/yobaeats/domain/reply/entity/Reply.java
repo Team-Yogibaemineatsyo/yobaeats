@@ -30,10 +30,6 @@ public class Reply extends BaseEntity {
     @Column(name = "reply_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_Id", nullable = false)
-    private User user;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
@@ -45,9 +41,8 @@ public class Reply extends BaseEntity {
     private boolean isDeleted = false;
 
     @Builder
-    public Reply(Long id, User user, Review review, String content) {
+    public Reply(Long id, Review review, String content) {
         this.id = id;
-        this.user = user;
         this.review = review;
         this.content = content;
     }
