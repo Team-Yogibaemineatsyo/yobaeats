@@ -15,12 +15,10 @@ import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CartService {
 
