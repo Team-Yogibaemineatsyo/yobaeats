@@ -7,9 +7,6 @@ import com.sparta.yobaeats.domain.user.entity.User;
 import jakarta.validation.constraints.NotNull;
 
 public record OrderCreateReq(
-
-        @NotNull(message = OrderValidationMessage.STORE_ID_NOTNULL_MESSAGE)
-        Long storeId
 ) {
     /**
      * OrderCreateReq를 사용하여 Order 엔티티를 생성하는 메서드

@@ -7,6 +7,7 @@ import com.sparta.yobaeats.domain.cart.dto.response.CartReadDetailRes;
 import com.sparta.yobaeats.domain.cart.entity.Cart;
 import com.sparta.yobaeats.domain.cart.entity.CartItem;
 import com.sparta.yobaeats.domain.cart.repository.CartRedisRepository;
+import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
 import com.sparta.yobaeats.domain.store.entity.QuantityType;
 import com.sparta.yobaeats.global.exception.InvalidException;
@@ -27,9 +28,9 @@ public class CartService {
     private final CartRedisRepository cartRepository;
 
     public void addItemToCart(CartCreateReq request, Long userId) {
-        Cart cart = findAddCartByUserId(userId);
+        Menu menu = menuService.findMenuById(request.menuId());
 
-        menuService.findMenuById(request.menuId());
+        Cart cart = findAddCartByUserId(userId, menu);
 
         List<CartItem> cartItems = cart.getItems();
         cartItems.stream()
@@ -116,14 +117,15 @@ public class CartService {
         cartRepository.delete(cart);
     }
 
-    private Cart findAddCartByUserId(Long userId) {
+    private Cart findAddCartByUserId(Long userId, Menu menu) {
         return cartRepository.findById(userId)
-                .orElseGet(() -> createNewCart(userId));
+                .orElseGet(() -> createNewCart(userId, menu));
     }
 
-    private Cart createNewCart(Long userId) {
+    private Cart createNewCart(Long userId, Menu menu) {
         return Cart.builder()
                 .userId(userId)
+                .storeId(menu.getStore().getId())
                 .build();
     }
 }

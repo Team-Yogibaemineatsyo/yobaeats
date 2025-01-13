@@ -4,7 +4,6 @@ import com.sparta.yobaeats.domain.cart.entity.Cart;
 import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
-import com.sparta.yobaeats.domain.order.dto.request.OrderCreateReq;
 import com.sparta.yobaeats.domain.order.dto.response.OrderReadDetailRes;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderMenu;
@@ -41,18 +40,21 @@ public class OrderService {
      * @param userId 주문을 생성하는 사용자 ID
      * @return 생성된 주문의 ID
      */
-    public Long createOrder(OrderCreateReq request, Long userId) {
+    public Long createOrder(Long userId) {
         // 사용자 객체 조회
         User user = userService.findUserById(userId);
-
-        // 스토어 조회
-        Store store = storeService.findStoreById(request.storeId());
 
         // 장바구니 조회
         Cart cart = cartService.findCartByUserId(userId);
 
+        // 스토어 조회
+        Store store = storeService.findStoreById(cart.getStoreId());
+
         // 주문 엔티티 생성
-        Order order = request.toEntity(store, user);
+        Order order = Order.builder()
+                .store(store)
+                .user(user)
+                .build();
 
         // 메뉴 조회
         List<OrderMenu> orderMenus = cart.getItems().stream()

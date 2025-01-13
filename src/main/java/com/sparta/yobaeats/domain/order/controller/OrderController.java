@@ -33,10 +33,9 @@ public class OrderController {
      */
     @PostMapping
     public ResponseEntity<Order> createOrder(
-            @RequestBody @Valid OrderCreateReq request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long orderId = orderService.createOrder(request, userDetails.getId());
+        Long orderId = orderService.createOrder(userDetails.getId());
         URI uri = UriBuilderUtil.create("/api/orders/{orderId}", orderId);
 
         return ResponseEntity.created(uri).build(); // 201 Created 응답

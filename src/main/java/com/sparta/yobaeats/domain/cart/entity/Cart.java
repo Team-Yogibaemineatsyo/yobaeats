@@ -19,10 +19,12 @@ public class Cart implements Serializable {
     @Id
     private Long userId;
     private List<CartItem> items;
+    private Long storeId;
 
     @Builder
-    public Cart(Long userId, List<CartItem> items) {
+    public Cart(Long userId, List<CartItem> items, Long storeId) {
         this.userId = userId;
         this.items = items != null ? items : new ArrayList<>();
+        this.storeId = storeId;
     }
 }
