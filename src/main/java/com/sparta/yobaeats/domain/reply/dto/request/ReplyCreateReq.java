@@ -17,9 +17,8 @@ public record ReplyCreateReq(
         String content
 ) {
 
-    public Reply to(User user, Review review) {
+    public Reply to(Review review) {
         return Reply.builder()
-                .user(user)
                 .review(review)
                 .content(content)
                 .build();

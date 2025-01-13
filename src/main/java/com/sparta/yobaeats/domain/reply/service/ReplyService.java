@@ -28,17 +28,17 @@ public class ReplyService {
     private final ReviewService reviewService;
 
     @Transactional
-    public Long createReply(ReplyCreateReq replyContentReq, Long userId) {
+    public Long createReply(ReplyCreateReq replyCreateReq, Long userId) {
         // 리뷰 존재 확인
-        Review review = reviewService.findReviewById(replyContentReq.reviewId());
+        Review review = reviewService.findReviewById(replyCreateReq.reviewId());
         // 중복 댓글 확인
         if (review.getReply() != null) {
             throw new ConflictException(ErrorCode.DUPLICATED_REPLY);
         }
         // 권한 확인
-        validateUser(userId, review.getStore().getUser().getId());
+        validateStoreOwner(userId, review.getStore().getUser().getId());
 
-        Reply reply = replyContentReq.to(userService.findUserById(userId), review);
+        Reply reply = replyCreateReq.to(review);
         replyRepository.save(reply);
 
         return reply.getId();
@@ -48,13 +48,14 @@ public class ReplyService {
         // 댓글 존재 확인
         Reply reply = findReplyById(replyId);
         // 권한 확인
-        validateUser(userId, reply.getUser().getId());
+        validateStoreOwner(userId, reply.getReview().getStore().getUser().getId());
 
         return ReplyReadRes.from(reply);
     }
 
     public List<ReplyReadRes> readReplies(Long userId) {
-        List<Reply> replies = replyRepository.findAllByUserIdAndIsDeletedFalseOrderByUpdatedAtDesc(userId);
+        List<Reply> replies = replyRepository
+                .findAllByUserId(userId);
 
         return replies.stream()
                 .map(ReplyReadRes::from)
@@ -66,7 +67,7 @@ public class ReplyService {
         // 댓글 존재 확인
         Reply reply = findReplyById(replyId);
         // 권한 확인
-        validateUser(userId, reply.getUser().getId());
+        validateStoreOwner(userId, reply.getReview().getStore().getUser().getId());
 
         reply.updateReply(replyUpdateReq.content());
     }
@@ -76,7 +77,7 @@ public class ReplyService {
         // 댓글 존재 확인
         Reply reply = findReplyById(replyId);
         // 권한 확인
-        validateUser(userId, reply.getUser().getId());
+        validateStoreOwner(userId, reply.getReview().getStore().getUser().getId());
 
         reply.softDelete();
     }
@@ -86,7 +87,7 @@ public class ReplyService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REPLY_NOT_FOUND));
     }
 
-    private void validateUser(Long userId, Long targetId) {
+    private void validateStoreOwner(Long userId, Long targetId) {
         if (!userId.equals(targetId)) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }

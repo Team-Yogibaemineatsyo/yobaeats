@@ -117,7 +117,7 @@ public class MenuServiceTest {
         Menu existingMenu = new Menu(menuId, store, "Old Name", 10000, "Old Description", false);
         MenuUpdateReq updateReq = new MenuUpdateReq("New Name", 12000, "New Description");
 
-        when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
+        when(menuRepository.findByIdAndIsDeletedFalse(menuId)).thenReturn(Optional.of(existingMenu));
 
         menuService.updateMenu(menuId, updateReq, owner.getId());
 
@@ -132,7 +132,7 @@ public class MenuServiceTest {
         Long menuId = 1L;
         Menu existingMenu = new Menu(menuId, store, "Menu to be deleted", 10000, "Description", false);
 
-        when(menuRepository.findById(menuId)).thenReturn(Optional.of(existingMenu));
+        when(menuRepository.findByIdAndIsDeletedFalse(menuId)).thenReturn(Optional.of(existingMenu));
 
         menuService.deleteMenu(menuId, owner.getId());
 
@@ -146,7 +146,7 @@ public class MenuServiceTest {
         Long menuId = 1L;
         MenuUpdateReq updateReq = new MenuUpdateReq("New Name", 12000, "New Description");
 
-        when(menuRepository.findById(menuId)).thenReturn(Optional.empty());
+        when(menuRepository.findByIdAndIsDeletedFalse(menuId)).thenReturn(Optional.empty());
 
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
             menuService.updateMenu(menuId, updateReq, owner.getId());
@@ -159,7 +159,7 @@ public class MenuServiceTest {
     void 메뉴_삭제_실패_메뉴_존재하지않음() {
         Long menuId = 1L;
 
-        when(menuRepository.findById(menuId)).thenReturn(Optional.empty());
+        when(menuRepository.findByIdAndIsDeletedFalse(menuId)).thenReturn(Optional.empty());
 
         CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
             menuService.deleteMenu(menuId, owner.getId());
