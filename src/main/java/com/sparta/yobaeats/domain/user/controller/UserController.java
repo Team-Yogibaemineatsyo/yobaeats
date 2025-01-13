@@ -27,8 +27,8 @@ public class UserController {
     public ResponseEntity<UserReadInfoRes> readUserInfo(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        UserReadInfoRes userRes = userService.findById(userDetails.getId());
-        return ResponseEntity.ok(userRes);
+        UserReadInfoRes userReadInfoRes = userService.findById(userDetails.getId());
+        return ResponseEntity.ok(userReadInfoRes);
     }
 
     @PatchMapping

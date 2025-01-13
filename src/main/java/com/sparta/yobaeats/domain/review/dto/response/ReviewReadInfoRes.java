@@ -28,7 +28,7 @@ public record ReviewReadInfoRes(
             .content(review.getContent())
             .createdAt(review.getCreatedAt())
             .updatedAt(review.getUpdatedAt())
-            .reply(com.sparta.yobaeats.domain.reply.dto.response.ReplyReadRes.from(review.getReply()))
+            .reply(ReplyReadRes.from(review.getReply()))
             .build();
     }
 }

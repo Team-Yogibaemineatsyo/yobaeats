@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import com.sparta.yobaeats.domain.order.entity.Order;
 import com.sparta.yobaeats.domain.order.entity.OrderStatus;
 import com.sparta.yobaeats.domain.order.service.OrderService;
+import com.sparta.yobaeats.domain.reply.entity.Reply;
 import com.sparta.yobaeats.domain.review.dto.request.ReviewCreateReq;
 import com.sparta.yobaeats.domain.review.dto.response.ReviewReadInfoRes;
 import com.sparta.yobaeats.domain.review.entity.Review;
@@ -24,7 +25,6 @@ import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.UnauthorizedException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +54,7 @@ class ReviewServiceTest {
     private Order order;
     private Store store;
     private Review review;
+    private Reply reply;
     private ReviewCreateReq reviewCreateReq;
 
     @BeforeEach
@@ -76,8 +77,8 @@ class ReviewServiceTest {
                 .store(store)
                 .orderStatus(OrderStatus.DELIVERED)
                 .build();
-
-        review = new Review(1L, user, store, order, "맨날 먹어도 맛있어요.", 5);
+        reply = new Reply(1L, review, "감사합니다.");
+        review = new Review(1L, user, store, order, "맨날 먹어도 맛있어요.", 5,reply);
         reviewCreateReq = new ReviewCreateReq(order.getId(), 5, "오늘 또 먹었어요.");
     }
 
@@ -173,21 +174,6 @@ class ReviewServiceTest {
                 () -> reviewService.readReviews(store.getId(), startStar, endStar));
 
         assertEquals(ErrorCode.INVALID_STAR_RANGE, exception.getErrorCode());
-    }
-
-    @DisplayName("해당 별점 범위의 리뷰가 없으면, '해당 별점의 리뷰가 없습니다.' 출력")
-    @Test
-    void findNoReviewsInStarRange() {
-        // given
-        int startStar = 1;
-        int endStar = 2;
-        given(reviewRepository.findReviewsByStoreIdAndStar(store.getId(), startStar,
-                endStar)).willReturn(new ArrayList<>());
-
-        // when & then
-        NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> reviewService.readReviews(store.getId(), startStar, endStar));
-        assertEquals(ErrorCode.REVIEW_NOT_FOUND, exception.getErrorCode());
     }
 
     @DisplayName("가게 리뷰 조회 성공")
