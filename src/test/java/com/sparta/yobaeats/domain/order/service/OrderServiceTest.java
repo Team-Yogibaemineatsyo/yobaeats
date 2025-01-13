@@ -1,6 +1,7 @@
 package com.sparta.yobaeats.domain.order.service;
 
 import com.sparta.yobaeats.domain.cart.entity.Cart;
+import com.sparta.yobaeats.domain.cart.entity.CartItem;
 import com.sparta.yobaeats.domain.cart.service.CartService;
 import com.sparta.yobaeats.domain.menu.entity.Menu;
 import com.sparta.yobaeats.domain.menu.service.MenuService;
@@ -14,6 +15,7 @@ import com.sparta.yobaeats.domain.user.entity.User;
 import com.sparta.yobaeats.domain.user.entity.UserRole;
 import com.sparta.yobaeats.domain.user.service.UserService;
 import com.sparta.yobaeats.global.exception.CustomRuntimeException;
+import com.sparta.yobaeats.global.exception.NotFoundException;
 import com.sparta.yobaeats.global.exception.error.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,13 +84,22 @@ public class OrderServiceTest {
     @Test
     void 주문_생성_성공() {
         // given
-        Cart cart = Cart.builder().userId(user.getId()).build();
+        Menu menu1 = Menu.builder().id(1L).menuName("Burger").menuPrice(5000).build();
+        Menu menu2 = Menu.builder().id(2L).menuName("Fries").menuPrice(2000).build();
+
+        List<CartItem> cartItems = List.of(
+                CartItem.builder().menuId(menu1.getId()).quantity(2).build(),
+                CartItem.builder().menuId(menu2.getId()).quantity(3).build()
+        );
+
+        Cart cart = Cart.builder().userId(user.getId()).storeId(store.getId()).items(cartItems).build();
         List<OrderMenu> menus = List.of(OrderMenu.builder().build());
 
-        when(storeService.findStoreById(store.getId())).thenReturn(store);
-//        when(menuService.findMenuById(menu.getId())).thenReturn(menu);
         when(userService.findUserById(user.getId())).thenReturn(user);
         when(cartService.findCartByUserId(user.getId())).thenReturn(cart);
+        when(menuService.findMenuById(1L)).thenReturn(menu1);
+        when(menuService.findMenuById(2L)).thenReturn(menu2);
+        when(storeService.findStoreById(store.getId())).thenReturn(store);
         when(orderRepository.save(any(Order.class)))
                 .thenReturn(Order.builder().id(1L).totalPrice(30000).user(user).store(store).menus(menus).build());
 
@@ -161,14 +172,14 @@ public class OrderServiceTest {
     }
 
     @Test
-    void 주문_생성_실패_스토어_없음() {
+    void 주문_생성_실패_장바구니_없음() {
         // given
-        when(storeService.findStoreById(store.getId())).thenThrow(new CustomRuntimeException(ErrorCode.STORE_NOT_FOUND));
+        when(cartService.findCartByUserId(user.getId())).thenThrow(new NotFoundException(ErrorCode.CART_NOT_FOUND));
 
         // when & then
-        CustomRuntimeException exception = assertThrows(CustomRuntimeException.class, () -> {
+        CustomRuntimeException exception = assertThrows(NotFoundException.class, () -> {
             orderService.createOrder(user.getId());
         });
-        assertEquals(ErrorCode.STORE_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.CART_NOT_FOUND, exception.getErrorCode());
     }
 }
